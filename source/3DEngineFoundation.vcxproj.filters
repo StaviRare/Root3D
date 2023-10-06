@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Platform Independence Layer">
+      <UniqueIdentifier>{fc396cc0-5303-4ca5-b88e-5e74beb68219}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform Independence Layer\File System">
+      <UniqueIdentifier>{7c29a1cf-d1a4-422f-a226-8c1f70d4754d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform Independence Layer\Data Types">
+      <UniqueIdentifier>{2c1247c3-fcce-491a-b998-745e5ea06a18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gameplay Foundation">
+      <UniqueIdentifier>{c350dc56-9c5f-496a-a66d-ff11fcd6cc19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform Independence Layer\Graphics Wrappers">
+      <UniqueIdentifier>{4841e73a-a3d2-47c8-9a2e-7240b1163266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core Systems">
+      <UniqueIdentifier>{55c8f065-a1ed-4948-a773-26731680801c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core Systems\Debug">
+      <UniqueIdentifier>{d4a4b73b-306b-47c6-aff5-3e8118cdd59d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core Systems">
+      <UniqueIdentifier>{92d8e2b4-6021-42a4-ba1c-b483a092c759}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform Independence Layer">
+      <UniqueIdentifier>{ca5e6ad0-2abf-43e6-9ffa-b1544c5fc92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform Independence Layer\Graphics Wrappers">
+      <UniqueIdentifier>{9147782c-284a-4e6f-bb2a-482bb56360c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform Independence Layer\File System">
+      <UniqueIdentifier>{7535e155-47bc-4302-9e69-d0ed449456e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform Independence Layer\Data Types">
+      <UniqueIdentifier>{e26edf63-a064-44fc-8d94-7998d4e361b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Gameplay Foundation">
+      <UniqueIdentifier>{818496cb-eee3-4eac-a11b-1dcee8aa7db1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core Systems\Debug">
+      <UniqueIdentifier>{6b27eaff-6250-46d3-a08a-3ba6e050954d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core Systems\Engine Config">
+      <UniqueIdentifier>{6ba787c5-b9b9-4f2a-93d3-e434caa8eeed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform Independence Layer\Timer">
+      <UniqueIdentifier>{4e3db151-5211-41bd-ae64-4f00d5532e35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform Independence Layer\Timer">
+      <UniqueIdentifier>{e30fd83d-83a9-4438-9307-e879b44abbc2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
+      <Filter>Source Files\Platform Independence Layer\File System</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectoryManager.cpp">
+      <Filter>Source Files\Platform Independence Layer\File System</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshGenerator.cpp">
+      <Filter>Source Files\Gameplay Foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Source Files\Core Systems\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXAPI.cpp">
+      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsWrapper.cpp">
+      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLAPI.cpp">
+      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files\Platform Independence Layer\Timer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="OpenGLAPI.h">
+      <Filter>Header Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsWrapper.h">
+      <Filter>Header Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsAPI.h">
+      <Filter>Header Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXAPI.h">
+      <Filter>Header Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>Header Files\Platform Independence Layer\File System</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectoryManager.h">
+      <Filter>Header Files\Platform Independence Layer\File System</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshGenerator.h">
+      <Filter>Header Files\Gameplay Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Header Files\Core Systems\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files\Platform Independence Layer\Timer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
