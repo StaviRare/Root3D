@@ -1,6 +1,11 @@
 # Ignore build artifacts
 build/artifacts/
 
+# Ignore Visual Studio project settings and temporary files
+
+*.suo
+*.browse.vc.db
+
 # Ignore executable files
 *.exe
 
