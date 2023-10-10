@@ -17,7 +17,7 @@
 #include "MeshGenerator.h"
 #include "Debug.h"
 #include "Timer.h"
-
+#include "Camera.h"
 
 const char* vertexShaderSource = R"(
     #version 330 core
@@ -44,11 +44,7 @@ const char* fragmentShaderSource = R"(
     })";
 
 
-glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-float cameraYaw = 0.0f;
-float cameraMoveSpeed = 3.00f;
-float cameraLookSpeed = 2.00f;
-float cameraFOV = 60.0f;
+
 
 static GLFWwindow* window = nullptr;
 int modelLoc = -1;
@@ -174,81 +170,87 @@ void OpenGLAPI::ExecuteRenderCommands()
 {
 
     if (!glfwWindowShouldClose(window)) {
+        if (Camera::exists()) {
+            
+            // Rotate Cube
+            float time = glfwGetTime();
+            float angle = time * 50.0f;
+            glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.0f));
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+            //// Leave cube alone
+            //// Set the model matrix (keep the cube stationary at -1 in the z-axis)
+            //glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+            //glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+
+
+
+            Camera& camera = Camera::getInstance();
+
+            // Directly translate camera.position to glm::vec3
+            glm::vec3 cameraPosGLM(camera.position.x, camera.position.y, camera.position.z);
+
+            // Calculate forward vector based on the camera's Y rotation (yaw)
+            glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.rotation.y), 0.0f, -glm::cos(camera.rotation.y)));
+
+            // Use the translated glm::vec3 for camera position
+            glm::vec3 cameraTarget = cameraPosGLM + forwardVector;
+
+            glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
+
+            // Use the translated glm::vec3 for the lookAt
+            glm::mat4 view = glm::lookAt(cameraPosGLM, cameraTarget, cameraUp);
+
+
+
+
+            //glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(cameraYaw), 0.0f, -glm::cos(cameraYaw)));
+
+
+            //// Set the view matrix (position and orient the camera)
+            //glm::vec3 cameraTarget = cameraPosition + forwardVector; // Point the camera towards the target
+            //glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
+            //glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, cameraUp);
+            
+            
+            
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+            // Set the projection matrix (perspective projection)
+            glm::mat4 projection = glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.1f, 100.0f);
+            glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
 
 
 
 
-        float time = glfwGetTime();
-        float angle = time * 50.0f;
-        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.0f));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-        //// Set the model matrix (keep the cube stationary at -1 in the z-axis)
-        //glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-        //glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 
-        // This is LOL should not be here.
-        double deltaTime = Timer::getDeltaTime();
+            // Bind the texture to the texture unit (e.g., GL_TEXTURE0)
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
 
+            // Draw the cube
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            cameraYaw -= cameraLookSpeed * deltaTime;
+            glfwSwapBuffers(window);
+            glfwPollEvents();
         }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            cameraYaw += cameraLookSpeed * deltaTime;
+        else {
+
         }
-
-        glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(cameraYaw), 0.0f, -glm::cos(cameraYaw)));
-
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            cameraPosition += forwardVector * cameraMoveSpeed * (float)deltaTime;
-        }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            cameraPosition -= forwardVector * cameraMoveSpeed * (float)deltaTime;
-        }
-
-        // Set the view matrix (position and orient the camera)
-        glm::vec3 cameraTarget = cameraPosition + forwardVector; // Point the camera towards the target
-        glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
-        glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, cameraUp);
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-        // Set the projection matrix (perspective projection)
-        glm::mat4 projection = glm::perspective(glm::radians(cameraFOV), 800.0f / 600.0f, 0.1f, 100.0f);
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-
-
-
-
-
-
-
-        // Bind the texture to the texture unit (e.g., GL_TEXTURE0)
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-
-        // Draw the cube
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
     }
     else {
 
-
-
-
         // destruction. Change logic.
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &EBO);
+        glDeleteProgram(shaderProgram);
 
-    glfwTerminate();
+        glfwTerminate();
     }
 }

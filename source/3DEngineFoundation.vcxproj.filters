@@ -64,6 +64,12 @@
     <Filter Include="Header Files\Platform Independence Layer\Timer">
       <UniqueIdentifier>{e30fd83d-83a9-4438-9307-e879b44abbc2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Low-Level Renderer">
+      <UniqueIdentifier>{9c3179cf-e12c-48b3-97f3-f9b239f0eac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Low-Level Renderer">
+      <UniqueIdentifier>{e38a6189-a810-485b-bd7d-43d81e5ecc5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -96,6 +102,12 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files\Platform Independence Layer\Timer</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Low-Level Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGLAPI.h">
@@ -127,6 +139,12 @@
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files\Platform Independence Layer\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Low-Level Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

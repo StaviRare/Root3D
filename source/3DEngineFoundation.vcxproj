@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DirectoryManager.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="FileManager.cpp" />
@@ -161,8 +162,10 @@
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="OpenGLAPI.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="DirectoryManager.h" />
     <ClInclude Include="DirectXAPI.h" />
     <ClInclude Include="FileManager.h" />
@@ -173,6 +176,7 @@
     <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="OpenGLAPI.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
