@@ -172,18 +172,9 @@ void OpenGLAPI::ExecuteRenderCommands()
     if (!glfwWindowShouldClose(window)) {
         if (Camera::exists()) {
             
-            // Rotate Cube
-            float time = glfwGetTime();
-            float angle = time * 50.0f;
-            glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.0f));
+            // Set the model matrix (keep the cube stationary at -1 in the z-axis)
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-            //// Leave cube alone
-            //// Set the model matrix (keep the cube stationary at -1 in the z-axis)
-            //glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-            //glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-
 
 
             Camera& camera = Camera::getInstance();
@@ -254,3 +245,11 @@ void OpenGLAPI::ExecuteRenderCommands()
         glfwTerminate();
     }
 }
+
+
+//
+//// Rotate Cube
+//float time = glfwGetTime();
+//float angle = time * 50.0f;
+//glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.0f));
+//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
