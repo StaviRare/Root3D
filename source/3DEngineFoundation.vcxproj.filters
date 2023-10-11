@@ -31,9 +31,6 @@
     <Filter Include="Source Files\Core Systems">
       <UniqueIdentifier>{55c8f065-a1ed-4948-a773-26731680801c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Core Systems\Debug">
-      <UniqueIdentifier>{d4a4b73b-306b-47c6-aff5-3e8118cdd59d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Core Systems">
       <UniqueIdentifier>{92d8e2b4-6021-42a4-ba1c-b483a092c759}</UniqueIdentifier>
     </Filter>
@@ -51,12 +48,6 @@
     </Filter>
     <Filter Include="Header Files\Gameplay Foundation">
       <UniqueIdentifier>{818496cb-eee3-4eac-a11b-1dcee8aa7db1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Core Systems\Debug">
-      <UniqueIdentifier>{6b27eaff-6250-46d3-a08a-3ba6e050954d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Core Systems\Engine Config">
-      <UniqueIdentifier>{6ba787c5-b9b9-4f2a-93d3-e434caa8eeed}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Platform Independence Layer\Timer">
       <UniqueIdentifier>{4e3db151-5211-41bd-ae64-4f00d5532e35}</UniqueIdentifier>
@@ -76,6 +67,12 @@
     <Filter Include="Header Files\Resource Managers">
       <UniqueIdentifier>{8a8269cf-4c2a-4aca-94c3-55c2a2441325}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Human Interface Devices">
+      <UniqueIdentifier>{8a945d64-d7e4-4420-8842-04e3a3ac8800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Human Interface Devices">
+      <UniqueIdentifier>{1ce3edb1-cf62-499c-86fa-c332a5323e8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -92,9 +89,6 @@
     </ClCompile>
     <ClCompile Include="MeshGenerator.cpp">
       <Filter>Source Files\Gameplay Foundation</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Source Files\Core Systems\Debug</Filter>
     </ClCompile>
     <ClCompile Include="DirectXAPI.cpp">
       <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
@@ -119,6 +113,15 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Source Files\Resource Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Source Files\Core Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Source Files\Core Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsKeyboardHandler.cpp">
+      <Filter>Source Files\Human Interface Devices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +149,6 @@
     <ClInclude Include="MeshGenerator.h">
       <Filter>Header Files\Gameplay Foundation</Filter>
     </ClInclude>
-    <ClInclude Include="Debug.h">
-      <Filter>Header Files\Core Systems\Debug</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files\Platform Independence Layer\Timer</Filter>
     </ClInclude>
@@ -166,6 +166,21 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files\Resource Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Header Files\Core Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Header Files\Core Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\Human Interface Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.h">
+      <Filter>Header Files\Human Interface Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsKeyboardHandler.h">
+      <Filter>Header Files\Human Interface Devices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -159,12 +159,14 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="GraphicsWrapper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="OpenGLAPI.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="WindowsKeyboardHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -175,6 +177,9 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="GraphicsWrapper.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="OpenGLAPI.h" />
@@ -182,6 +187,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="WindowsKeyboardHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -168,7 +168,6 @@ void OpenGLAPI::ClearScreen()
 
 void OpenGLAPI::ExecuteRenderCommands()
 {
-
     if (!glfwWindowShouldClose(window)) {
         if (Camera::exists()) {
             
@@ -192,32 +191,11 @@ void OpenGLAPI::ExecuteRenderCommands()
 
             // Use the translated glm::vec3 for the lookAt
             glm::mat4 view = glm::lookAt(cameraPosGLM, cameraTarget, cameraUp);
-
-
-
-
-            //glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(cameraYaw), 0.0f, -glm::cos(cameraYaw)));
-
-
-            //// Set the view matrix (position and orient the camera)
-            //glm::vec3 cameraTarget = cameraPosition + forwardVector; // Point the camera towards the target
-            //glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
-            //glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, cameraUp);
-            
-            
-            
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
             // Set the projection matrix (perspective projection)
             glm::mat4 projection = glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.1f, 100.0f);
             glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-
-
-
-
-
-
 
             // Bind the texture to the texture unit (e.g., GL_TEXTURE0)
             glActiveTexture(GL_TEXTURE0);
