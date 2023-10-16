@@ -200,5 +200,8 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

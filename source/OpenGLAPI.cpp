@@ -186,10 +186,10 @@ void OpenGLAPI::ExecuteRenderCommands()
             Camera& camera = Camera::getInstance();
 
             // Directly translate camera.position to glm::vec3
-            glm::vec3 cameraPosGLM(camera.position.x, camera.position.y, camera.position.z);
+            glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
 
             // Calculate forward vector based on the camera's Y rotation (yaw)
-            glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.rotation.y), 0.0f, -glm::cos(camera.rotation.y)));
+            glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.transform.rotation.y), 0.0f, -glm::cos(camera.transform.rotation.y)));
 
             // Use the translated glm::vec3 for camera position
             glm::vec3 cameraTarget = cameraPosGLM + forwardVector;

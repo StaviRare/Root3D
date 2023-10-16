@@ -36,7 +36,7 @@ void ExampleScene::tick()
 void initCamera()
 {
     camera.fov = 60.0f;
-    camera.position = Vector3(0, 0, 3);
+    camera.transform.position = Vector3(0, 0, 3);
 }
 
 void initCube()
@@ -52,19 +52,19 @@ void handleCameraMovement()
 
     if (Input::keyDown("d"))
     {
-        camera.rotation += Vector3(0, cameraLookSpeed * deltaTime, 0);
+        camera.transform.rotation += Vector3(0, cameraLookSpeed * deltaTime, 0);
     }
 
     if (Input::keyDown("a"))
     {
-        camera.rotation -= Vector3(0, cameraLookSpeed * deltaTime, 0);
+        camera.transform.rotation -= Vector3(0, cameraLookSpeed * deltaTime, 0);
     }
 
     // Calculate the forward direction based on the Y-axis rotation.
     Vector3 forward(
-        -sin(camera.rotation.y),
+        -sin(camera.transform.rotation.y),
         0,
-        cos(camera.rotation.y)
+        cos(camera.transform.rotation.y)
     );
 
     // Normalize the forward vector if it isn't normalized already.
@@ -72,17 +72,17 @@ void handleCameraMovement()
 
     if (Input::keyDown("w"))
     {
-        camera.position -= forward * cameraMoveSpeed * deltaTime;
+        camera.transform.position -= forward * cameraMoveSpeed * deltaTime;
     }
 
     if (Input::keyDown("s"))
     {
-        camera.position += forward * cameraMoveSpeed * deltaTime;
+        camera.transform.position += forward * cameraMoveSpeed * deltaTime;
     }
 } 
 
 void handleCubeTransform()
 {
     entity.transform.position += Vector3(1, 0, 0);
-    Debug::log(entity.transform.position.toString());
+    //Debug::log(entity.transform.position.toString());
 }
