@@ -2,28 +2,48 @@
 #include "Camera.h"
 #include "Timer.h"
 #include "Input.h"
+#include "Mesh.h"
+#include "Entity.h"
+#include "MeshData.h"
+#include "MeshGenerator.h"
+#include "Debug.h"
 
+static Entity entity;
 static Camera camera;
 static float cameraMoveSpeed = 3.00f;
 static float cameraLookSpeed = 2.00f;
 
 void initCamera();
+void initCube();
 void handleCameraMovement();
+void handleCubeTransform();
+
+
 
 void ExampleScene::init()
 {
     initCamera();
+    initCube();
 }
 
 void ExampleScene::tick()
 {
     handleCameraMovement();
+    handleCubeTransform();
 }
+
 
 void initCamera()
 {
     camera.fov = 60.0f;
     camera.position = Vector3(0, 0, 3);
+}
+
+void initCube()
+{
+    Mesh mesh = MeshGenerator::GetCube();
+    MeshData meshData = entity.AddComponent<MeshData>();
+    meshData.mesh = mesh;
 }
 
 void handleCameraMovement()
@@ -60,3 +80,9 @@ void handleCameraMovement()
         camera.position += forward * cameraMoveSpeed * deltaTime;
     }
 } 
+
+void handleCubeTransform()
+{
+    entity.transform.position += Vector3(1, 0, 0);
+    Debug::log(entity.transform.position.toString());
+}

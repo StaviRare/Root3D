@@ -154,6 +154,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DirectoryManager.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="ExampleScene.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="Debug.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="OpenGLAPI.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -170,8 +172,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="DirectoryManager.h" />
     <ClInclude Include="DirectXAPI.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="ExampleScene.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="Debug.h" />
@@ -181,11 +185,13 @@
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshData.h" />
     <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="OpenGLAPI.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="WindowsKeyboardHandler.h" />
   </ItemGroup>
