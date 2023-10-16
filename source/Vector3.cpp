@@ -1,3 +1,4 @@
+#include <sstream>
 #include "Vector3.h"
 #include "Math.h"
 
@@ -58,4 +59,11 @@ void Vector3::normalize()
     x /= mag;
     y /= mag;
     z /= mag;
+}
+
+std::string Vector3::toString() const
+{
+    std::ostringstream oss;
+    oss << "(" << x << ", " << y << ", " << z << ")";
+    return oss.str();
 }

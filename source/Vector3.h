@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class Vector3
 {
 public:
@@ -7,6 +9,7 @@ public:
     float magnitude() const;
     Vector3 normalized() const;
     void normalize();
+    std::string toString() const;
 
     // Constructors
     Vector3(float _x = 0, float _y = 0, float _z = 0) : x(_x), y(_y), z(_z) {}
