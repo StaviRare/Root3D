@@ -126,9 +126,6 @@
     <ClCompile Include="MeshData.cpp">
       <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGLAPI.h">
@@ -198,6 +195,9 @@
       <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
+      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
       <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
   </ItemGroup>

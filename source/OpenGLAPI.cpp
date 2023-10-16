@@ -9,6 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <string>
+#include "Texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -56,6 +57,7 @@ unsigned int fragmentShader;
 unsigned int shaderProgram;
 unsigned int vertexShader;
 double lastFrameTime = 0;
+static Texture textureObject;
 
 OpenGLAPI::OpenGLAPI()
 {
@@ -134,17 +136,22 @@ void OpenGLAPI::Initialize()
 
     // Load the texture image (replace "your_texture.png" with the actual image path)
     int width, height, nrChannels;
-    unsigned char* data = stbi_load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png", &width, &height, &nrChannels, 0);
-    if (data)
+    
+    if (!textureObject.rawData)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        textureObject.rawData = stbi_load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png", &width, &height, &nrChannels, 0);
+    }
+
+    if (textureObject.rawData)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureObject.rawData);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
     {
         std::cout << "Failed to load texture" << std::endl;
     }
-    stbi_image_free(data);
+    stbi_image_free(textureObject.rawData);
 
     // Set texture properties (optional)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

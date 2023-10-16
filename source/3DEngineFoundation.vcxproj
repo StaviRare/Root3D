@@ -154,7 +154,6 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DirectoryManager.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="ExampleScene.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="Debug.cpp" />
@@ -190,6 +189,7 @@
     <ClInclude Include="OpenGLAPI.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector3.h" />
