@@ -1,12 +1,11 @@
-# 3D Engine Foundation
+# Engine Foundation 3D
 
 ## Description
     This project is a basic foundation for a 3D engine.
-    Please note that it's just the beginning, and many features are yet to be added.
-    The foundation is designed as a starting point for customization and extension.
-    You can build upon it, add missing components, and tailor it to your specific needs.
-    Compatibility: 32-bit Windows platform with Visual Studio 2019.
-
+	Please note that the development is active, and the project is primarily for learning and exploration. 
+	The base provided here is intended to kickstart further customization and development. 
+	Users are encouraged to expand on it, integrate additional elements, and adapt it to their unique requirements. 
+    Compatibility: 32-bit Windows in debug mode using Visual Studio 2019.
 
 ## Usage
     1. Open the solution file (`BasicEngine.sln`) in Visual Studio 2019.
@@ -17,8 +16,6 @@
     - Click "Close."
     4. Build the project by clicking the "Build" button or by pressing `Ctrl + Shift + B`.
     5. Run the project by clicking the "Start Debugging" button or by pressing `F5`.
-
-
 
 ## License
     This project is licensed under the MIT License.
