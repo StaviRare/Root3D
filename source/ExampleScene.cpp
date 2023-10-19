@@ -41,9 +41,13 @@ void initCamera()
 
 void initCube()
 {
-    Mesh mesh = MeshGenerator::GetCube();
-    MeshData meshData = entity.AddComponent<MeshData>();
-    meshData.mesh = mesh;
+    // When RenderQueue and EntityPool will be implemented, 
+    // this code will be relevant.
+
+
+    //Mesh mesh = MeshGenerator::GetCube();
+    //MeshData meshData = entity.AddComponent<MeshData>();
+    //meshData.mesh = mesh;
 }
 
 void handleCameraMovement()
@@ -83,6 +87,6 @@ void handleCameraMovement()
 
 void handleCubeTransform()
 {
-    entity.transform.position += Vector3(1, 0, 0);
+    //entity.transform.position += Vector3(1, 0, 0);
     //Debug::log(entity.transform.position.toString());
 }
