@@ -5,14 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Source Files\Platform Independence Layer">
       <UniqueIdentifier>{fc396cc0-5303-4ca5-b88e-5e74beb68219}</UniqueIdentifier>
     </Filter>
@@ -31,47 +23,17 @@
     <Filter Include="Source Files\Core Systems">
       <UniqueIdentifier>{55c8f065-a1ed-4948-a773-26731680801c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Core Systems">
-      <UniqueIdentifier>{92d8e2b4-6021-42a4-ba1c-b483a092c759}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Platform Independence Layer">
-      <UniqueIdentifier>{ca5e6ad0-2abf-43e6-9ffa-b1544c5fc92c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Platform Independence Layer\Graphics Wrappers">
-      <UniqueIdentifier>{9147782c-284a-4e6f-bb2a-482bb56360c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Platform Independence Layer\File System">
-      <UniqueIdentifier>{7535e155-47bc-4302-9e69-d0ed449456e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Platform Independence Layer\Data Types">
-      <UniqueIdentifier>{e26edf63-a064-44fc-8d94-7998d4e361b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Gameplay Foundation">
-      <UniqueIdentifier>{818496cb-eee3-4eac-a11b-1dcee8aa7db1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Platform Independence Layer\Timer">
       <UniqueIdentifier>{4e3db151-5211-41bd-ae64-4f00d5532e35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Platform Independence Layer\Timer">
-      <UniqueIdentifier>{e30fd83d-83a9-4438-9307-e879b44abbc2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Low-Level Renderer">
       <UniqueIdentifier>{9c3179cf-e12c-48b3-97f3-f9b239f0eac0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Low-Level Renderer">
-      <UniqueIdentifier>{e38a6189-a810-485b-bd7d-43d81e5ecc5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Resource Managers">
       <UniqueIdentifier>{625c7ef8-87fa-46a9-956e-65c33a7d1b77}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Resource Managers">
-      <UniqueIdentifier>{8a8269cf-4c2a-4aca-94c3-55c2a2441325}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Human Interface Devices">
       <UniqueIdentifier>{8a945d64-d7e4-4420-8842-04e3a3ac8800}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Human Interface Devices">
-      <UniqueIdentifier>{1ce3edb1-cf62-499c-86fa-c332a5323e8d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -128,80 +90,80 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="OpenGLAPI.h">
-      <Filter>Header Files\Platform Independence Layer\Graphics Wrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsWrapper.h">
-      <Filter>Header Files\Platform Independence Layer\Graphics Wrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsAPI.h">
-      <Filter>Header Files\Platform Independence Layer\Graphics Wrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXAPI.h">
-      <Filter>Header Files\Platform Independence Layer\Graphics Wrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="FileManager.h">
-      <Filter>Header Files\Platform Independence Layer\File System</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectoryManager.h">
-      <Filter>Header Files\Platform Independence Layer\File System</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshGenerator.h">
-      <Filter>Header Files\Gameplay Foundation</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Header Files\Platform Independence Layer\Timer</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Low-Level Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="ExampleScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Header Files\Resource Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files\Resource Managers</Filter>
-    </ClInclude>
     <ClInclude Include="Math.h">
-      <Filter>Header Files\Core Systems</Filter>
+      <Filter>Source Files\Core Systems</Filter>
     </ClInclude>
     <ClInclude Include="Debug.h">
-      <Filter>Header Files\Core Systems</Filter>
+      <Filter>Source Files\Core Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshGenerator.h">
+      <Filter>Source Files\Gameplay Foundation</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>Header Files\Human Interface Devices</Filter>
+      <Filter>Source Files\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="InputHandler.h">
-      <Filter>Header Files\Human Interface Devices</Filter>
+      <Filter>Source Files\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="WindowsKeyboardHandler.h">
-      <Filter>Header Files\Human Interface Devices</Filter>
+      <Filter>Source Files\Human Interface Devices</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshData.h">
-      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files\Low-Level Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
+    <ClInclude Include="Entity.h">
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Header Files\Platform Independence Layer\Data Types</Filter>
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshData.h">
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectoryManager.h">
+      <Filter>Source Files\Platform Independence Layer\File System</Filter>
+    </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>Source Files\Platform Independence Layer\File System</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXAPI.h">
+      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsAPI.h">
+      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsWrapper.h">
+      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLAPI.h">
+      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Source Files\Platform Independence Layer\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Source Files\Resource Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Source Files\Resource Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
