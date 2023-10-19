@@ -21,10 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{557C7F66-15A3-4C01-A82B-B9BC5A7D668B}</ProjectGuid>
-    <RootNamespace>3DEngineFoundation</RootNamespace>
+    <ProjectGuid>{FD580355-5881-45EA-927E-850EF50159AE}</ProjectGuid>
+    <RootNamespace>EngineFoundation3D</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>3DEngineFoundation</ProjectName>
+    <ProjectName>EngineFoundation3D</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
