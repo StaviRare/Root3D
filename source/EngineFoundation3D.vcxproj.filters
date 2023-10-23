@@ -5,6 +5,30 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Source Files\Game Layer">
+      <UniqueIdentifier>{842786d3-217e-4ca5-bc08-443eb47f79e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Layer\Gameplay Foundation">
+      <UniqueIdentifier>{c350dc56-9c5f-496a-a66d-ff11fcd6cc19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Layer\Gameplay Foundation\Entities">
+      <UniqueIdentifier>{92ae6cd5-ba7d-4635-98c1-e0035aaa1bcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Layer\Gameplay Foundation\Components">
+      <UniqueIdentifier>{3ff03da3-8664-47c6-9a9d-a5e8743a10a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Layer\Human Interface Devices">
+      <UniqueIdentifier>{8a945d64-d7e4-4420-8842-04e3a3ac8800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Layer\Low-Level Renderer">
+      <UniqueIdentifier>{9c3179cf-e12c-48b3-97f3-f9b239f0eac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resource Managers">
+      <UniqueIdentifier>{625c7ef8-87fa-46a9-956e-65c33a7d1b77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core Systems">
+      <UniqueIdentifier>{55c8f065-a1ed-4948-a773-26731680801c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Platform Independence Layer">
       <UniqueIdentifier>{fc396cc0-5303-4ca5-b88e-5e74beb68219}</UniqueIdentifier>
     </Filter>
@@ -14,26 +38,11 @@
     <Filter Include="Source Files\Platform Independence Layer\Data Types">
       <UniqueIdentifier>{2c1247c3-fcce-491a-b998-745e5ea06a18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Gameplay Foundation">
-      <UniqueIdentifier>{c350dc56-9c5f-496a-a66d-ff11fcd6cc19}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Platform Independence Layer\Graphics Wrappers">
       <UniqueIdentifier>{4841e73a-a3d2-47c8-9a2e-7240b1163266}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Core Systems">
-      <UniqueIdentifier>{55c8f065-a1ed-4948-a773-26731680801c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Platform Independence Layer\Timer">
       <UniqueIdentifier>{4e3db151-5211-41bd-ae64-4f00d5532e35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Low-Level Renderer">
-      <UniqueIdentifier>{9c3179cf-e12c-48b3-97f3-f9b239f0eac0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Resource Managers">
-      <UniqueIdentifier>{625c7ef8-87fa-46a9-956e-65c33a7d1b77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Human Interface Devices">
-      <UniqueIdentifier>{8a945d64-d7e4-4420-8842-04e3a3ac8800}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -50,7 +59,7 @@
       <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
     </ClCompile>
     <ClCompile Include="MeshGenerator.cpp">
-      <Filter>Source Files\Gameplay Foundation</Filter>
+      <Filter>Source Files\Game Layer\Gameplay Foundation</Filter>
     </ClCompile>
     <ClCompile Include="DirectXAPI.cpp">
       <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
@@ -65,7 +74,7 @@
       <Filter>Source Files\Platform Independence Layer\Timer</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Low-Level Renderer</Filter>
+      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Vector3.cpp">
       <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
@@ -83,10 +92,13 @@
       <Filter>Source Files\Core Systems</Filter>
     </ClCompile>
     <ClCompile Include="WindowsKeyboardHandler.cpp">
-      <Filter>Source Files\Human Interface Devices</Filter>
+      <Filter>Source Files\Game Layer\Human Interface Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityPool.cpp">
+      <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClCompile>
     <ClCompile Include="MeshData.cpp">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+      <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,39 +112,21 @@
       <Filter>Source Files\Core Systems</Filter>
     </ClInclude>
     <ClInclude Include="MeshGenerator.h">
-      <Filter>Source Files\Gameplay Foundation</Filter>
+      <Filter>Source Files\Game Layer\Gameplay Foundation</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>Source Files\Human Interface Devices</Filter>
+      <Filter>Source Files\Game Layer\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="InputHandler.h">
-      <Filter>Source Files\Human Interface Devices</Filter>
+      <Filter>Source Files\Game Layer\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="WindowsKeyboardHandler.h">
-      <Filter>Source Files\Human Interface Devices</Filter>
+      <Filter>Source Files\Game Layer\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Source Files\Low-Level Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshData.h">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
       <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
     <ClInclude Include="Vector3.h">
@@ -164,6 +158,27 @@
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Source Files\Resource Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityPool.h">
+      <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshData.h">
+      <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

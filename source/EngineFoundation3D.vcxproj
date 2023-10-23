@@ -154,6 +154,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DirectoryManager.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
+    <ClCompile Include="EntityPool.cpp" />
     <ClCompile Include="ExampleScene.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="Debug.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="DirectoryManager.h" />
     <ClInclude Include="DirectXAPI.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityPool.h" />
     <ClInclude Include="ExampleScene.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="Debug.h" />

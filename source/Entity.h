@@ -6,6 +6,7 @@
 
 #include "Transform.h"
 #include "Component.h"
+#include "Entitypool.h"
 
 class Entity
 {
@@ -63,8 +64,15 @@ public:
         return false;
     }
 
+    Entity()
+    {
+        EntityPool::AddEntity(this);
+    }
+
     ~Entity()
     {
+        EntityPool::RemoveEntity(this);
+
         for (Component* component : components)
         {
             delete component;
