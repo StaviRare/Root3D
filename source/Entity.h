@@ -15,7 +15,7 @@ public:
     std::vector<Component*> components;
 
     template <typename T>
-    T& AddComponent()
+    T* AddComponent()
     {
         static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
 
@@ -23,17 +23,17 @@ public:
         {
             if (dynamic_cast<T*>(existingComponent) != nullptr)
             {
-                return *dynamic_cast<T*>(existingComponent);
+                return dynamic_cast<T*>(existingComponent);
             }
         }
 
         T* component = new T();
         components.push_back(component);
-        return *component;
+        return component;
     }
 
     template <typename T>
-    T* GetComponent()
+    T* GetComponent() const
     {
         static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
 

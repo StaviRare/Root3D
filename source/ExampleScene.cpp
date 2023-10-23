@@ -9,6 +9,9 @@
 #include "Debug.h"
 
 static Entity entity;
+
+static Entity entity2;
+
 static Camera camera;
 static float cameraMoveSpeed = 3.00f;
 static float cameraLookSpeed = 2.00f;
@@ -41,13 +44,17 @@ void initCamera()
 
 void initCube()
 {
-    // When RenderQueue and EntityPool will be implemented, 
-    // this code will be relevant.
+    entity.transform.position = Vector3(0, 0, 0);
+    Mesh mesh = MeshGenerator::GetCube();
+    MeshData* meshData = entity.AddComponent<MeshData>();
+    meshData->mesh = mesh;
 
-
-    //Mesh mesh = MeshGenerator::GetCube();
-    //MeshData meshData = entity.AddComponent<MeshData>();
-    //meshData.mesh = mesh;
+    // weird bug
+    //
+    //entity2.transform.position = Vector3(1, 0, 0);
+    //Mesh mesh2 = MeshGenerator::GetCube();
+    //MeshData* meshData2 = entity2.AddComponent<MeshData>();
+    //meshData2->mesh = mesh2;
 }
 
 void handleCameraMovement()
@@ -87,6 +94,5 @@ void handleCameraMovement()
 
 void handleCubeTransform()
 {
-    //entity.transform.position += Vector3(1, 0, 0);
-    //Debug::log(entity.transform.position.toString());
+    entity.transform.rotation += Vector3(1, 1, 0);
 }

@@ -19,6 +19,8 @@
 #include "Debug.h"
 #include "Timer.h"
 #include "Camera.h"
+#include "Entity.h"
+#include "MeshData.h"
 
 const char* vertexShaderSource = R"(
     #version 330 core
@@ -89,8 +91,7 @@ void OpenGLAPI::Initialize()
     glEnable(GL_DEPTH_TEST);
 
 
-    // Create cube mesh
-    Mesh mesh = MeshGenerator::GetCube();
+
 
 
     // Create and compile the vertex shader
@@ -119,9 +120,7 @@ void OpenGLAPI::Initialize()
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, mesh.GetVertices().size() * sizeof(float), mesh.GetVertices().data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndices().size() * sizeof(int), mesh.GetIndices().data(), GL_STATIC_DRAW);
+
 
     // Set vertex attribute pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -175,47 +174,77 @@ void OpenGLAPI::ClearScreen()
 
 void OpenGLAPI::ExecuteRenderCommands()
 {
-    if (!glfwWindowShouldClose(window)) {
-        if (Camera::exists()) {
-            
-            // Set the model matrix (keep the cube stationary at -1 in the z-axis)
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    if (!glfwWindowShouldClose(window))
+    {
+        if (Camera::exists())
+        {
+            const std::set<Entity*>& entities = EntityPool::GetEntities();
+            for (const Entity* entity : entities)
+            {
+                // Get the MeshData component (if it exists)
+                MeshData* meshData = entity->GetComponent<MeshData>();
+
+                if (meshData)
+                {
+                    // Create cube mesh
+                    Mesh mesh = meshData->mesh;
+                    glBufferData(GL_ARRAY_BUFFER, mesh.GetVertices().size() * sizeof(float), mesh.GetVertices().data(), GL_STATIC_DRAW);
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndices().size() * sizeof(int), mesh.GetIndices().data(), GL_STATIC_DRAW);
 
 
-            Camera& camera = Camera::getInstance();
+                    // Assuming entity's transform.rotation is stored in degrees
+                    Vector3 rotation = entity->transform.rotation;
+                    glm::mat4 model = glm::mat4(1.0f);
 
-            // Directly translate camera.position to glm::vec3
-            glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+                    // Convert degrees to radians and apply rotation
+                    model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate around the X-axis
+                    model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the Y-axis
+                    model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around the Z-axis
 
-            // Calculate forward vector based on the camera's Y rotation (yaw)
-            glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.transform.rotation.y), 0.0f, -glm::cos(camera.transform.rotation.y)));
+                    // Apply translation
+                    Vector3 position = entity->transform.position;
+                    model = glm::translate(model, glm::vec3(position.x, position.y, position.z));
 
-            // Use the translated glm::vec3 for camera position
-            glm::vec3 cameraTarget = cameraPosGLM + forwardVector;
+                    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-            glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
 
-            // Use the translated glm::vec3 for the lookAt
-            glm::mat4 view = glm::lookAt(cameraPosGLM, cameraTarget, cameraUp);
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+                    Camera& camera = Camera::getInstance();
 
-            // Set the projection matrix (perspective projection)
-            glm::mat4 projection = glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.1f, 100.0f);
-            glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+                    // Directly translate camera.position to glm::vec3
+                    glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
 
-            // Bind the texture to the texture unit (e.g., GL_TEXTURE0)
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture);
+                    // Calculate forward vector based on the camera's Y rotation (yaw)
+                    glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.transform.rotation.y), 0.0f, -glm::cos(camera.transform.rotation.y)));
 
-            // Draw the cube
-            glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+                    // Use the translated glm::vec3 for camera position
+                    glm::vec3 cameraTarget = cameraPosGLM + forwardVector;
 
-            glfwSwapBuffers(window);
-            glfwPollEvents();
+                    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
+
+                    // Use the translated glm::vec3 for the lookAt
+                    glm::mat4 view = glm::lookAt(cameraPosGLM, cameraTarget, cameraUp);
+                    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+                    // Set the projection matrix (perspective projection)
+                    glm::mat4 projection = glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.1f, 100.0f);
+                    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+                    // Bind the texture to the texture unit (e.g., GL_TEXTURE0)
+                    glActiveTexture(GL_TEXTURE0);
+                    glBindTexture(GL_TEXTURE_2D, texture);
+
+                    // Draw the cube
+                    glBindVertexArray(VAO);
+                    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+                    glfwSwapBuffers(window);
+                    glfwPollEvents();
+                }
+            }
         }
-        else {
+        else
+        {
 
         }
     }
