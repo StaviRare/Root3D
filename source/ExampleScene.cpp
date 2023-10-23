@@ -9,7 +9,6 @@
 #include "Debug.h"
 
 static Entity entity;
-
 static Entity entity2;
 
 static Camera camera;
@@ -44,17 +43,17 @@ void initCamera()
 
 void initCube()
 {
+    // cube 1
     entity.transform.position = Vector3(0, 0, 0);
     Mesh mesh = MeshGenerator::GetCube();
     MeshData* meshData = entity.AddComponent<MeshData>();
     meshData->mesh = mesh;
 
-    // weird bug
-    //
-    //entity2.transform.position = Vector3(1, 0, 0);
-    //Mesh mesh2 = MeshGenerator::GetCube();
-    //MeshData* meshData2 = entity2.AddComponent<MeshData>();
-    //meshData2->mesh = mesh2;
+    // cube 2
+    entity2.transform.position = Vector3(1.5f, 0, 0);
+    Mesh mesh2 = MeshGenerator::GetCube();
+    MeshData* meshData2 = entity2.AddComponent<MeshData>();
+    meshData2->mesh = mesh2;
 }
 
 void handleCameraMovement()
