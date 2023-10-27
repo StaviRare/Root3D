@@ -1,5 +1,5 @@
-# Ignore build artifacts
-build/artifacts/
+# Ignore build intermediate
+build/intermediate/
 
 # Ignore Visual Studio project settings and temporary files
 .vs/
