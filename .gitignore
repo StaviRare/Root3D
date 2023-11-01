@@ -9,3 +9,6 @@ build/intermediate/
 
 # Ignore program database files
 *.pdb
+
+# Ignore Python compiled files
+__pycache__/
