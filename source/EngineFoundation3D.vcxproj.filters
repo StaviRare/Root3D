@@ -41,7 +41,7 @@
     <Filter Include="Source Files\Platform Independence Layer\Timer">
       <UniqueIdentifier>{4e3db151-5211-41bd-ae64-4f00d5532e35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Resources">
+    <Filter Include="Source Files\Resource Management">
       <UniqueIdentifier>{625c7ef8-87fa-46a9-956e-65c33a7d1b77}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -83,7 +83,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Resource Management</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Source Files\Core Systems</Filter>
@@ -154,10 +154,10 @@
       <Filter>Source Files\Platform Independence Layer\Timer</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Resource Management</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Resource Management</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
