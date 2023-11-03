@@ -7,9 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 #include "OpenGLAPI.h"
 #include "Mesh.h"
 #include "MeshGenerator.h"
@@ -19,6 +16,7 @@
 #include "Entity.h"
 #include "MeshData.h"
 #include "Texture.h"
+#include "Renderer.h"
 
 static const char* vertexShaderSource = R"(
     #version 330 core
@@ -56,7 +54,6 @@ unsigned int texture;
 unsigned int fragmentShader;
 unsigned int shaderProgram;
 unsigned int vertexShader;
-static Texture textureObject;
 
 OpenGLAPI::OpenGLAPI()
 {
@@ -118,29 +115,9 @@ void OpenGLAPI::Initialize()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // Load and bind the texture
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    // Load the texture image (replace "your_texture.png" with the actual image path)
-    int width, height, nrChannels;
-    
-    if (!textureObject.rawData)
-    {
-        textureObject.rawData = stbi_load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png", &width, &height, &nrChannels, 0);
-    }
-
-    if (textureObject.rawData)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureObject.rawData);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    stbi_image_free(textureObject.rawData);
+    // Load and bind the texture (not sure I need this here)
+    //glGenTextures(1, &texture);
+    //glBindTexture(GL_TEXTURE_2D, texture);
 
     // Set texture properties (optional)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -168,17 +145,23 @@ void OpenGLAPI::ExecuteRenderCommands()
             const std::set<Entity*>& entities = EntityPool::GetEntities();
             for (const Entity* entity : entities)
             {
-                // Get the MeshData component (if it exists)
+                Renderer* renderer = entity->GetComponent<Renderer>();
                 MeshData* meshData = entity->GetComponent<MeshData>();
 
-                if (meshData)
+                if (renderer && meshData)
                 {
-                    // Create cube mesh
+                    int width = renderer->material.texture.width;
+                    int height = renderer->material.texture.height;
+
+                    // problem is here
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, renderer->material.texture.rawData);
+                    glGenerateMipmap(GL_TEXTURE_2D);
+
                     Mesh mesh = meshData->mesh;
+
                     glBufferData(GL_ARRAY_BUFFER, mesh.GetVertices().size() * sizeof(float), mesh.GetVertices().data(), GL_STATIC_DRAW);
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
                     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndices().size() * sizeof(int), mesh.GetIndices().data(), GL_STATIC_DRAW);
-
 
                     // Assuming entity's transform.rotation is stored in degrees
                     Vector3 rotation = entity->transform.rotation;
@@ -221,10 +204,9 @@ void OpenGLAPI::ExecuteRenderCommands()
                     glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, texture);
 
-                    // Draw the cube
+                    // Draw the mesh
                     glBindVertexArray(VAO);
                     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
                 }
             }
         }

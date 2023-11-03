@@ -9,6 +9,8 @@
 #include "Debug.h"
 #include "Texture.h"
 #include "Renderer.h"
+
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 static Entity entity;
@@ -70,39 +72,56 @@ void initCamera()
 
 void initCube()
 {
-    //// Texture
-    //Texture texture;
-    //int width, height, nrChannels;
-    //unsigned char* data = stbi_load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png", &width, &height, &nrChannels, 0);
+    // Entity 1
+    Texture texture;
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png", &width, &height, &nrChannels, 0);
 
-    //if (data)
-    //{
-    //    texture.width = static_cast<unsigned int>(width);
-    //    texture.height = static_cast<unsigned int>(height);
-    //    texture.nrChannels = static_cast<unsigned int>(nrChannels);
-    //    texture.rawData = data;
-    //}
+    if (data)
+    {
+        texture.width = static_cast<unsigned int>(width);
+        texture.height = static_cast<unsigned int>(height);
+        texture.nrChannels = static_cast<unsigned int>(nrChannels);
+        texture.rawData = data;
+    }
 
-    //// Material
-    //Material material;
-    //material.texture = texture;
-    //material.vertexShader = vertexShaderSource;
-    //material.fragmentShader = fragmentShaderSource;
+    Material material;
+    material.texture = texture;
 
-
-    // Cube 1 entity
     entity.transform.position = Vector3(0, 0, 0);
     Mesh mesh = MeshGenerator::GetCube();
     MeshData* meshData = entity.AddComponent<MeshData>();
     meshData->mesh = mesh;
-    //Renderer* renderer = entity.AddComponent<Renderer>();
-    //renderer->material = material;
+    Renderer* renderer = entity.AddComponent<Renderer>();
+    renderer->material = material;
 
-    // Cube 2 entity
+
+
+
+
+
+    // Entity 2
+    Texture texture2;
+    int width2, height2, nrChannels2;
+    unsigned char* data2 = stbi_load("C:/Users/Stavi/Desktop/Stavi/1.png", &width2, &height2, &nrChannels2, 0);
+
+    if (data2)
+    {
+        texture2.width = static_cast<unsigned int>(width2);
+        texture2.height = static_cast<unsigned int>(height2);
+        texture2.nrChannels = static_cast<unsigned int>(nrChannels2);
+        texture2.rawData = data2;
+    }
+
+    Material material2;
+    material2.texture = texture2;
+
     entity2.transform.position = Vector3(1.5f, 0, 0);
     Mesh mesh2 = MeshGenerator::GetCube();
     MeshData* meshData2 = entity2.AddComponent<MeshData>();
     meshData2->mesh = mesh2;
+    Renderer* renderer2 = entity2.AddComponent<Renderer>();
+    renderer2->material = material2;
 }
 
 void handleCameraMovement()
