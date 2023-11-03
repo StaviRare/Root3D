@@ -5,8 +5,8 @@
 class MeshData : public Component
 {
 public:
-    MeshData(); // Default constructor
-    MeshData(const Mesh& _mesh); // Constructor taking a Mesh by reference
+    MeshData(); 
+    MeshData(const Mesh& _mesh);
 
-    Mesh mesh; // Use a Mesh object directly
+    Mesh mesh;
 };

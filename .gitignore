@@ -1,5 +1,5 @@
-# Ignore build intermediate
-build/intermediate/
+# Ignore build folder
+build/
 
 # Ignore Visual Studio project settings and temporary files
 .vs/

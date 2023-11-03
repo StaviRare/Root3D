@@ -1,19 +1,16 @@
-#include "OpenGLAPI.h"
-#include <GL/glew.h>
+#include <string>
 #include <iostream>
-
+#include <GL/glew.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
-#include <string>
-#include "Texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "OpenGLAPI.h"
 #include "Mesh.h"
 #include "MeshGenerator.h"
 #include "Debug.h"
@@ -21,8 +18,9 @@
 #include "Camera.h"
 #include "Entity.h"
 #include "MeshData.h"
+#include "Texture.h"
 
-const char* vertexShaderSource = R"(
+static const char* vertexShaderSource = R"(
     #version 330 core
     layout(location = 0) in vec3 aPos;
     layout(location = 1) in vec2 aTexCoord;
@@ -36,7 +34,7 @@ const char* vertexShaderSource = R"(
         TexCoord = aTexCoord;
     })";
 
-const char* fragmentShaderSource = R"(
+static const char* fragmentShaderSource = R"(
     #version 330 core
     in vec2 TexCoord;
     out vec4 FragColor;
@@ -58,7 +56,6 @@ unsigned int texture;
 unsigned int fragmentShader;
 unsigned int shaderProgram;
 unsigned int vertexShader;
-double lastFrameTime = 0;
 static Texture textureObject;
 
 OpenGLAPI::OpenGLAPI()
@@ -90,17 +87,12 @@ void OpenGLAPI::Initialize()
 
     glEnable(GL_DEPTH_TEST);
 
-
-
-
-
     // Create and compile the vertex shader
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
 
     // Create and compile the fragment shader
-
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
@@ -113,14 +105,12 @@ void OpenGLAPI::Initialize()
     glUseProgram(shaderProgram);
 
     // Create vertex array and buffers
-
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
 
     // Set vertex attribute pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -129,7 +119,6 @@ void OpenGLAPI::Initialize()
     glEnableVertexAttribArray(1);
 
     // Load and bind the texture
-
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -150,6 +139,7 @@ void OpenGLAPI::Initialize()
     {
         std::cout << "Failed to load texture" << std::endl;
     }
+
     stbi_image_free(textureObject.rawData);
 
     // Set texture properties (optional)
@@ -162,9 +152,6 @@ void OpenGLAPI::Initialize()
     modelLoc = glGetUniformLocation(shaderProgram, "model");
     viewLoc = glGetUniformLocation(shaderProgram, "view");
     projectionLoc = glGetUniformLocation(shaderProgram, "projection");
-
-
-    lastFrameTime = glfwGetTime();
 }
 
 void OpenGLAPI::ClearScreen()
@@ -263,11 +250,3 @@ void OpenGLAPI::ExecuteRenderCommands()
         glfwTerminate();
     }
 }
-
-
-//
-//// Rotate Cube
-//float time = glfwGetTime();
-//float angle = time * 50.0f;
-//glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.0f));
-//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));

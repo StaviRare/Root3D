@@ -6,6 +6,6 @@ class Material
 {
 public:
     Texture texture;
-    unsigned char* vertexShader;
-    unsigned char* fragmentShader;
+    std::string vertexShader;
+    std::string fragmentShader;
 };

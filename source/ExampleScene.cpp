@@ -7,13 +7,40 @@
 #include "MeshData.h"
 #include "MeshGenerator.h"
 #include "Debug.h"
+#include "Texture.h"
+#include "Renderer.h"
+#include "stb_image.h"
 
 static Entity entity;
 static Entity entity2;
-
 static Camera camera;
 static float cameraMoveSpeed = 3.00f;
 static float cameraLookSpeed = 2.00f;
+
+static const char* vertexShaderSource = R"(
+    #version 330 core
+    layout(location = 0) in vec3 aPos;
+    layout(location = 1) in vec2 aTexCoord;
+    out vec2 TexCoord;
+    uniform mat4 model;
+    uniform mat4 view;
+    uniform mat4 projection;
+    void main()
+    {
+        gl_Position = projection * view * model * vec4(aPos, 1.0);
+        TexCoord = aTexCoord;
+    })";
+
+static const char* fragmentShaderSource = R"(
+    #version 330 core
+    in vec2 TexCoord;
+    out vec4 FragColor;
+    uniform sampler2D textureSampler;
+    void main()
+    {
+        FragColor = texture(textureSampler, TexCoord);
+    })";
+
 
 void initCamera();
 void initCube();
@@ -43,13 +70,35 @@ void initCamera()
 
 void initCube()
 {
-    // cube 1
+    //// Texture
+    //Texture texture;
+    //int width, height, nrChannels;
+    //unsigned char* data = stbi_load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png", &width, &height, &nrChannels, 0);
+
+    //if (data)
+    //{
+    //    texture.width = static_cast<unsigned int>(width);
+    //    texture.height = static_cast<unsigned int>(height);
+    //    texture.nrChannels = static_cast<unsigned int>(nrChannels);
+    //    texture.rawData = data;
+    //}
+
+    //// Material
+    //Material material;
+    //material.texture = texture;
+    //material.vertexShader = vertexShaderSource;
+    //material.fragmentShader = fragmentShaderSource;
+
+
+    // Cube 1 entity
     entity.transform.position = Vector3(0, 0, 0);
     Mesh mesh = MeshGenerator::GetCube();
     MeshData* meshData = entity.AddComponent<MeshData>();
     meshData->mesh = mesh;
+    //Renderer* renderer = entity.AddComponent<Renderer>();
+    //renderer->material = material;
 
-    // cube 2
+    // Cube 2 entity
     entity2.transform.position = Vector3(1.5f, 0, 0);
     Mesh mesh2 = MeshGenerator::GetCube();
     MeshData* meshData2 = entity2.AddComponent<MeshData>();

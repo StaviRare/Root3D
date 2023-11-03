@@ -23,9 +23,6 @@
     <Filter Include="Source Files\Game Layer\Low-Level Renderer">
       <UniqueIdentifier>{9c3179cf-e12c-48b3-97f3-f9b239f0eac0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Resource Managers">
-      <UniqueIdentifier>{625c7ef8-87fa-46a9-956e-65c33a7d1b77}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Core Systems">
       <UniqueIdentifier>{55c8f065-a1ed-4948-a773-26731680801c}</UniqueIdentifier>
     </Filter>
@@ -43,6 +40,9 @@
     </Filter>
     <Filter Include="Source Files\Platform Independence Layer\Timer">
       <UniqueIdentifier>{4e3db151-5211-41bd-ae64-4f00d5532e35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resources">
+      <UniqueIdentifier>{625c7ef8-87fa-46a9-956e-65c33a7d1b77}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -83,7 +83,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>Source Files\Resource Managers</Filter>
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Source Files\Core Systems</Filter>
@@ -98,7 +98,7 @@
       <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClCompile>
     <ClCompile Include="MeshData.cpp">
-      <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
+      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,10 +154,10 @@
       <Filter>Source Files\Platform Independence Layer\Timer</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>Source Files\Resource Managers</Filter>
+      <Filter>Source Files\Resources</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>Source Files\Resource Managers</Filter>
+      <Filter>Source Files\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
@@ -179,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
