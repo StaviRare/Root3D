@@ -9,6 +9,7 @@
 #include "Debug.h"
 #include "Texture.h"
 #include "Renderer.h"
+#include "TextureResourceManager.h";
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -73,20 +74,8 @@ void initCamera()
 void initCube()
 {
     // Entity 1
-    Texture texture;
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png", &width, &height, &nrChannels, 0);
-
-    if (data)
-    {
-        texture.width = static_cast<unsigned int>(width);
-        texture.height = static_cast<unsigned int>(height);
-        texture.nrChannels = static_cast<unsigned int>(nrChannels);
-        texture.rawData = data;
-    }
-
     Material material;
-    material.texture = texture;
+    material.texture = TextureResourceManager::Load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png");
 
     entity.transform.position = Vector3(0, 0, 0);
     Mesh mesh = MeshGenerator::GetCube();
@@ -97,24 +86,9 @@ void initCube()
 
 
 
-
-
-
     // Entity 2
-    Texture texture2;
-    int width2, height2, nrChannels2;
-    unsigned char* data2 = stbi_load("C:/Users/Stavi/Desktop/Stavi/1.png", &width2, &height2, &nrChannels2, 0);
-
-    if (data2)
-    {
-        texture2.width = static_cast<unsigned int>(width2);
-        texture2.height = static_cast<unsigned int>(height2);
-        texture2.nrChannels = static_cast<unsigned int>(nrChannels2);
-        texture2.rawData = data2;
-    }
-
     Material material2;
-    material2.texture = texture2;
+    material2.texture = TextureResourceManager::Load("C:/Users/Stavi/Desktop/Stavi/1.png");
 
     entity2.transform.position = Vector3(1.5f, 0, 0);
     Mesh mesh2 = MeshGenerator::GetCube();

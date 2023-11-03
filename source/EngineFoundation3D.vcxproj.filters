@@ -100,6 +100,9 @@
     <ClCompile Include="MeshData.cpp">
       <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="TextureResourceManager.cpp">
+      <Filter>Source Files\Resource Management</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ExampleScene.h">
@@ -182,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureResourceManager.h">
+      <Filter>Source Files\Resource Management</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
