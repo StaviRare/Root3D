@@ -13,7 +13,9 @@ public:
     static void Initialize(APIType api);
     static void ClearScreen();
     static void ExecuteRenderCommands();
+    
 
 private:
     static GraphicsAPI* mAPI;
+    static void BindTexture(Texture& texture);
 };

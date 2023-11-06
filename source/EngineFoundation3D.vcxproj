@@ -162,7 +162,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="OpenGLAPI.cpp" />
     <ClCompile Include="SceneManager.cpp" />

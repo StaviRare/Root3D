@@ -97,9 +97,6 @@
     <ClCompile Include="EntityPool.cpp">
       <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="MeshData.cpp">
-      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="TextureResourceManager.cpp">
       <Filter>Source Files\Resource Management</Filter>
     </ClCompile>

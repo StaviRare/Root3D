@@ -15,7 +15,6 @@
 #include "Camera.h"
 #include "Entity.h"
 #include "MeshData.h"
-#include "Texture.h"
 #include "Renderer.h"
 
 static const char* vertexShaderSource = R"(
@@ -46,14 +45,13 @@ static const char* fragmentShaderSource = R"(
 
 
 static GLFWwindow* window = nullptr;
-int modelLoc = -1;
-int viewLoc = -1;
-int projectionLoc = -1;
-unsigned int VAO, VBO, EBO;
-unsigned int texture;
-unsigned int fragmentShader;
-unsigned int shaderProgram;
-unsigned int vertexShader;
+static int modelLoc = -1;
+static int viewLoc = -1;
+static int projectionLoc = -1;
+static unsigned int VAO, VBO, EBO;
+static unsigned int fragmentShader;
+static unsigned int shaderProgram;
+static unsigned int vertexShader;
 
 OpenGLAPI::OpenGLAPI()
 {
@@ -115,16 +113,6 @@ void OpenGLAPI::Initialize()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // Load and bind the texture (not sure I need this here)
-    //glGenTextures(1, &texture);
-    //glBindTexture(GL_TEXTURE_2D, texture);
-
-    // Set texture properties (optional)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     // Set shader uniforms
     modelLoc = glGetUniformLocation(shaderProgram, "model");
     viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -143,6 +131,7 @@ void OpenGLAPI::ExecuteRenderCommands()
         if (Camera::exists())
         {
             const std::set<Entity*>& entities = EntityPool::GetEntities();
+            
             for (const Entity* entity : entities)
             {
                 Renderer* renderer = entity->GetComponent<Renderer>();
@@ -150,12 +139,11 @@ void OpenGLAPI::ExecuteRenderCommands()
 
                 if (renderer && meshData)
                 {
-                    int width = renderer->material.texture.width;
-                    int height = renderer->material.texture.height;
+                    BindTexture(renderer->material.texture);
 
-                    // problem is here
-                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, renderer->material.texture.rawData);
-                    glGenerateMipmap(GL_TEXTURE_2D);
+                    // We're currently using one texture unity.
+                    //glActiveTexture(GL_TEXTURE0);
+
 
                     Mesh mesh = meshData->mesh;
 
@@ -178,7 +166,6 @@ void OpenGLAPI::ExecuteRenderCommands()
 
                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-
                     Camera& camera = Camera::getInstance();
 
                     // Directly translate camera.position to glm::vec3
@@ -199,10 +186,6 @@ void OpenGLAPI::ExecuteRenderCommands()
                     // Set the projection matrix (perspective projection)
                     glm::mat4 projection = glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.1f, 100.0f);
                     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-                    // Bind the texture to the texture unit (e.g., GL_TEXTURE0)
-                    glActiveTexture(GL_TEXTURE0);
-                    glBindTexture(GL_TEXTURE_2D, texture);
 
                     // Draw the mesh
                     glBindVertexArray(VAO);
@@ -230,5 +213,45 @@ void OpenGLAPI::ExecuteRenderCommands()
         glDeleteProgram(shaderProgram);
 
         glfwTerminate();
+    }
+}
+
+void OpenGLAPI::BindTexture(Texture& texture)
+{
+    // Check if the texture is already loaded
+    if (texture.textureID == 0)
+    {
+        // Generate texture ID and bind it
+        glGenTextures(1, &texture.textureID);
+        glBindTexture(GL_TEXTURE_2D, texture.textureID);
+
+        // Set texture parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // Upload texture data
+        if (texture.rawData)
+        {
+            GLenum format = GL_RGBA;
+
+            if (texture.nrChannels == 3)
+            {
+                format = GL_RGB;
+            }
+
+            glTexImage2D(GL_TEXTURE_2D, 0, format, texture.width, texture.height, 0, format, GL_UNSIGNED_BYTE, texture.rawData);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cerr << "Failed to load texture" << std::endl;
+        }
+    }
+    else
+    {
+        // Bind existing texture
+        glBindTexture(GL_TEXTURE_2D, texture.textureID);
     }
 }

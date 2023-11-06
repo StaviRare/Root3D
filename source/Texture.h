@@ -1,5 +1,6 @@
-// texture.h
 #pragma once
+#include <cstring>
+#include <utility>
 
 class Texture
 {
@@ -10,34 +11,31 @@ public:
     unsigned int height = 0;
     unsigned int nrChannels = 0;
 
-    Texture() : textureID(0), rawData(nullptr), width(0), height(0), nrChannels(0)
-    {
-
-    }
+    Texture() : textureID(0), rawData(nullptr), width(0), height(0), nrChannels(0) {}
 
     ~Texture()
     {
         delete[] rawData;
     }
 
-    // Copy constructor
-    Texture(const Texture& other) : textureID(other.textureID), width(other.width), height(other.height), nrChannels(other.nrChannels)
+    // Corrected copy constructor
+    Texture(const Texture& other) 
+        : textureID(other.textureID), width(other.width), height(other.height), nrChannels(other.nrChannels)
     {
-        rawData = new unsigned char[width * height * nrChannels];
-        std::copy(other.rawData, other.rawData + width * height * nrChannels, rawData);
+        if (other.rawData) {
+            rawData = new unsigned char[width * height * nrChannels];
+            std::memcpy(rawData, other.rawData, width * height * nrChannels);
+        }
     }
 
-    Texture& operator=(const Texture& other)
+    // Corrected assignment operator using copy-and-swap idiom
+    Texture& operator=(Texture other)
     {
-        if (this != &other)
-        {
-            Texture temp(other); // Utilize the copy constructor
-            std::swap(textureID, temp.textureID);
-            std::swap(rawData, temp.rawData);
-            std::swap(width, temp.width);
-            std::swap(height, temp.height);
-            std::swap(nrChannels, temp.nrChannels);
-        }
+        std::swap(textureID, other.textureID);
+        std::swap(rawData, other.rawData);
+        std::swap(width, other.width);
+        std::swap(height, other.height);
+        std::swap(nrChannels, other.nrChannels);
         return *this;
     }
 };

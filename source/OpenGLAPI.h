@@ -10,4 +10,5 @@ public:
     void Initialize() override;
     void ClearScreen() override;
     void ExecuteRenderCommands() override;
+    void BindTexture(Texture& texture) override;
 };

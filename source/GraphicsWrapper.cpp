@@ -26,8 +26,12 @@ void GraphicsWrapper::ClearScreen()
     mAPI->ClearScreen();
 }
 
-
 void GraphicsWrapper::ExecuteRenderCommands()
 {
     mAPI->ExecuteRenderCommands();
+}
+
+void GraphicsWrapper::BindTexture(Texture& texture)
+{
+    mAPI->BindTexture(texture);
 }
