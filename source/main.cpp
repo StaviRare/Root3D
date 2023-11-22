@@ -1,10 +1,8 @@
-#include "GraphicsWrapper.h"
 #include "Debug.h"
 #include "Timer.h"
 #include "Camera.h"
-
-#include "ExampleScene.h"
 #include "SceneManager.h"
+#include "GraphicsWrapper.h"
 
 void Initialize();
 void Tick();
@@ -36,6 +34,5 @@ void Tick()
     //GraphicsWrapper::SwapBuffers();
 
     SceneManager::runScene();
-
     Timer::calculateLoopTime();
 }

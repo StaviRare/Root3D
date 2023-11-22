@@ -1,190 +1,196 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="Engine">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Source Files\Game Layer">
+    <Filter Include="Engine\Game Layer">
       <UniqueIdentifier>{842786d3-217e-4ca5-bc08-443eb47f79e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Game Layer\Gameplay Foundation">
+    <Filter Include="Engine\Game Layer\Gameplay Foundation">
       <UniqueIdentifier>{c350dc56-9c5f-496a-a66d-ff11fcd6cc19}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Game Layer\Gameplay Foundation\Entities">
+    <Filter Include="Engine\Game Layer\Gameplay Foundation\Entities">
       <UniqueIdentifier>{92ae6cd5-ba7d-4635-98c1-e0035aaa1bcb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Game Layer\Gameplay Foundation\Components">
+    <Filter Include="Engine\Game Layer\Gameplay Foundation\Components">
       <UniqueIdentifier>{3ff03da3-8664-47c6-9a9d-a5e8743a10a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Game Layer\Human Interface Devices">
+    <Filter Include="Engine\Game Layer\Human Interface Devices">
       <UniqueIdentifier>{8a945d64-d7e4-4420-8842-04e3a3ac8800}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Game Layer\Low-Level Renderer">
+    <Filter Include="Engine\Game Layer\Low-Level Renderer">
       <UniqueIdentifier>{9c3179cf-e12c-48b3-97f3-f9b239f0eac0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Core Systems">
+    <Filter Include="Engine\Core Systems">
       <UniqueIdentifier>{55c8f065-a1ed-4948-a773-26731680801c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Platform Independence Layer">
+    <Filter Include="Engine\Platform Independence Layer">
       <UniqueIdentifier>{fc396cc0-5303-4ca5-b88e-5e74beb68219}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Platform Independence Layer\File System">
+    <Filter Include="Engine\Platform Independence Layer\File System">
       <UniqueIdentifier>{7c29a1cf-d1a4-422f-a226-8c1f70d4754d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Platform Independence Layer\Data Types">
+    <Filter Include="Engine\Platform Independence Layer\Data Types">
       <UniqueIdentifier>{2c1247c3-fcce-491a-b998-745e5ea06a18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Platform Independence Layer\Graphics Wrappers">
+    <Filter Include="Engine\Platform Independence Layer\Graphics Wrappers">
       <UniqueIdentifier>{4841e73a-a3d2-47c8-9a2e-7240b1163266}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Platform Independence Layer\Timer">
+    <Filter Include="Engine\Platform Independence Layer\Timer">
       <UniqueIdentifier>{4e3db151-5211-41bd-ae64-4f00d5532e35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Resource Management">
+    <Filter Include="Engine\Resource Management">
       <UniqueIdentifier>{625c7ef8-87fa-46a9-956e-65c33a7d1b77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Example">
+      <UniqueIdentifier>{2f34e853-d0fc-4f31-bcb8-1395c1d0c7a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="FileManager.cpp">
-      <Filter>Source Files\Platform Independence Layer\File System</Filter>
+      <Filter>Engine\Platform Independence Layer\File System</Filter>
     </ClCompile>
     <ClCompile Include="DirectoryManager.cpp">
-      <Filter>Source Files\Platform Independence Layer\File System</Filter>
+      <Filter>Engine\Platform Independence Layer\File System</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClCompile>
     <ClCompile Include="MeshGenerator.cpp">
-      <Filter>Source Files\Game Layer\Gameplay Foundation</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation</Filter>
     </ClCompile>
     <ClCompile Include="DirectXAPI.cpp">
-      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsWrapper.cpp">
-      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClCompile>
     <ClCompile Include="OpenGLAPI.cpp">
-      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>Source Files\Platform Independence Layer\Timer</Filter>
+      <Filter>Engine\Platform Independence Layer\Timer</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Vector3.cpp">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
-    </ClCompile>
-    <ClCompile Include="ExampleScene.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>Source Files\Resource Management</Filter>
+      <Filter>Engine\Resource Management</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
-      <Filter>Source Files\Core Systems</Filter>
+      <Filter>Engine\Core Systems</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
-      <Filter>Source Files\Core Systems</Filter>
+      <Filter>Engine\Core Systems</Filter>
     </ClCompile>
     <ClCompile Include="WindowsKeyboardHandler.cpp">
-      <Filter>Source Files\Game Layer\Human Interface Devices</Filter>
+      <Filter>Engine\Game Layer\Human Interface Devices</Filter>
     </ClCompile>
     <ClCompile Include="EntityPool.cpp">
-      <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClCompile>
     <ClCompile Include="TextureResourceManager.cpp">
-      <Filter>Source Files\Resource Management</Filter>
+      <Filter>Engine\Resource Management</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRegistrations.cpp">
+      <Filter>Example</Filter>
+    </ClCompile>
+    <ClCompile Include="ExampleScene.cpp">
+      <Filter>Example</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExampleScene.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Math.h">
-      <Filter>Source Files\Core Systems</Filter>
+      <Filter>Engine\Core Systems</Filter>
     </ClInclude>
     <ClInclude Include="Debug.h">
-      <Filter>Source Files\Core Systems</Filter>
+      <Filter>Engine\Core Systems</Filter>
     </ClInclude>
     <ClInclude Include="MeshGenerator.h">
-      <Filter>Source Files\Game Layer\Gameplay Foundation</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>Source Files\Game Layer\Human Interface Devices</Filter>
+      <Filter>Engine\Game Layer\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="InputHandler.h">
-      <Filter>Source Files\Game Layer\Human Interface Devices</Filter>
+      <Filter>Engine\Game Layer\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="WindowsKeyboardHandler.h">
-      <Filter>Source Files\Game Layer\Human Interface Devices</Filter>
+      <Filter>Engine\Game Layer\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
     <ClInclude Include="Vector3.h">
-      <Filter>Source Files\Platform Independence Layer\Data Types</Filter>
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
     <ClInclude Include="DirectoryManager.h">
-      <Filter>Source Files\Platform Independence Layer\File System</Filter>
+      <Filter>Engine\Platform Independence Layer\File System</Filter>
     </ClInclude>
     <ClInclude Include="FileManager.h">
-      <Filter>Source Files\Platform Independence Layer\File System</Filter>
+      <Filter>Engine\Platform Independence Layer\File System</Filter>
     </ClInclude>
     <ClInclude Include="DirectXAPI.h">
-      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsAPI.h">
-      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsWrapper.h">
-      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="OpenGLAPI.h">
-      <Filter>Source Files\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Source Files\Platform Independence Layer\Timer</Filter>
+      <Filter>Engine\Platform Independence Layer\Timer</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>Source Files\Resource Management</Filter>
+      <Filter>Engine\Resource Management</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>Source Files\Resource Management</Filter>
+      <Filter>Engine\Resource Management</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
-      <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClInclude>
     <ClInclude Include="EntityPool.h">
-      <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Source Files\Game Layer\Low-Level Renderer</Filter>
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
     </ClInclude>
     <ClInclude Include="MeshData.h">
-      <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation\Components</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation\Components</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>Source Files\Game Layer\Gameplay Foundation\Entities</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Source Files\Game Layer\Gameplay Foundation\Components</Filter>
+      <Filter>Engine\Game Layer\Gameplay Foundation\Components</Filter>
     </ClInclude>
     <ClInclude Include="TextureResourceManager.h">
-      <Filter>Source Files\Resource Management</Filter>
+      <Filter>Engine\Resource Management</Filter>
+    </ClInclude>
+    <ClInclude Include="ExampleScene.h">
+      <Filter>Example</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

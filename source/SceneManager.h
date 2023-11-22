@@ -1,15 +1,16 @@
 #pragma once
-
+#include <map>
+#include <functional>
 #include "Scene.h"
 
-class SceneManager {
+class SceneManager
+{
 public:
-    SceneManager() = delete;
-
-    static void loadScene(int sceneId);
+    static void registerScene(int index, std::function<Scene* ()> constructor);
+    static void loadScene(int index);
     static void runScene();
 
 private:
     static Scene* currentScene;
-    static void setScene(Scene* scene);
+    static std::map<int, std::function<Scene* ()>>& getSceneRegistry();
 };

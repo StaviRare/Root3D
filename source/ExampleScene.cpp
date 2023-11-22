@@ -10,6 +10,7 @@
 #include "Texture.h"
 #include "Renderer.h"
 #include "TextureResourceManager.h";
+#include "SceneManager.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

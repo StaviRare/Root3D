@@ -1,36 +1,51 @@
+#include "Debug.h"
 #include "SceneManager.h"
-
-// Add .h for every scene..
-#include "ExampleScene.h"
-
 
 Scene* SceneManager::currentScene = nullptr;
 
-
-void SceneManager::loadScene(int sceneId) {
-    switch (sceneId) {
-    
-    case 0:
-        setScene(new ExampleScene());
-        break;
-
-    default:
-
-        break;
-    }
-
-    currentScene->init();
+std::map<int, std::function<Scene* ()>>& SceneManager::getSceneRegistry()
+{
+    static std::map<int, std::function<Scene* ()>> sceneFactory;
+    return sceneFactory;
 }
 
-void SceneManager::runScene() {
-    if (currentScene != nullptr) {
+void SceneManager::registerScene(int index, std::function<Scene* ()> constructor)
+{
+    auto& registry = getSceneRegistry();
+
+    if (registry.find(index) != registry.end())
+    {
+        Debug::error("Scene " + std::to_string(index) + " index already taken.");
+    }
+
+    registry[index] = constructor;
+}
+
+void SceneManager::loadScene(int index)
+{
+    auto& registry = getSceneRegistry();
+    auto it = registry.find(index);
+    
+    if (it != registry.end())
+    {
+        if (currentScene != nullptr)
+        {
+            delete currentScene;
+        }
+
+        currentScene = it->second();
+        currentScene->init();
+    }
+}
+
+void SceneManager::runScene()
+{
+    if (currentScene != nullptr)
+    {
         currentScene->tick();
     }
-}
-
-void SceneManager::setScene(Scene* scene) {
-    if (currentScene != nullptr) {
-        delete currentScene;
+    else
+    {
+        Debug::error("Current scene is null!");
     }
-    currentScene = scene;
 }
