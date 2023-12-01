@@ -52,6 +52,9 @@ static unsigned int VAO, VBO, EBO;
 static unsigned int fragmentShader;
 static unsigned int shaderProgram;
 static unsigned int vertexShader;
+static float aspectRatio = 0;
+static float screenWidth = 960;
+static float screenHeight = 540;
 
 OpenGLAPI::OpenGLAPI()
 {
@@ -63,18 +66,34 @@ OpenGLAPI::~OpenGLAPI()
 
 }
 
+void onWindowResize(GLFWwindow* window, int width, int height)
+{
+    // Update the OpenGL viewport
+    glViewport(0, 0, width, height);
+
+    // protection
+    if (height == 0) height = 1;
+
+    screenWidth = width;
+    screenHeight = height;
+    aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+}
+
 void OpenGLAPI::Initialize()
 {
     if (!glfwInit()) {
         //return -1;
     }
 
-    window = glfwCreateWindow(800, 600, "Scene", NULL, NULL);
+    window = glfwCreateWindow(screenWidth, screenHeight, "Scene", NULL, NULL);
+    aspectRatio = screenWidth / screenHeight;
+
     if (!window) {
         glfwTerminate();
     }
 
     glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, onWindowResize); // on resize callback
 
     if (glewInit() != GLEW_OK) {
         glfwTerminate();
@@ -190,7 +209,7 @@ void OpenGLAPI::ExecuteRenderCommands()
                     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
                     // Set the projection matrix (perspective projection)
-                    glm::mat4 projection = glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.1f, 100.0f);
+                    glm::mat4 projection = glm::perspective(glm::radians(camera.fov), aspectRatio, camera.nearClipPlane, camera.farClipPlane);
                     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
                     // Draw the mesh

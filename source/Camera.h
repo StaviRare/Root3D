@@ -10,7 +10,9 @@ public:
     // Constructor
     Camera();
 
-    float fov;
+    float fov = 60;
+    float farClipPlane = 100;
+    float nearClipPlane = 0.1f;
     Color backgroundColor;
 
     static bool exists();
