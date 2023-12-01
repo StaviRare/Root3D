@@ -160,19 +160,17 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="GraphicsWrapper.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="OpenGLAPI.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneRegistrations.cpp" />
     <ClCompile Include="TextureResourceManager.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="WindowsKeyboardHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DirectoryManager.h" />
     <ClInclude Include="DirectXAPI.h" />
@@ -198,6 +196,7 @@
     <ClInclude Include="TextureResourceManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="WindowsKeyboardHandler.h" />
   </ItemGroup>

@@ -105,19 +105,19 @@ void handleCameraMovement()
 
     if (Input::keyDown("d"))
     {
-        camera.transform.rotation += Vector3(0, cameraLookSpeed * deltaTime, 0);
+        camera.transform.eulerAngles += Vector3(0, cameraLookSpeed * deltaTime, 0);
     }
 
     if (Input::keyDown("a"))
     {
-        camera.transform.rotation -= Vector3(0, cameraLookSpeed * deltaTime, 0);
+        camera.transform.eulerAngles -= Vector3(0, cameraLookSpeed * deltaTime, 0);
     }
 
     // Calculate the forward direction based on the Y-axis rotation.
     Vector3 forward(
-        -sin(camera.transform.rotation.y),
+        -sin(camera.transform.eulerAngles.y),
         0,
-        cos(camera.transform.rotation.y)
+        cos(camera.transform.eulerAngles.y)
     );
 
     // Normalize the forward vector if it isn't normalized already.
@@ -136,5 +136,5 @@ void handleCameraMovement()
 
 void handleCubeTransform()
 {
-    entity.transform.rotation += Vector3(1, 1, 0);
+    entity.transform.eulerAngles += Vector3(1, 1, 0);
 }

@@ -58,9 +58,6 @@
     <ClCompile Include="DirectoryManager.cpp">
       <Filter>Engine\Platform Independence Layer\File System</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
-    </ClCompile>
     <ClCompile Include="MeshGenerator.cpp">
       <Filter>Engine\Game Layer\Gameplay Foundation</Filter>
     </ClCompile>
@@ -79,14 +76,8 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Vector3.cpp">
-      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
-    </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine\Resource Management</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>Engine\Core Systems</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Engine\Core Systems</Filter>
@@ -191,6 +182,12 @@
     </ClInclude>
     <ClInclude Include="ExampleScene.h">
       <Filter>Example</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

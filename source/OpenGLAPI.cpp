@@ -152,7 +152,7 @@ void OpenGLAPI::ExecuteRenderCommands()
                     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndices().size() * sizeof(int), mesh.GetIndices().data(), GL_STATIC_DRAW);
 
                     // Assuming entity's transform.rotation is stored in degrees
-                    Vector3 rotation = entity->transform.rotation;
+                    Vector3 rotation = entity->transform.eulerAngles;
                     glm::mat4 model = glm::mat4(1.0f);
 
                     // Convert degrees to radians and apply rotation
@@ -172,7 +172,7 @@ void OpenGLAPI::ExecuteRenderCommands()
                     glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
 
                     // Calculate forward vector based on the camera's Y rotation (yaw)
-                    glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.transform.rotation.y), 0.0f, -glm::cos(camera.transform.rotation.y)));
+                    glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.transform.eulerAngles.y), 0.0f, -glm::cos(camera.transform.eulerAngles.y)));
 
                     // Use the translated glm::vec3 for camera position
                     glm::vec3 cameraTarget = cameraPosGLM + forwardVector;
