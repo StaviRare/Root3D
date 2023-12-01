@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef LOGGER_H
-#define LOGGER_H
-
 #include <iostream>
 #include <string>
 
@@ -14,5 +11,3 @@ public:
     static void error(const std::string& errorMessage);
     static void warning(const std::string& warningMessage);
 };
-
-#endif

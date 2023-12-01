@@ -69,6 +69,7 @@ void ExampleScene::tick()
 void initCamera()
 {
     camera.fov = 60.0f;
+    camera.backgroundColor = Color(0.1f, 0, 0.1f, 0);
     camera.transform.position = Vector3(0, 0, 3);
 }
 

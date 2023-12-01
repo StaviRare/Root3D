@@ -130,8 +130,16 @@ void OpenGLAPI::ExecuteRenderCommands()
     {
         if (Camera::exists())
         {
+            Camera& camera = Camera::getInstance();
+
+            const auto& bg = camera.backgroundColor;
+            glClearColor(bg.r, bg.g, bg.b, bg.a);
+
+            // This code should not be in this location. 
+            // Instead, this section should handle the iteration and execution of commands from a list.
+
             const std::set<Entity*>& entities = EntityPool::GetEntities();
-            
+
             for (const Entity* entity : entities)
             {
                 Renderer* renderer = entity->GetComponent<Renderer>();
@@ -165,8 +173,6 @@ void OpenGLAPI::ExecuteRenderCommands()
                     model = glm::translate(model, glm::vec3(position.x, position.y, position.z));
 
                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-                    Camera& camera = Camera::getInstance();
 
                     // Directly translate camera.position to glm::vec3
                     glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);

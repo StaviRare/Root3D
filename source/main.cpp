@@ -24,11 +24,13 @@ void Initialize()
 {
     Timer::initialize();
     GraphicsWrapper::Initialize(APIType::OpenGL);
+    // Maybe entity manager here.
     SceneManager::loadScene(0);
 }
 
 void Tick()
 {
+    // Maybe entity manager here.
     GraphicsWrapper::ClearScreen();
     GraphicsWrapper::ExecuteRenderCommands();
     //GraphicsWrapper::SwapBuffers();
