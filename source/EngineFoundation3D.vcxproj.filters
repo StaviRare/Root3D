@@ -47,6 +47,9 @@
     <Filter Include="Example">
       <UniqueIdentifier>{2f34e853-d0fc-4f31-bcb8-1395c1d0c7a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Platform Independence Layer\Collections and Iterators">
+      <UniqueIdentifier>{fc9d2fbe-6355-4a9f-9eea-b59d89c8fedd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -188,6 +191,12 @@
     </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Engine\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="List.h">
+      <Filter>Engine\Platform Independence Layer\Collections and Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="Iterator.h">
+      <Filter>Engine\Platform Independence Layer\Collections and Iterators</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
