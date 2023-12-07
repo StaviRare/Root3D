@@ -162,6 +162,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="OpenGLAPI.cpp" />
+    <ClCompile Include="PlatformDetector.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneRegistrations.cpp" />
     <ClCompile Include="TextureResourceManager.cpp" />
@@ -191,6 +192,8 @@
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="OpenGLAPI.h" />
+    <ClInclude Include="Platform.h" />
+    <ClInclude Include="PlatformDetector.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

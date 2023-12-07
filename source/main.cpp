@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "SceneManager.h"
 #include "GraphicsWrapper.h"
+#include "PlatformDetector.h"
 
 void Initialize();
 void Tick();
@@ -22,6 +23,7 @@ int main()
 
 void Initialize()
 {
+    PlatformDetector::Initialize();
     Timer::initialize();
     GraphicsWrapper::Initialize(APIType::OpenGL);
     // Maybe entity manager here.

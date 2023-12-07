@@ -50,6 +50,9 @@
     <Filter Include="Engine\Platform Independence Layer\Collections and Iterators">
       <UniqueIdentifier>{fc9d2fbe-6355-4a9f-9eea-b59d89c8fedd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Platform Independence Layer\Platform Detection">
+      <UniqueIdentifier>{ea6ee84e-ec15-49b0-8d67-f18aa1124584}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -99,6 +102,9 @@
     </ClCompile>
     <ClCompile Include="ExampleScene.cpp">
       <Filter>Example</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformDetector.cpp">
+      <Filter>Engine\Platform Independence Layer\Platform Detection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +203,12 @@
     </ClInclude>
     <ClInclude Include="Iterator.h">
       <Filter>Engine\Platform Independence Layer\Collections and Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformDetector.h">
+      <Filter>Engine\Platform Independence Layer\Platform Detection</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>Engine\Platform Independence Layer\Platform Detection</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
