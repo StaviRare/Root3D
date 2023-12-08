@@ -78,6 +78,8 @@ void initCube()
     // Entity 1
     Material material;
     material.texture = TextureResourceManager::Load("C:/Users/Stavi/Desktop/Stavi/Profile2_x2BW.png");
+    material.vertexShader = vertexShaderSource;
+    material.fragmentShader = fragmentShaderSource;
 
     entity.transform.position = Vector3(0, 0, 0);
     Mesh mesh = MeshGenerator::GetCube();
