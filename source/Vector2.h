@@ -40,6 +40,14 @@ public:
         }
     }
 
+    float cross(const Vector2& other) const {
+        return x * other.y - y * other.x;
+    }
+
+    float dot(const Vector2& other) const {
+        return x * other.x + y * other.y;
+    }
+
     std::string toString() const
     {
         std::ostringstream oss;
