@@ -165,6 +165,7 @@
     <ClCompile Include="PlatformDetector.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneRegistrations.cpp" />
+    <ClCompile Include="Stopwatch.cpp" />
     <ClCompile Include="TextureResourceManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="WindowsKeyboardHandler.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureResourceManager.h" />
     <ClInclude Include="Timer.h" />
