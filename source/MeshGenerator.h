@@ -6,4 +6,5 @@ class MeshGenerator {
 public:
     static Mesh GetCube();
     static Mesh GetQuad();
+    static Mesh GetSphere();
 };

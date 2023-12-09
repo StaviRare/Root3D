@@ -21,12 +21,21 @@ static const char* vertexShaderSource = R"(
     #version 330 core
     layout(location = 0) in vec3 aPos;
     layout(location = 1) in vec2 aTexCoord;
+    layout(location = 2) in vec3 aNormal;   // Add normal data
+
     out vec2 TexCoord;
+    out vec3 Normal;         // Pass normal data
+    out vec3 FragPos;        // Pass fragment position
+
     uniform mat4 model;
     uniform mat4 view;
     uniform mat4 projection;
+
     void main()
     {
+        FragPos = vec3(model * vec4(aPos, 1.0)); // Calculate world position of vertex
+        Normal = mat3(transpose(inverse(model))) * aNormal; // Calculate normal
+
         gl_Position = projection * view * model * vec4(aPos, 1.0);
         TexCoord = aTexCoord;
     })";
@@ -34,11 +43,29 @@ static const char* vertexShaderSource = R"(
 static const char* fragmentShaderSource = R"(
     #version 330 core
     in vec2 TexCoord;
+    in vec3 Normal;          // Added normal vector
+    in vec3 FragPos;         // Fragment position
+
     out vec4 FragColor;
+
     uniform sampler2D textureSampler;
+    uniform vec3 lightDir;   // Direction of the light
+    uniform vec3 lightColor; // Color of the light
+
     void main()
     {
-        FragColor = texture(textureSampler, TexCoord);
+        // Ambient lighting
+        float ambientStrength = 0.1;
+        vec3 ambient = ambientStrength * lightColor;
+
+        // Diffuse lighting
+        vec3 norm = normalize(Normal);
+        float diff = max(dot(norm, -lightDir), 0.0);
+        vec3 diffuse = diff * lightColor;
+
+        // Combine results
+        vec3 result = (ambient + diffuse) * texture(textureSampler, TexCoord).rgb;
+        FragColor = vec4(result, 1.0);
     })";
 
 
@@ -48,7 +75,7 @@ static GLFWwindow* window = nullptr;
 static int modelLoc = -1;
 static int viewLoc = -1;
 static int projectionLoc = -1;
-static unsigned int VAO, VBO, EBO;
+static unsigned int VAO, VBO[3], EBO; // Separate VBOs for positions, texture coordinates, and normals
 static unsigned int fragmentShader;
 static unsigned int shaderProgram;
 static unsigned int vertexShader;
@@ -120,17 +147,25 @@ void OpenGLAPI::Initialize()
 
     // Create vertex array and buffers
     glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(3, VBO);
     glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    // Set vertex attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    // Vertex positions
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    // Texture coordinates
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
+
+    // Normals
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(2);
 
     // Set shader uniforms
     modelLoc = glGetUniformLocation(shaderProgram, "model");
@@ -174,9 +209,19 @@ void OpenGLAPI::ExecuteRenderCommands()
 
                     Mesh mesh = meshData->mesh;
 
+                    // Update VBOs
+                    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
                     glBufferData(GL_ARRAY_BUFFER, mesh.GetVertices().size() * sizeof(float), mesh.GetVertices().data(), GL_STATIC_DRAW);
+
+                    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+                    glBufferData(GL_ARRAY_BUFFER, mesh.GetTexCoords().size() * sizeof(float), mesh.GetTexCoords().data(), GL_STATIC_DRAW);
+
+                    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+                    glBufferData(GL_ARRAY_BUFFER, mesh.GetNormals().size() * sizeof(float), mesh.GetNormals().data(), GL_STATIC_DRAW);
+
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
                     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndices().size() * sizeof(int), mesh.GetIndices().data(), GL_STATIC_DRAW);
+
 
                     // Assuming entity's transform.rotation is stored in degrees
                     Vector3 rotation = entity->transform.eulerAngles;
@@ -212,9 +257,23 @@ void OpenGLAPI::ExecuteRenderCommands()
                     glm::mat4 projection = glm::perspective(glm::radians(camera.fov), aspectRatio, camera.nearClipPlane, camera.farClipPlane);
                     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+
+                    glm::vec3 lightDir = glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)); // Direction of the light
+                    glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f); // White light
+
+                    // Set light properties in the shader
+                    int lightDirLoc = glGetUniformLocation(shaderProgram, "lightDir");
+                    int lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
+                    glUniform3fv(lightDirLoc, 1, glm::value_ptr(lightDir));
+                    glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+
                     // Draw the mesh
                     glBindVertexArray(VAO);
-                    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+                    // Draws the mesh as a series of triangles. The number of indices determines how many vertices are 
+                    // used from the index buffer, ensuring the entire mesh is rendered correctly.
+                    glDrawElements(GL_TRIANGLES, mesh.GetIndices().size(), GL_UNSIGNED_INT, 0);
+
                 }
             }
         }
@@ -229,14 +288,27 @@ void OpenGLAPI::ExecuteRenderCommands()
         // Poll events: This checks for user input and window events (e.g., keyboard, mouse).
         glfwPollEvents();
     }
-    else {
+    else
+    {
+        // Cleanup resources
 
-        // destruction. Change logic.
-        glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
+        // Delete VBOs
+        glDeleteBuffers(3, VBO);
+
+        // Delete EBO
         glDeleteBuffers(1, &EBO);
+
+        // Delete VAO
+        glDeleteVertexArrays(1, &VAO);
+
+        // Delete shader program
         glDeleteProgram(shaderProgram);
 
+        // Delete shaders
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+
+        // Terminate GLFW
         glfwTerminate();
     }
 }
