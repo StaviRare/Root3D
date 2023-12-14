@@ -76,7 +76,7 @@
     <ClCompile Include="OpenGLAPI.cpp">
       <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
+    <ClCompile Include="Time.cpp">
       <Filter>Engine\Platform Independence Layer\Timer</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -156,7 +156,7 @@
     <ClInclude Include="OpenGLAPI.h">
       <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
+    <ClInclude Include="Time.h">
       <Filter>Engine\Platform Independence Layer\Timer</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">

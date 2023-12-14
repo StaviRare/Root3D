@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-class Timer
+class Time
 {
 private:
     static std::chrono::time_point<std::chrono::high_resolution_clock> loopStartTime;
@@ -12,9 +12,9 @@ private:
 
 
 public:
-    static void initialize();
-    static void calculateLoopTime();
-    static double getDeltaTime();
-    static double getDoubleDeltaTime();
-    static double getTimeSinceInit();
+    static void Initialize();
+    static void CalculateLoopTime();
+    static double DeltaTime();
+    static double DoubleDeltaTime();
+    static double TimeSinceInit();
 };

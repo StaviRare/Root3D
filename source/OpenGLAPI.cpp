@@ -11,7 +11,7 @@
 #include "Mesh.h"
 #include "MeshGenerator.h"
 #include "Debug.h"
-#include "Timer.h"
+#include "Time.h"
 #include "Camera.h"
 #include "Entity.h"
 #include "MeshData.h"

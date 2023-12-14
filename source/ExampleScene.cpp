@@ -1,6 +1,6 @@
 #include "ExampleScene.h"
 #include "Camera.h"
-#include "Timer.h"
+#include "Time.h"
 #include "Input.h"
 #include "Mesh.h"
 #include "Entity.h"
@@ -104,7 +104,7 @@ void initCube()
 
 void handleCameraMovement()
 {
-    double deltaTime = Timer::getDeltaTime();
+    double deltaTime = Time::DeltaTime();
 
     if (Input::keyDown("d"))
     {

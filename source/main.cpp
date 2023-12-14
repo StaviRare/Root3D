@@ -1,5 +1,5 @@
 #include "Debug.h"
-#include "Timer.h"
+#include "Time.h"
 #include "Camera.h"
 #include "SceneManager.h"
 #include "GraphicsWrapper.h"
@@ -24,7 +24,7 @@ int main()
 void Initialize()
 {
     PlatformDetector::Initialize();
-    Timer::initialize();
+    Time::Initialize();
     GraphicsWrapper::Initialize(APIType::OpenGL);
     // Maybe entity manager here.
     SceneManager::loadScene(0);
@@ -38,5 +38,5 @@ void Tick()
     //GraphicsWrapper::SwapBuffers();
 
     SceneManager::runScene();
-    Timer::calculateLoopTime();
+    Time::CalculateLoopTime();
 }
