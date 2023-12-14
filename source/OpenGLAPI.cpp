@@ -222,19 +222,21 @@ void OpenGLAPI::ExecuteRenderCommands()
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
                     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndices().size() * sizeof(int), mesh.GetIndices().data(), GL_STATIC_DRAW);
 
-
-                    // Assuming entity's transform.rotation is stored in degrees
-                    Vector3 rotation = entity->transform.eulerAngles;
                     glm::mat4 model = glm::mat4(1.0f);
-
-                    // Convert degrees to radians and apply rotation
-                    model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate around the X-axis
-                    model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the Y-axis
-                    model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around the Z-axis
 
                     // Apply translation
                     Vector3 position = entity->transform.position;
                     model = glm::translate(model, glm::vec3(position.x, position.y, position.z));
+
+                    // Apply scale
+                    Vector3 scale = entity->transform.scale;
+                    model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
+
+                    // Only then, apply rotations
+                    Vector3 rotation = entity->transform.eulerAngles;
+                    model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate around the X-axis
+                    model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the Y-axis
+                    model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around the Z-axis
 
                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 

@@ -81,7 +81,8 @@ void initCube()
     material.vertexShader = vertexShaderSource;
     material.fragmentShader = fragmentShaderSource;
 
-    entity.transform.position = Vector3(0, 0, 0);
+    entity.transform.position = Vector3(-1.0, 0, 0);
+    //entity.transform.scale *= 1.5;
     Mesh mesh = MeshGenerator::GetCube();
     MeshData* meshData = entity.AddComponent<MeshData>();
     meshData->mesh = mesh;
@@ -94,7 +95,7 @@ void initCube()
     Material material2;
     material2.texture = TextureResourceManager::Load("C:/Users/Stavi/Desktop/Stavi/1.png");
 
-    entity2.transform.position = Vector3(1.5f, 0, 0);
+    entity2.transform.position = Vector3(1.0f, 0, 0);
     Mesh mesh2 = MeshGenerator::GetCube();
     MeshData* meshData2 = entity2.AddComponent<MeshData>();
     meshData2->mesh = mesh2;
