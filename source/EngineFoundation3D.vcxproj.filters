@@ -109,6 +109,12 @@
     <ClCompile Include="Stopwatch.cpp">
       <Filter>Engine\Platform Independence Layer\Timer</Filter>
     </ClCompile>
+    <ClCompile Include="RenderQueue.cpp">
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderCommandHandler.cpp">
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.h">
@@ -215,6 +221,15 @@
     </ClInclude>
     <ClInclude Include="Stopwatch.h">
       <Filter>Engine\Platform Independence Layer\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderQueue.h">
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderCommand.h">
+      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderCommandHandler.h">
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -163,6 +163,8 @@
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="OpenGLAPI.cpp" />
     <ClCompile Include="PlatformDetector.cpp" />
+    <ClCompile Include="RenderCommandHandler.cpp" />
+    <ClCompile Include="RenderQueue.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneRegistrations.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
@@ -195,7 +197,10 @@
     <ClInclude Include="OpenGLAPI.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="PlatformDetector.h" />
+    <ClInclude Include="RenderCommand.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderCommandHandler.h" />
+    <ClInclude Include="RenderQueue.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Stopwatch.h" />

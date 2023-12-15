@@ -13,9 +13,7 @@
 #include "Debug.h"
 #include "Time.h"
 #include "Camera.h"
-#include "Entity.h"
-#include "MeshData.h"
-#include "Renderer.h"
+#include "RenderQueue.h"
 
 static const char* vertexShaderSource = R"(
     #version 330 core
@@ -189,94 +187,88 @@ void OpenGLAPI::ExecuteRenderCommands()
             const auto& bg = camera.backgroundColor;
             glClearColor(bg.r, bg.g, bg.b, bg.a);
 
-            // This code should not be in this location. 
-            // Instead, this section should handle the iteration and execution of commands from a list.
 
-            const std::set<Entity*>& entities = EntityPool::GetEntities();
-
-            for (const Entity* entity : entities)
-            {
-                Renderer* renderer = entity->GetComponent<Renderer>();
-                MeshData* meshData = entity->GetComponent<MeshData>();
-
-                if (renderer && meshData)
-                {
-                    BindTexture(renderer->material.texture);
-
-                    // We're currently using one texture unity.
-                    //glActiveTexture(GL_TEXTURE0);
+            while (!RenderQueue::IsEmpty()) {
+                RenderCommand* command = RenderQueue::Dequeue();
 
 
-                    Mesh mesh = meshData->mesh;
+                Mesh* mesh = command->mesh;
+                Texture* texture = command->texture;
+                Vector3 position = command->position;
+                Vector3 rotation = command->eulerAngles;
+                Vector3 scale = command->scale;
 
-                    // Update VBOs
-                    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-                    glBufferData(GL_ARRAY_BUFFER, mesh.GetVertices().size() * sizeof(float), mesh.GetVertices().data(), GL_STATIC_DRAW);
-
-                    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-                    glBufferData(GL_ARRAY_BUFFER, mesh.GetTexCoords().size() * sizeof(float), mesh.GetTexCoords().data(), GL_STATIC_DRAW);
-
-                    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-                    glBufferData(GL_ARRAY_BUFFER, mesh.GetNormals().size() * sizeof(float), mesh.GetNormals().data(), GL_STATIC_DRAW);
-
-                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndices().size() * sizeof(int), mesh.GetIndices().data(), GL_STATIC_DRAW);
-
-                    glm::mat4 model = glm::mat4(1.0f);
-
-                    // Apply translation
-                    Vector3 position = entity->transform.position;
-                    model = glm::translate(model, glm::vec3(position.x, position.y, position.z));
-
-                    // Apply scale
-                    Vector3 scale = entity->transform.scale;
-                    model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
-
-                    // Only then, apply rotations
-                    Vector3 rotation = entity->transform.eulerAngles;
-                    model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate around the X-axis
-                    model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the Y-axis
-                    model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around the Z-axis
-
-                    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-                    // Directly translate camera.position to glm::vec3
-                    glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
-
-                    // Calculate forward vector based on the camera's Y rotation (yaw)
-                    glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.transform.eulerAngles.y), 0.0f, -glm::cos(camera.transform.eulerAngles.y)));
-
-                    // Use the translated glm::vec3 for camera position
-                    glm::vec3 cameraTarget = cameraPosGLM + forwardVector;
-
-                    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
-
-                    // Use the translated glm::vec3 for the lookAt
-                    glm::mat4 view = glm::lookAt(cameraPosGLM, cameraTarget, cameraUp);
-                    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-                    // Set the projection matrix (perspective projection)
-                    glm::mat4 projection = glm::perspective(glm::radians(camera.fov), aspectRatio, camera.nearClipPlane, camera.farClipPlane);
-                    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+                BindTexture(*texture);
 
 
-                    glm::vec3 lightDir = glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)); // Direction of the light
-                    glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f); // White light
+                // We're currently using one texture unity.
+                //glActiveTexture(GL_TEXTURE0);
 
-                    // Set light properties in the shader
-                    int lightDirLoc = glGetUniformLocation(shaderProgram, "lightDir");
-                    int lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
-                    glUniform3fv(lightDirLoc, 1, glm::value_ptr(lightDir));
-                    glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
 
-                    // Draw the mesh
-                    glBindVertexArray(VAO);
 
-                    // Draws the mesh as a series of triangles. The number of indices determines how many vertices are 
-                    // used from the index buffer, ensuring the entire mesh is rendered correctly.
-                    glDrawElements(GL_TRIANGLES, mesh.GetIndices().size(), GL_UNSIGNED_INT, 0);
+                // Update VBOs
+                glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+                glBufferData(GL_ARRAY_BUFFER, mesh->GetVertices().size() * sizeof(float), mesh->GetVertices().data(), GL_STATIC_DRAW);
 
-                }
+                glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+                glBufferData(GL_ARRAY_BUFFER, mesh->GetTexCoords().size() * sizeof(float), mesh->GetTexCoords().data(), GL_STATIC_DRAW);
+
+                glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+                glBufferData(GL_ARRAY_BUFFER, mesh->GetNormals().size() * sizeof(float), mesh->GetNormals().data(), GL_STATIC_DRAW);
+
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetIndices().size() * sizeof(int), mesh->GetIndices().data(), GL_STATIC_DRAW);
+
+                glm::mat4 model = glm::mat4(1.0f);
+
+                // Apply translation
+                model = glm::translate(model, glm::vec3(position.x, position.y, position.z));
+
+                // Apply scale
+                model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
+
+                // Only then, apply rotations
+                model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate around the X-axis
+                model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the Y-axis
+                model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around the Z-axis
+
+                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+                // Directly translate camera.position to glm::vec3
+                glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+
+                // Calculate forward vector based on the camera's Y rotation (yaw)
+                glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.transform.eulerAngles.y), 0.0f, -glm::cos(camera.transform.eulerAngles.y)));
+
+                // Use the translated glm::vec3 for camera position
+                glm::vec3 cameraTarget = cameraPosGLM + forwardVector;
+
+                glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
+
+                // Use the translated glm::vec3 for the lookAt
+                glm::mat4 view = glm::lookAt(cameraPosGLM, cameraTarget, cameraUp);
+                glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+                // Set the projection matrix (perspective projection)
+                glm::mat4 projection = glm::perspective(glm::radians(camera.fov), aspectRatio, camera.nearClipPlane, camera.farClipPlane);
+                glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+                glm::vec3 lightDir = glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)); // Direction of the light
+                glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f); // White light
+
+                // Set light properties in the shader
+                int lightDirLoc = glGetUniformLocation(shaderProgram, "lightDir");
+                int lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
+                glUniform3fv(lightDirLoc, 1, glm::value_ptr(lightDir));
+                glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+
+                // Draw the mesh
+                glBindVertexArray(VAO);
+
+                // Draws the mesh as a series of triangles. The number of indices determines how many vertices are 
+                // used from the index buffer, ensuring the entire mesh is rendered correctly.
+                glDrawElements(GL_TRIANGLES, mesh->GetIndices().size(), GL_UNSIGNED_INT, 0);
             }
         }
         else
