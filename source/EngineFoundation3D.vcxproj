@@ -164,10 +164,10 @@
     <ClCompile Include="PlatformDetector.cpp" />
     <ClCompile Include="RenderCommandHandler.cpp" />
     <ClCompile Include="RenderQueue.cpp" />
+    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneRegistrations.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
-    <ClCompile Include="TextureResourceManager.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="WindowsKeyboardHandler.cpp" />
   </ItemGroup>
@@ -199,12 +199,12 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderCommandHandler.h" />
     <ClInclude Include="RenderQueue.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureResourceManager.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector2.h" />

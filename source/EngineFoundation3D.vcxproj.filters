@@ -91,9 +91,6 @@
     <ClCompile Include="EntityPool.cpp">
       <Filter>Engine\Game Layer\Gameplay Foundation\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="TextureResourceManager.cpp">
-      <Filter>Engine\Resource Management</Filter>
-    </ClCompile>
     <ClCompile Include="SceneRegistrations.cpp">
       <Filter>Example</Filter>
     </ClCompile>
@@ -111,6 +108,9 @@
     </ClCompile>
     <ClCompile Include="RenderCommandHandler.cpp">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Engine\Resource Management</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,9 +189,6 @@
     <ClInclude Include="Renderer.h">
       <Filter>Engine\Game Layer\Gameplay Foundation\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TextureResourceManager.h">
-      <Filter>Engine\Resource Management</Filter>
-    </ClInclude>
     <ClInclude Include="ExampleScene.h">
       <Filter>Example</Filter>
     </ClInclude>
@@ -227,6 +224,9 @@
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Engine\Resource Management</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
