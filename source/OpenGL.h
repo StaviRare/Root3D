@@ -10,11 +10,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <list>
 
-class OpenGLAPI : public GraphicsAPI
+class OpenGL : public GraphicsAPI
 {
 public:
-    OpenGLAPI();
-    ~OpenGLAPI();
+    OpenGL();
+    ~OpenGL();
 
     void Initialize() override;
     void ClearScreen() override;

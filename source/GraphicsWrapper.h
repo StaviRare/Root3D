@@ -16,6 +16,6 @@ public:
     
 
 private:
-    static GraphicsAPI* mAPI;
+    static GraphicsAPI* graphicsAPI;
     static void BindTexture(Texture& texture);
 };

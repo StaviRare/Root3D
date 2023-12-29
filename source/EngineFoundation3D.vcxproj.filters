@@ -67,13 +67,10 @@
     <ClCompile Include="MeshGenerator.cpp">
       <Filter>Engine\Game Layer\Gameplay Foundation</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXAPI.cpp">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsWrapper.cpp">
       <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGLAPI.cpp">
+    <ClCompile Include="OpenGL.cpp">
       <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
@@ -150,16 +147,13 @@
     <ClInclude Include="FileManager.h">
       <Filter>Engine\Platform Independence Layer\File System</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXAPI.h">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsAPI.h">
       <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsWrapper.h">
       <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLAPI.h">
+    <ClInclude Include="OpenGL.h">
       <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">

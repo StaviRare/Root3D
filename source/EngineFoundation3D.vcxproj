@@ -153,7 +153,6 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DirectoryManager.cpp" />
-    <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="EntityPool.cpp" />
     <ClCompile Include="ExampleScene.cpp" />
     <ClCompile Include="FileManager.cpp" />
@@ -161,7 +160,7 @@
     <ClCompile Include="GraphicsWrapper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
-    <ClCompile Include="OpenGLAPI.cpp" />
+    <ClCompile Include="OpenGL.cpp" />
     <ClCompile Include="PlatformDetector.cpp" />
     <ClCompile Include="RenderCommandHandler.cpp" />
     <ClCompile Include="RenderQueue.cpp" />
@@ -177,7 +176,6 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DirectoryManager.h" />
-    <ClInclude Include="DirectXAPI.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityPool.h" />
     <ClInclude Include="ExampleScene.h" />
@@ -194,7 +192,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="MeshGenerator.h" />
-    <ClInclude Include="OpenGLAPI.h" />
+    <ClInclude Include="OpenGL.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="PlatformDetector.h" />
     <ClInclude Include="RenderCommand.h" />

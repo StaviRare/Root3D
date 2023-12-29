@@ -8,7 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <map>
 
-#include "OpenGLAPI.h"
+#include "OpenGL.h"
 #include "Mesh.h"
 #include "Camera.h"
 #include "RenderQueue.h"
@@ -24,12 +24,12 @@ static float aspectRatio = 0;
 static float screenWidth = 960;
 static float screenHeight = 540;
 
-OpenGLAPI::OpenGLAPI()
+OpenGL::OpenGL()
 {
 
 }
 
-OpenGLAPI::~OpenGLAPI()
+OpenGL::~OpenGL()
 {
 
 }
@@ -47,7 +47,7 @@ void onWindowResize(GLFWwindow* window, int width, int height)
     aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 }
 
-GLuint OpenGLAPI::CompileShader(const std::string& source, GLenum type) {
+GLuint OpenGL::CompileShader(const std::string& source, GLenum type) {
     GLuint shader = glCreateShader(type);
     const char* src = source.c_str();
     glShaderSource(shader, 1, &src, nullptr);
@@ -56,7 +56,7 @@ GLuint OpenGLAPI::CompileShader(const std::string& source, GLenum type) {
     return shader;
 }
 
-GLuint OpenGLAPI::CreateShaderProgram(const std::string& vertexSource, const std::string& fragmentSource) {
+GLuint OpenGL::CreateShaderProgram(const std::string& vertexSource, const std::string& fragmentSource) {
     GLuint vertexShader = CompileShader(vertexSource, GL_VERTEX_SHADER);
     GLuint fragmentShader = CompileShader(fragmentSource, GL_FRAGMENT_SHADER);
 
@@ -71,7 +71,7 @@ GLuint OpenGLAPI::CreateShaderProgram(const std::string& vertexSource, const std
     return program;
 }
 
-void OpenGLAPI::Initialize()
+void OpenGL::Initialize()
 {
     if (!glfwInit()) {
         //return -1;
@@ -116,12 +116,12 @@ void OpenGLAPI::Initialize()
     glEnableVertexAttribArray(2);
 }
 
-void OpenGLAPI::ClearScreen()
+void OpenGL::ClearScreen()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLAPI::ExecuteRenderCommands()
+void OpenGL::ExecuteRenderCommands()
 {
     if (!glfwWindowShouldClose(window))
     {
@@ -269,7 +269,7 @@ void OpenGLAPI::ExecuteRenderCommands()
     }
 }
 
-void OpenGLAPI::BindTexture(Texture& texture)
+void OpenGL::BindTexture(Texture& texture)
 {
     // Check if the texture is already loaded
     if (texture.textureID == 0)

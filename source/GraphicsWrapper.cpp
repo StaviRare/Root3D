@@ -1,37 +1,36 @@
 #include "GraphicsWrapper.h"
-#include "OpenGLAPI.h"
-#include "DirectXAPI.h"
+#include "OpenGL.h"
 
-GraphicsAPI* GraphicsWrapper::mAPI = nullptr;
+GraphicsAPI* GraphicsWrapper::graphicsAPI = nullptr;
 
 
 void GraphicsWrapper::Initialize(APIType api)
 {
-    mAPI = new OpenGLAPI();
+    graphicsAPI = new OpenGL();
 
     //if (api == APIType::OpenGL)
     //{
-    //    mAPI = new OpenGLAPI();
+    //    graphicsAPI = new OpenGL();
     //}
     //else if (api == APIType::DirectX)
     //{
-    //    //mAPI = new DirectXAPI();
+    //    graphicsAPI = new DirectX();
     //}
 
-    mAPI->Initialize();
+    graphicsAPI->Initialize();
 }
 
 void GraphicsWrapper::ClearScreen()
 {
-    mAPI->ClearScreen();
+    graphicsAPI->ClearScreen();
 }
 
 void GraphicsWrapper::ExecuteRenderCommands()
 {
-    mAPI->ExecuteRenderCommands();
+    graphicsAPI->ExecuteRenderCommands();
 }
 
 void GraphicsWrapper::BindTexture(Texture& texture)
 {
-    mAPI->BindTexture(texture);
+    graphicsAPI->BindTexture(texture);
 }
