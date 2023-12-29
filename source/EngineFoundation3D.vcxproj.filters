@@ -231,5 +231,8 @@
     <ClInclude Include="RenderCommandHandler.h">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 #include "Entity.h"
 #include "RenderCommand.h"
 #include "Renderer.h"
+#include "Debug.h"
 
 void RenderCommandHandler::Tick()
 {
@@ -24,6 +25,7 @@ void RenderCommandHandler::Tick()
             renderCommand.position = entity->transform.position;
             renderCommand.eulerAngles = entity->transform.eulerAngles;
             renderCommand.scale = entity->transform.scale;
+            renderCommand.shader = &renderer->material.shader;
 
             RenderQueue::Enqueue(renderCommand);
         }

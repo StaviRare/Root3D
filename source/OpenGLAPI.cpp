@@ -6,64 +6,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <map>
 
 #include "OpenGLAPI.h"
 #include "Mesh.h"
 #include "Camera.h"
 #include "RenderQueue.h"
-
-static const char* vertexShaderSource = R"(
-    #version 330 core
-    layout(location = 0) in vec3 aPos;
-    layout(location = 1) in vec2 aTexCoord;
-    layout(location = 2) in vec3 aNormal;   // Add normal data
-
-    out vec2 TexCoord;
-    out vec3 Normal;         // Pass normal data
-    out vec3 FragPos;        // Pass fragment position
-
-    uniform mat4 model;
-    uniform mat4 view;
-    uniform mat4 projection;
-
-    void main()
-    {
-        FragPos = vec3(model * vec4(aPos, 1.0)); // Calculate world position of vertex
-        Normal = mat3(transpose(inverse(model))) * aNormal; // Calculate normal
-
-        gl_Position = projection * view * model * vec4(aPos, 1.0);
-        TexCoord = aTexCoord;
-    })";
-
-static const char* fragmentShaderSource = R"(
-    #version 330 core
-    in vec2 TexCoord;
-    in vec3 Normal;          // Added normal vector
-    in vec3 FragPos;         // Fragment position
-
-    out vec4 FragColor;
-
-    uniform sampler2D textureSampler;
-    uniform vec3 lightDir;   // Direction of the light
-    uniform vec3 lightColor; // Color of the light
-
-    void main()
-    {
-        // Ambient lighting
-        float ambientStrength = 0.1;
-        vec3 ambient = ambientStrength * lightColor;
-
-        // Diffuse lighting
-        vec3 norm = normalize(Normal);
-        float diff = max(dot(norm, -lightDir), 0.0);
-        vec3 diffuse = diff * lightColor;
-
-        // Combine results
-        vec3 result = (ambient + diffuse) * texture(textureSampler, TexCoord).rgb;
-        FragColor = vec4(result, 1.0);
-    })";
-
-
+#include "Debug.h"
 
 
 static GLFWwindow* window = nullptr;
@@ -71,9 +20,6 @@ static int modelLoc = -1;
 static int viewLoc = -1;
 static int projectionLoc = -1;
 static unsigned int VAO, VBO[3], EBO; // Separate VBOs for positions, texture coordinates, and normals
-static unsigned int fragmentShader;
-static unsigned int shaderProgram;
-static unsigned int vertexShader;
 static float aspectRatio = 0;
 static float screenWidth = 960;
 static float screenHeight = 540;
@@ -101,6 +47,30 @@ void onWindowResize(GLFWwindow* window, int width, int height)
     aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 }
 
+GLuint OpenGLAPI::CompileShader(const std::string& source, GLenum type) {
+    GLuint shader = glCreateShader(type);
+    const char* src = source.c_str();
+    glShaderSource(shader, 1, &src, nullptr);
+    glCompileShader(shader);
+
+    return shader;
+}
+
+GLuint OpenGLAPI::CreateShaderProgram(const std::string& vertexSource, const std::string& fragmentSource) {
+    GLuint vertexShader = CompileShader(vertexSource, GL_VERTEX_SHADER);
+    GLuint fragmentShader = CompileShader(fragmentSource, GL_FRAGMENT_SHADER);
+
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    glLinkProgram(program);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return program;
+}
+
 void OpenGLAPI::Initialize()
 {
     if (!glfwInit()) {
@@ -123,23 +93,6 @@ void OpenGLAPI::Initialize()
 
     glEnable(GL_DEPTH_TEST);
 
-    // Create and compile the vertex shader
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    // Create and compile the fragment shader
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    // Create and link the shader program
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    glUseProgram(shaderProgram);
-
     // Create vertex array and buffers
     glGenVertexArrays(1, &VAO);
     glGenBuffers(3, VBO);
@@ -161,11 +114,6 @@ void OpenGLAPI::Initialize()
     glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(2);
-
-    // Set shader uniforms
-    modelLoc = glGetUniformLocation(shaderProgram, "model");
-    viewLoc = glGetUniformLocation(shaderProgram, "view");
-    projectionLoc = glGetUniformLocation(shaderProgram, "projection");
 }
 
 void OpenGLAPI::ClearScreen()
@@ -187,6 +135,22 @@ void OpenGLAPI::ExecuteRenderCommands()
 
             while (!RenderQueue::IsEmpty()) {
                 RenderCommand* command = RenderQueue::Dequeue();
+
+                
+                // find / compile shader
+                if (command->shader->ID == 0) 
+                {
+                    command->shader->ID = CreateShaderProgram(command->shader->vertexCode, command->shader->fragmentCode);
+                    shaderProgramIDs.push_back(command->shader->ID);
+                }
+                GLuint shaderProgram = command->shader->ID;
+                glUseProgram(shaderProgram);
+
+
+                // Set shader uniforms
+                modelLoc = glGetUniformLocation(shaderProgram, "model");
+                viewLoc = glGetUniformLocation(shaderProgram, "view");
+                projectionLoc = glGetUniformLocation(shaderProgram, "projection");
 
 
                 Mesh* mesh = command->mesh;
@@ -293,11 +257,12 @@ void OpenGLAPI::ExecuteRenderCommands()
         glDeleteVertexArrays(1, &VAO);
 
         // Delete shader program
-        glDeleteProgram(shaderProgram);
+        for (GLuint shaderID : shaderProgramIDs) 
+        {
+            glDeleteProgram(shaderID);
+        }
 
-        // Delete shaders
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
+        shaderProgramIDs.clear();
 
         // Terminate GLFW
         glfwTerminate();
