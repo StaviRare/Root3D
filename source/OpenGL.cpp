@@ -198,8 +198,8 @@ void OpenGL::ExecuteRenderCommands()
                 // Directly translate camera.position to glm::vec3
                 glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
 
-                // Calculate forward vector based on the camera's Y rotation (yaw)
-                glm::vec3 forwardVector = glm::normalize(glm::vec3(glm::sin(camera.transform.eulerAngles.y), 0.0f, -glm::cos(camera.transform.eulerAngles.y)));
+                // Convert the camera's forward direction, calculated from its Euler angles, to a glm::vec3 type.
+                glm::vec3 forwardVector = glm::vec3(camera.transform.getForward().x, camera.transform.getForward().y, camera.transform.getForward().z);
 
                 // Use the translated glm::vec3 for camera position
                 glm::vec3 cameraTarget = cameraPosGLM + forwardVector;

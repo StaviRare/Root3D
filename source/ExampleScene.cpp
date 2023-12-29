@@ -78,34 +78,40 @@ void handleCameraMovement()
 {
     double deltaTime = Time::DeltaTime();
 
+    // Move forward
+    if (Input::keyDown("w"))
+    {
+        camera.transform.position += camera.transform.getForward() * cameraMoveSpeed * deltaTime;
+    }
+
+    // Move back
+    if (Input::keyDown("s"))
+    {
+        camera.transform.position -= camera.transform.getForward() * cameraMoveSpeed * deltaTime;
+    }
+
+    // Look left
     if (Input::keyDown("d"))
     {
         camera.transform.eulerAngles += Vector3(0, cameraLookSpeed * deltaTime, 0);
     }
 
+    // Look right
     if (Input::keyDown("a"))
     {
         camera.transform.eulerAngles -= Vector3(0, cameraLookSpeed * deltaTime, 0);
     }
 
-    // Calculate the forward direction based on the Y-axis rotation.
-    Vector3 forward(
-        -sin(camera.transform.eulerAngles.y),
-        0,
-        cos(camera.transform.eulerAngles.y)
-    );
-
-    // Normalize the forward vector if it isn't normalized already.
-    forward = forward.normalized();
-
-    if (Input::keyDown("w"))
+    // Look up
+    if (Input::keyDown("e"))
     {
-        camera.transform.position -= forward * cameraMoveSpeed * deltaTime;
+        camera.transform.eulerAngles += Vector3(cameraLookSpeed * deltaTime, 0, 0);
     }
 
-    if (Input::keyDown("s"))
+    // Look down
+    if (Input::keyDown("q"))
     {
-        camera.transform.position += forward * cameraMoveSpeed * deltaTime;
+        camera.transform.eulerAngles -= Vector3(cameraLookSpeed * deltaTime, 0, 0);
     }
 } 
 
