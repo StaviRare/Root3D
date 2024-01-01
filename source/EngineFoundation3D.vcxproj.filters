@@ -231,5 +231,8 @@
     <ClInclude Include="Types.h">
       <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
+    <ClInclude Include="Matrix4.h">
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

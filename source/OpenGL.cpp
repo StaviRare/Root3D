@@ -1,10 +1,7 @@
+#include <map>
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <map>
 
 #include "OpenGL.h"
 #include "Mesh.h"
@@ -12,6 +9,7 @@
 #include "RenderQueue.h"
 #include "Debug.h"
 #include "Time.h"
+#include "Matrix4.h"
 
 
 static GLFWwindow* window = nullptr;
@@ -153,54 +151,51 @@ void OpenGL::ExecuteRenderCommands()
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetIndices().size() * sizeof(int), mesh->GetIndices().data(), GL_STATIC_DRAW);
 
-                glm::mat4 model = glm::mat4(1.0f);
+                Matrix4 model = Matrix4::Identity();
 
-                // Apply translation
-                model = glm::translate(model, glm::vec3(position.x, position.y, position.z));
+                // Using SRT (Scale-Rotate-Translate) order for transformations
+                model = model.Scale(command->scale);
+                model = model.RotateX(rotation.x);
+                model = model.RotateY(rotation.y);
+                model = model.RotateZ(rotation.z);
+                model = model.Translate(command->position);
 
-                // Apply scale
-                model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
+                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Pointer());
 
-                // Only then, apply rotations
-                model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate around the X-axis
-                model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the Y-axis
-                model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around the Z-axis
+                // Make this better
+                Vector3 cameraTarget = camera.transform.position + camera.transform.getForward();
+                Vector3 cameraUp(0.0f, 1.0f, 0.0f); // add 'up' to transform
 
-                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                // Use Matrix4 for view matrix calculation
+                Matrix4 view = Matrix4::LookAt(camera.transform.position, cameraTarget, cameraUp);
+                glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.Pointer());
 
-                // Directly translate camera.position to glm::vec3
-                glm::vec3 cameraPosGLM(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+                // Use Matrix4 for projection matrix calculation
+                Matrix4 projection = Matrix4::Perspective(camera.fov, aspectRatio, camera.nearClipPlane, camera.farClipPlane);
+                glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.Pointer());
 
-                // Convert the camera's forward direction, calculated from its Euler angles, to a glm::vec3 type.
-                glm::vec3 forwardVector = glm::vec3(camera.transform.getForward().x, camera.transform.getForward().y, camera.transform.getForward().z);
+                // Define the direction of the light source
+                Vector3 lightDir(1.0f, 0.0f, 0.0f); // Direction of the light
 
-                // Use the translated glm::vec3 for camera position
-                glm::vec3 cameraTarget = cameraPosGLM + forwardVector;
+                // Define the color of the light source
+                Vector3 lightColor(1.0f, 1.0f, 1.0f); // White light
 
-                glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Upward direction
+                // Normalize the light direction vector
+                lightDir.normalize();
 
-                // Use the translated glm::vec3 for the lookAt
-                glm::mat4 view = glm::lookAt(cameraPosGLM, cameraTarget, cameraUp);
-                glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-                // Set the projection matrix (perspective projection)
-                glm::mat4 projection = glm::perspective(glm::radians(camera.fov), aspectRatio, camera.nearClipPlane, camera.farClipPlane);
-                glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-
-                glm::vec3 lightDir = glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)); // Direction of the light
-                glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f); // White light
-
-                // Set light properties in the shader
+                // Get the locations of the light direction and color uniforms in the shader
                 int lightDirLoc = glGetUniformLocation(shaderProgram, "lightDir");
                 int lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
-                glUniform3fv(lightDirLoc, 1, glm::value_ptr(lightDir));
-                glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+
+                // Pass the light direction and color as uniforms to the shader
+                glUniform3f(lightDirLoc, lightDir.x, lightDir.y, lightDir.z); // Set the light direction
+                glUniform3f(lightColorLoc, lightColor.x, lightColor.y, lightColor.z); // Set the light color
 
                 // Draw the mesh
                 glBindVertexArray(VAO);
 
-                // Draws the mesh as a series of triangles. The number of indices determines how many vertices are 
+                // Draws the mesh as a series of triangles. 
+                // The number of indices determines how many vertices are 
                 // used from the index buffer, ensuring the entire mesh is rendered correctly.
                 glDrawElements(GL_TRIANGLES, mesh->GetIndices().size(), GL_UNSIGNED_INT, 0);
             }
