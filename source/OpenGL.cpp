@@ -1,4 +1,3 @@
-#include <string>
 #include <iostream>
 #include <GL/glew.h>
 #include <GL/glew.h>
@@ -47,29 +46,6 @@ void onWindowResize(GLFWwindow* window, int width, int height)
     aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 }
 
-GLuint OpenGL::CompileShader(const std::string& source, GLenum type) {
-    GLuint shader = glCreateShader(type);
-    const char* src = source.c_str();
-    glShaderSource(shader, 1, &src, nullptr);
-    glCompileShader(shader);
-
-    return shader;
-}
-
-GLuint OpenGL::CreateShaderProgram(const std::string& vertexSource, const std::string& fragmentSource) {
-    GLuint vertexShader = CompileShader(vertexSource, GL_VERTEX_SHADER);
-    GLuint fragmentShader = CompileShader(fragmentSource, GL_FRAGMENT_SHADER);
-
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return program;
-}
 
 void OpenGL::Initialize()
 {
@@ -299,7 +275,7 @@ void OpenGL::BindTexture(Texture& texture)
         }
         else
         {
-            std::cerr << "Failed to load texture" << std::endl;
+            Debug::error("Failed to load texture");
         }
     }
     else
@@ -307,4 +283,29 @@ void OpenGL::BindTexture(Texture& texture)
         // Bind existing texture
         glBindTexture(GL_TEXTURE_2D, texture.textureID);
     }
+}
+
+
+unsigned int OpenGL::CompileShader(const string& source, unsigned int type) {
+    unsigned int shader = glCreateShader(type);
+    const char* src = source.c_str();
+    glShaderSource(shader, 1, &src, nullptr);
+    glCompileShader(shader);
+
+    return shader;
+}
+
+unsigned int OpenGL::CreateShaderProgram(const string& vertexSource, const string& fragmentSource) {
+    unsigned int vertexShader = CompileShader(vertexSource, GL_VERTEX_SHADER);
+    unsigned int fragmentShader = CompileShader(fragmentSource, GL_FRAGMENT_SHADER);
+
+    unsigned int program = glCreateProgram();
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    glLinkProgram(program);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return program;
 }

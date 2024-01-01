@@ -228,5 +228,8 @@
     <ClInclude Include="Resource.h">
       <Filter>Engine\Resource Management</Filter>
     </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

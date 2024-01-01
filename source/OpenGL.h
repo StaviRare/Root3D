@@ -1,14 +1,8 @@
 #pragma once
-#include "GraphicsAPI.h"
-#include <string>
-#include <iostream>
-#include <GL/glew.h>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <list>
+
+#include "Types.h"
+#include "GraphicsAPI.h"
 
 class OpenGL : public GraphicsAPI
 {
@@ -22,7 +16,7 @@ public:
     void BindTexture(Texture& texture) override;
 
 private:
-    std::list<GLuint> shaderProgramIDs;
-    GLuint CompileShader(const std::string& source, GLenum type);
-    GLuint CreateShaderProgram(const std::string& vertexSource, const std::string& fragmentSource);
+    std::list<unsigned int> shaderProgramIDs;
+    unsigned int CompileShader(const string& source, unsigned int type);
+    unsigned int CreateShaderProgram(const string& vertexSource, const string& fragmentSource);
 };
