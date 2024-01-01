@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "RenderQueue.h"
 #include "Debug.h"
+#include "Time.h"
 
 
 static GLFWwindow* window = nullptr;
@@ -108,26 +109,29 @@ void OpenGL::ExecuteRenderCommands()
             const auto& bg = camera.backgroundColor;
             glClearColor(bg.r, bg.g, bg.b, bg.a);
 
-
             while (!RenderQueue::IsEmpty()) {
                 RenderCommand* command = RenderQueue::Dequeue();
 
-                
                 // find / compile shader
                 if (command->shader->ID == 0) 
                 {
                     command->shader->ID = CreateShaderProgram(command->shader->vertexCode, command->shader->fragmentCode);
                     shaderProgramIDs.push_back(command->shader->ID);
                 }
+
                 GLuint shaderProgram = command->shader->ID;
                 glUseProgram(shaderProgram);
 
+                // Retrieve the location of the 'time' uniform in the shader program
+                GLint timeLocation = glGetUniformLocation(shaderProgram, "time");
+
+                // Set the 'time' uniform in the shader to the total elapsed time since program initialization
+                glUniform1f(timeLocation, Time::TimeSinceInit());
 
                 // Set shader uniforms
                 modelLoc = glGetUniformLocation(shaderProgram, "model");
                 viewLoc = glGetUniformLocation(shaderProgram, "view");
                 projectionLoc = glGetUniformLocation(shaderProgram, "projection");
-
 
                 Mesh* mesh = command->mesh;
                 Texture* texture = command->texture;
@@ -136,12 +140,6 @@ void OpenGL::ExecuteRenderCommands()
                 Vector3 scale = command->scale;
 
                 BindTexture(*texture);
-
-
-                // We're currently using one texture unity.
-                //glActiveTexture(GL_TEXTURE0);
-
-
 
                 // Update VBOs
                 glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);

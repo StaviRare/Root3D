@@ -62,7 +62,7 @@ void initPrimitives()
 
 
     // Entity 2
-    Shader shader2 = Resource::LoadShader("shaders/Unlit.glsl");
+    Shader shader2 = Resource::LoadShader("shaders/UnlitWobble.glsl");
     Material material2(shader2);
     material2.texture = Resource::LoadTexture("textures/1.png");
 
