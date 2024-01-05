@@ -1,16 +1,34 @@
 #pragma once
 
-#include "Vector3.h"
 #include "Texture.h"
-#include "Mesh.h"
 #include "Shader.h"
 
-struct RenderCommand 
+struct ObjectRenderCommand // object render command
 {
-    Mesh* mesh;
-    Texture* texture;
     Shader* shader;
-    Vector3 position;
-    Vector3 eulerAngles;
-    Vector3 scale;
+    Texture* texture;
+
+    const float* vertices;
+    unsigned int verticesSize;
+
+    const float* texCoords;
+    unsigned int texCoordsSize;
+
+    const float* normals;
+    unsigned int normalsSize;
+
+    const int* indices;
+    unsigned int indicesSize;
+
+    float modelMatrix[16];
+};
+
+
+struct GlobalRenderCommand
+{
+    float backgroundColor[4];
+    float directionalLightDirection[3];
+    float directionalLightColor[4];
+    float viewMatrix[16];
+    float projectionMatrix[16];
 };

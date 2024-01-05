@@ -4,22 +4,23 @@
 #include <GLFW/glfw3.h>
 
 #include "OpenGL.h"
-#include "Mesh.h"
-#include "Camera.h"
 #include "RenderQueue.h"
 #include "Debug.h"
 #include "Time.h"
-#include "Matrix4.h"
-
 
 static GLFWwindow* window = nullptr;
 static int modelLoc = -1;
 static int viewLoc = -1;
 static int projectionLoc = -1;
-static unsigned int VAO, VBO[3], EBO; // Separate VBOs for positions, texture coordinates, and normals
-static float aspectRatio = 0;
-static float screenWidth = 960;
-static float screenHeight = 540;
+static int lightDirLoc = -1;
+static int lightColorLoc = -1;
+
+static unsigned int VAO;
+static unsigned int EBO;
+static unsigned int VBO[3];
+
+static float screenWidth = 960;     // SHOULD NOT BE HERE
+static float screenHeight = 540;    // SHOULD NOT BE HERE
 
 OpenGL::OpenGL()
 {
@@ -31,35 +32,21 @@ OpenGL::~OpenGL()
 
 }
 
-void onWindowResize(GLFWwindow* window, int width, int height)
-{
-    // Update the OpenGL viewport
-    glViewport(0, 0, width, height);
-
-    // protection
-    if (height == 0) height = 1;
-
-    screenWidth = width;
-    screenHeight = height;
-    aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-}
-
-
 void OpenGL::Initialize()
 {
     if (!glfwInit()) {
         //return -1;
     }
 
-    window = glfwCreateWindow(screenWidth, screenHeight, "Scene", NULL, NULL);
-    aspectRatio = screenWidth / screenHeight;
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // non resizable window
+
+    window = glfwCreateWindow(screenWidth, screenHeight, "Root3D", NULL, NULL);
 
     if (!window) {
         glfwTerminate();
     }
 
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, onWindowResize); // on resize callback
 
     if (glewInit() != GLEW_OK) {
         glfwTerminate();
@@ -99,18 +86,25 @@ void OpenGL::ExecuteRenderCommands()
 {
     if (!glfwWindowShouldClose(window))
     {
-        if (Camera::exists())
+        const GlobalRenderCommand* onceCmd = RenderQueue::GetOnceCommand();
+        
+        if (onceCmd) 
         {
-            Camera& camera = Camera::getInstance();
+            const float* bg = onceCmd->backgroundColor;
+            const float* viewMatrix = onceCmd->viewMatrix;
+            const float* projectionMatrix = onceCmd->projectionMatrix;
+            const float* lightColor = onceCmd->directionalLightColor;
+            const float* lightDir = onceCmd->directionalLightDirection;
 
-            const auto& bg = camera.backgroundColor;
-            glClearColor(bg.r, bg.g, bg.b, bg.a);
+            glClearColor(bg[0], bg[1], bg[2], bg[3]);
 
-            while (!RenderQueue::IsEmpty()) {
-                RenderCommand* command = RenderQueue::Dequeue();
+            // Run render per object command
+            while (RenderQueue::IsEmpty() == false)
+            {
+                ObjectRenderCommand* command = RenderQueue::Dequeue();
 
                 // find / compile shader
-                if (command->shader->ID == 0) 
+                if (command->shader->ID == 0)
                 {
                     command->shader->ID = CreateShaderProgram(command->shader->vertexCode, command->shader->fragmentCode);
                     shaderProgramIDs.push_back(command->shader->ID);
@@ -125,71 +119,45 @@ void OpenGL::ExecuteRenderCommands()
                 // Set the 'time' uniform in the shader to the total elapsed time since program initialization
                 glUniform1f(timeLocation, Time::TimeSinceInit());
 
-                // Set shader uniforms
-                modelLoc = glGetUniformLocation(shaderProgram, "model");
-                viewLoc = glGetUniformLocation(shaderProgram, "view");
-                projectionLoc = glGetUniformLocation(shaderProgram, "projection");
-
-                Mesh* mesh = command->mesh;
                 Texture* texture = command->texture;
-                Vector3 position = command->position;
-                Vector3 rotation = command->eulerAngles;
-                Vector3 scale = command->scale;
 
                 BindTexture(*texture);
 
-                // Update VBOs
+                // Bind vertex position buffer and upload data
                 glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-                glBufferData(GL_ARRAY_BUFFER, mesh->GetVertices().size() * sizeof(float), mesh->GetVertices().data(), GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, command->verticesSize * sizeof(float), command->vertices, GL_STATIC_DRAW);
 
+                // Bind texture coordinate buffer and upload data
                 glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-                glBufferData(GL_ARRAY_BUFFER, mesh->GetTexCoords().size() * sizeof(float), mesh->GetTexCoords().data(), GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, command->texCoordsSize * sizeof(float), command->texCoords, GL_STATIC_DRAW);
 
+                // Bind vertex normal buffer and upload data
                 glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-                glBufferData(GL_ARRAY_BUFFER, mesh->GetNormals().size() * sizeof(float), mesh->GetNormals().data(), GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, command->normalsSize * sizeof(float), command->normals, GL_STATIC_DRAW);
 
+                // Bind index buffer and upload data
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetIndices().size() * sizeof(int), mesh->GetIndices().data(), GL_STATIC_DRAW);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, command->indicesSize * sizeof(int), command->indices, GL_STATIC_DRAW);
 
-                Matrix4 model = Matrix4::Identity();
+                // Set shader's model matrix
+                modelLoc = glGetUniformLocation(shaderProgram, "model");
+                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, command->modelMatrix);
 
-                // Using SRT (Scale-Rotate-Translate) order for transformations
-                model = model.Scale(command->scale);
-                model = model.RotateX(rotation.x);
-                model = model.RotateY(rotation.y);
-                model = model.RotateZ(rotation.z);
-                model = model.Translate(command->position);
+                // Set shader's view matrix
+                viewLoc = glGetUniformLocation(shaderProgram, "view");
+                glUniformMatrix4fv(viewLoc, 1, GL_FALSE, viewMatrix);
 
-                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Pointer());
+                // Set shader's projection matrix
+                projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+                glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projectionMatrix);
 
-                // Make this better
-                Vector3 cameraTarget = camera.transform.position + camera.transform.getForward();
-                Vector3 cameraUp(0.0f, 1.0f, 0.0f); // add 'up' to transform
+                // Set shader's light direction
+                lightDirLoc = glGetUniformLocation(shaderProgram, "lightDir");
+                glUniform3f(lightDirLoc, lightDir[0], lightDir[1], lightDir[2]);
 
-                // Use Matrix4 for view matrix calculation
-                Matrix4 view = Matrix4::LookAt(camera.transform.position, cameraTarget, cameraUp);
-                glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.Pointer());
-
-                // Use Matrix4 for projection matrix calculation
-                Matrix4 projection = Matrix4::Perspective(camera.fov, aspectRatio, camera.nearClipPlane, camera.farClipPlane);
-                glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.Pointer());
-
-                // Define the direction of the light source
-                Vector3 lightDir(1.0f, 0.0f, 0.0f); // Direction of the light
-
-                // Define the color of the light source
-                Vector3 lightColor(1.0f, 1.0f, 1.0f); // White light
-
-                // Normalize the light direction vector
-                lightDir.normalize();
-
-                // Get the locations of the light direction and color uniforms in the shader
-                int lightDirLoc = glGetUniformLocation(shaderProgram, "lightDir");
-                int lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
-
-                // Pass the light direction and color as uniforms to the shader
-                glUniform3f(lightDirLoc, lightDir.x, lightDir.y, lightDir.z); // Set the light direction
-                glUniform3f(lightColorLoc, lightColor.x, lightColor.y, lightColor.z); // Set the light color
+                // Set shader's light color
+                lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
+                glUniform3f(lightColorLoc, lightColor[0], lightColor[1], lightColor[2]);
 
                 // Draw the mesh
                 glBindVertexArray(VAO);
@@ -197,14 +165,9 @@ void OpenGL::ExecuteRenderCommands()
                 // Draws the mesh as a series of triangles. 
                 // The number of indices determines how many vertices are 
                 // used from the index buffer, ensuring the entire mesh is rendered correctly.
-                glDrawElements(GL_TRIANGLES, mesh->GetIndices().size(), GL_UNSIGNED_INT, 0);
+                glDrawElements(GL_TRIANGLES, command->indicesSize, GL_UNSIGNED_INT, 0);
             }
         }
-        else
-        {
-
-        }
-
         // Swap buffers: This displays the rendered frame on the window.
         glfwSwapBuffers(window);
 
@@ -276,7 +239,6 @@ void OpenGL::BindTexture(Texture& texture)
         glBindTexture(GL_TEXTURE_2D, texture.textureID);
     }
 }
-
 
 unsigned int OpenGL::CompileShader(const string& source, unsigned int type) {
     unsigned int shader = glCreateShader(type);

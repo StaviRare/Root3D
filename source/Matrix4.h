@@ -33,46 +33,26 @@ public:
         return result;
     }
 
-    Matrix4 RotateX(float angle) const {
-        float rad = angle * Math::PI / 180.0f; // Not sure we want that here
-        float cosA = cos(rad);
-        float sinA = sin(rad);
+    Matrix4 Rotate(const Vector3& angles) const {
+        // Convert angles to radians
+        float radX = angles.x * Math::PI / 180.0f;
+        float radY = angles.y * Math::PI / 180.0f;
+        float radZ = angles.z * Math::PI / 180.0f;
 
-        Matrix4 rotation;
-        rotation.m[1][1] = cosA;
-        rotation.m[1][2] = -sinA;
-        rotation.m[2][1] = sinA;
-        rotation.m[2][2] = cosA;
+        // Rotation matrices for each axis
+        Matrix4 rotX, rotY, rotZ;
 
-        return (*this) * rotation;
-    }
+        rotX.m[1][1] = cos(radX); rotX.m[1][2] = -sin(radX);
+        rotX.m[2][1] = sin(radX); rotX.m[2][2] = cos(radX);
 
-    Matrix4 RotateY(float angle) const {
-        float rad = angle * Math::PI / 180.0f; // Not sure we want that here
-        float cosA = cos(rad);
-        float sinA = sin(rad);
+        rotY.m[0][0] = cos(radY); rotY.m[0][2] = sin(radY);
+        rotY.m[2][0] = -sin(radY); rotY.m[2][2] = cos(radY);
 
-        Matrix4 rotation;
-        rotation.m[0][0] = cosA;
-        rotation.m[0][2] = sinA;
-        rotation.m[2][0] = -sinA;
-        rotation.m[2][2] = cosA;
+        rotZ.m[0][0] = cos(radZ); rotZ.m[0][1] = -sin(radZ);
+        rotZ.m[1][0] = sin(radZ); rotZ.m[1][1] = cos(radZ);
 
-        return (*this) * rotation;
-    }
-
-    Matrix4 RotateZ(float angle) const {
-        float rad = angle * Math::PI / 180.0f; // Not sure we want that here
-        float cosA = cos(rad);
-        float sinA = sin(rad);
-
-        Matrix4 rotation;
-        rotation.m[0][0] = cosA;
-        rotation.m[0][1] = -sinA;
-        rotation.m[1][0] = sinA;
-        rotation.m[1][1] = cosA;
-
-        return (*this) * rotation;
+        // Combine rotations and apply to this matrix
+        return (*this) * rotZ * rotY * rotX;
     }
 
     Matrix4 operator*(const Matrix4& rhs) const {
@@ -127,5 +107,13 @@ public:
 
     const float* Pointer() const {
         return &m[0][0];
+    }
+
+    void CopyToArray(float(&out)[16]) const {
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                out[i * 4 + j] = m[i][j];
+            }
+        }
     }
 };

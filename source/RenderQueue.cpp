@@ -1,14 +1,16 @@
 #include "RenderQueue.h"
 
-std::queue<RenderCommand> RenderQueue::queue;
+std::queue<ObjectRenderCommand> RenderQueue::queue;
+GlobalRenderCommand RenderQueue::onceCommand;
+bool RenderQueue::hasOnceCommand = false;
 
-void RenderQueue::Enqueue(const RenderCommand& command) {
+void RenderQueue::Enqueue(const ObjectRenderCommand& command) {
     queue.push(command);
 }
 
-RenderCommand* RenderQueue::Dequeue() {
+ObjectRenderCommand* RenderQueue::Dequeue() {
     if (!queue.empty()) {
-        RenderCommand* command = &queue.front();
+        ObjectRenderCommand* command = &queue.front();
         queue.pop();
         return command;
     }
@@ -24,6 +26,20 @@ size_t RenderQueue::Size() {
 }
 
 void RenderQueue::Clear() {
-    std::queue<RenderCommand> empty;
-    std::swap(queue, empty);
+    while (!queue.empty()) {
+        queue.pop();
+    }
+}
+
+void RenderQueue::EnqueueOnce(const GlobalRenderCommand& command) {
+    onceCommand = command;
+    hasOnceCommand = true;
+}
+
+const GlobalRenderCommand* RenderQueue::GetOnceCommand() {
+    if (hasOnceCommand) {
+        hasOnceCommand = false; // Reset flag after fetching
+        return &onceCommand;
+    }
+    return nullptr;
 }
