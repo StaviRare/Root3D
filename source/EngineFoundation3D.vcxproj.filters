@@ -53,6 +53,12 @@
     <Filter Include="Engine\Platform Independence Layer\Platform Detection">
       <UniqueIdentifier>{ea6ee84e-ec15-49b0-8d67-f18aa1124584}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Core Systems\Math">
+      <UniqueIdentifier>{865ad840-006c-49ab-9346-f96a598d04a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Core Systems\Debug">
+      <UniqueIdentifier>{a1591100-082e-4637-a800-0f55e9bf2876}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileManager.cpp">
@@ -78,9 +84,6 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine\Resource Management</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Engine\Core Systems</Filter>
     </ClCompile>
     <ClCompile Include="WindowsKeyboardHandler.cpp">
       <Filter>Engine\Game Layer\Human Interface Devices</Filter>
@@ -113,14 +116,11 @@
       <Filter>Engine\Core Systems</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Debug.cpp">
+      <Filter>Engine\Core Systems\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Math.h">
-      <Filter>Engine\Core Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Debug.h">
-      <Filter>Engine\Core Systems</Filter>
-    </ClInclude>
     <ClInclude Include="MeshGenerator.h">
       <Filter>Engine\Game Layer\Gameplay Foundation</Filter>
     </ClInclude>
@@ -135,12 +135,6 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
     <ClInclude Include="DirectoryManager.h">
       <Filter>Engine\Platform Independence Layer\File System</Filter>
@@ -193,12 +187,6 @@
     <ClInclude Include="ExampleScene.h">
       <Filter>Example</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
     <ClInclude Include="List.h">
       <Filter>Engine\Platform Independence Layer\Collections and Iterators</Filter>
     </ClInclude>
@@ -232,11 +220,29 @@
     <ClInclude Include="Types.h">
       <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix4.h">
-      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
-    </ClInclude>
     <ClInclude Include="Core.h">
       <Filter>Engine\Core Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Engine\Core Systems\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix4.h">
+      <Filter>Engine\Core Systems\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Engine\Core Systems\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Engine\Core Systems\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Engine\Core Systems\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
