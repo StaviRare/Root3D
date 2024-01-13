@@ -2,7 +2,7 @@
 
 Platform PlatformDetector::_currentPlatform = Platform::Unknown;
 
-void PlatformDetector::Initialize() 
+void PlatformDetector::Initialize()
 {
 #ifdef _WIN32 || defined(_WIN64)
     _currentPlatform = Platform::Windows;
@@ -13,20 +13,22 @@ void PlatformDetector::Initialize()
 #endif
 }
 
-Platform PlatformDetector::GetPlatform() 
+Platform PlatformDetector::GetPlatform()
 {
     return _currentPlatform;
 }
 
-string PlatformDetector::GetPlatformName() 
+string PlatformDetector::GetPlatformName()
 {
     switch (_currentPlatform)
     {
-    case Platform::Windows:
+        case Platform::Windows:
         return "Windows";
-    case Platform::Android:
+
+        case Platform::Android:
         return "Android";
-    default:
+
+        default:
         return "Unknown";
     }
 }

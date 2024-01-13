@@ -3,12 +3,13 @@
 #include "Types.h"
 #include "Platform.h"
 
-class PlatformDetector {
-public:
+class PlatformDetector
+{
+    public:
     static Platform GetPlatform();
     static string GetPlatformName();
     static void Initialize();
 
-private:
+    private:
     static Platform _currentPlatform;
 };
