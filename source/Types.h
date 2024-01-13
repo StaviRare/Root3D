@@ -21,5 +21,6 @@ using float32 = float;
 using float64 = double;
 
 // Others
+using id = uint64;
 using byte = uint8;
 using string = std::string;
