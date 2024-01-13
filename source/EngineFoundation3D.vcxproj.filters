@@ -55,9 +55,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="FileManager.cpp">
       <Filter>Engine\Platform Independence Layer\File System</Filter>
     </ClCompile>
@@ -112,6 +109,10 @@
     <ClCompile Include="Resource.cpp">
       <Filter>Engine\Resource Management</Filter>
     </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>Engine\Core Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.h">
@@ -233,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="Matrix4.h">
       <Filter>Engine\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>Engine\Core Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

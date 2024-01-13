@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Core.cpp" />
     <ClCompile Include="DirectoryManager.cpp" />
     <ClCompile Include="EntityPool.cpp" />
     <ClCompile Include="ExampleScene.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Core.h" />
     <ClInclude Include="DirectoryManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityPool.h" />
