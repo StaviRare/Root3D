@@ -1,12 +1,12 @@
 #pragma once
 
-#include <iostream>
+#include "Types.h"
 #include "Platform.h"
 
 class PlatformDetector {
 public:
     static Platform GetPlatform();
-    static std::string GetPlatformName();
+    static string GetPlatformName();
     static void Initialize();
 
 private:

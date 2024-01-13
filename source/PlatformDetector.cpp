@@ -18,7 +18,7 @@ Platform PlatformDetector::GetPlatform()
     return _currentPlatform;
 }
 
-std::string PlatformDetector::GetPlatformName() 
+string PlatformDetector::GetPlatformName() 
 {
     switch (_currentPlatform)
     {
