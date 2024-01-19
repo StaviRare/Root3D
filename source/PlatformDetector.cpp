@@ -4,7 +4,7 @@ Platform PlatformDetector::_currentPlatform = Platform::Unknown;
 
 void PlatformDetector::Initialize()
 {
-#ifdef _WIN32 || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
     _currentPlatform = Platform::Windows;
 #elif __ANDROID__
     _currentPlatform = Platform::Android;
