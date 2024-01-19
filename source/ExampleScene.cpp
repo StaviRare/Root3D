@@ -76,7 +76,7 @@ void initPrimitives()
 
 void handleCameraMovement()
 {
-    double deltaTime = Time::DeltaTime();
+    float deltaTime = Time::DeltaTime();
 
     // Move forward
     if (Input::keyDown("w"))
