@@ -6,12 +6,21 @@
 #include "GraphicsWrapper.h"
 #include "PlatformDetector.h"
 #include "RenderCommandHandler.h"
+#include "WindowWrapper.h"
+
+static Window* window;
 
 void Core::Initialize()
 {
+    // LOAD CONFIG W/ JsonParser
+
     PlatformDetector::Initialize();
     Time::Initialize();
-    GraphicsWrapper::Initialize(APIType::OpenGL); // hard coded. will use config in future.
+    WindowWrapper::Initialize(960, 540);            // Hard coded. will use EngineConfig in future.
+    GraphicsWrapper::Initialize(APIType::OpenGL);   // Hard coded. will use EngineConfig in future.
+
+    // Physics initialize
+
     SceneManager::loadScene(0);
 }
 
@@ -20,6 +29,7 @@ void Core::Tick()
     // Physics Simulation
 
     // Input Handling
+    WindowWrapper::PollEvents();
 
     // Game Logic Processing
     SceneManager::runScene();
@@ -31,8 +41,8 @@ void Core::Tick()
 
     // UI Rendering
 
-    // End of Frame Tasks ()
-    //GraphicsWrapper::SwapBuffers();
+    // End of Frame Tasks
+    WindowWrapper::SwapBuffers();
 
     // Game Pausing
 
@@ -46,4 +56,7 @@ void Core::UnInitialize()
 {
     // Shut everything down, in reverse order
     // Physics.Uninitialize();
+
+    GraphicsWrapper::UnInitialize();
+    WindowWrapper::UnInitialize();
 }

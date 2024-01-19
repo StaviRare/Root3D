@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="DesktopWindow.cpp" />
     <ClCompile Include="DirectoryManager.cpp" />
     <ClCompile Include="EntityPool.cpp" />
     <ClCompile Include="ExampleScene.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="SceneRegistrations.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="WindowWrapper.cpp" />
     <ClCompile Include="WindowsKeyboardHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +179,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="DesktopWindow.h" />
     <ClInclude Include="DirectoryManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityPool.h" />
@@ -211,8 +214,11 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="UserDefinedTypes.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowWrapper.h" />
     <ClInclude Include="WindowsKeyboardHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

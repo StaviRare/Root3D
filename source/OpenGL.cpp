@@ -1,14 +1,13 @@
 #include <map>
 #include <iostream>
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 #include "OpenGL.h"
 #include "RenderQueue.h"
 #include "Debug.h"
 #include "Time.h"
+#include "WindowWrapper.h"
 
-static GLFWwindow* window = nullptr;
 static int modelLoc = -1;
 static int viewLoc = -1;
 static int projectionLoc = -1;
@@ -19,8 +18,6 @@ static unsigned int VAO;
 static unsigned int EBO;
 static unsigned int VBO[3];
 
-static float screenWidth = 960;     // SHOULD NOT BE HERE
-static float screenHeight = 540;    // SHOULD NOT BE HERE
 
 OpenGL::OpenGL()
 {
@@ -34,47 +31,36 @@ OpenGL::~OpenGL()
 
 void OpenGL::Initialize()
 {
-    if (!glfwInit()) {
-        //return -1;
+    WindowWrapper::RegisterResizeCallback(OnWindowResize);
+
+    initialized = glewInit() == GLEW_OK;
+
+    if (initialized)
+    {
+        glEnable(GL_DEPTH_TEST);
+
+        // Create vertex array and buffers
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(3, VBO);
+        glGenBuffers(1, &EBO);
+
+        glBindVertexArray(VAO);
+
+        // Vertex positions
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+        glEnableVertexAttribArray(0);
+
+        // Texture coordinates
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
+        glEnableVertexAttribArray(1);
+
+        // Normals
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+        glEnableVertexAttribArray(2);
     }
-
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // non resizable window
-
-    window = glfwCreateWindow(screenWidth, screenHeight, "Root3D", NULL, NULL);
-
-    if (!window) {
-        glfwTerminate();
-    }
-
-    glfwMakeContextCurrent(window);
-
-    if (glewInit() != GLEW_OK) {
-        glfwTerminate();
-    }
-
-    glEnable(GL_DEPTH_TEST);
-
-    // Create vertex array and buffers
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(3, VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    // Vertex positions
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // Texture coordinates
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-
-    // Normals
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(2);
 }
 
 void OpenGL::ClearScreen()
@@ -84,11 +70,11 @@ void OpenGL::ClearScreen()
 
 void OpenGL::ExecuteRenderCommands()
 {
-    if (!glfwWindowShouldClose(window))
+    if (initialized)
     {
         const GlobalRenderCommand* onceCmd = RenderQueue::GetOnceCommand();
-        
-        if (onceCmd) 
+
+        if (onceCmd)
         {
             const float* bg = onceCmd->backgroundColor;
             const float* viewMatrix = onceCmd->viewMatrix;
@@ -168,36 +154,23 @@ void OpenGL::ExecuteRenderCommands()
                 glDrawElements(GL_TRIANGLES, command->indicesSize, GL_UNSIGNED_INT, 0);
             }
         }
-        // Swap buffers: This displays the rendered frame on the window.
-        glfwSwapBuffers(window);
-
-        // Poll events: This checks for user input and window events (e.g., keyboard, mouse).
-        glfwPollEvents();
     }
-    else
+}
+
+void OpenGL::UnInitialize()
+{
+    WindowWrapper::UnRegisterResizeCallback(OnWindowResize);
+
+    glDeleteBuffers(3, VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &VAO);
+
+    for (GLuint shaderID : shaderProgramIDs)
     {
-        // Cleanup resources
-
-        // Delete VBOs
-        glDeleteBuffers(3, VBO);
-
-        // Delete EBO
-        glDeleteBuffers(1, &EBO);
-
-        // Delete VAO
-        glDeleteVertexArrays(1, &VAO);
-
-        // Delete shader program
-        for (GLuint shaderID : shaderProgramIDs) 
-        {
-            glDeleteProgram(shaderID);
-        }
-
-        shaderProgramIDs.clear();
-
-        // Terminate GLFW
-        glfwTerminate();
+        glDeleteProgram(shaderID);
     }
+
+    shaderProgramIDs.clear();
 }
 
 void OpenGL::BindTexture(Texture& texture)
@@ -240,7 +213,13 @@ void OpenGL::BindTexture(Texture& texture)
     }
 }
 
-unsigned int OpenGL::CompileShader(const string& source, unsigned int type) {
+void OpenGL::OnWindowResize(int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+unsigned int OpenGL::CompileShader(const string& source, unsigned int type)
+{
     unsigned int shader = glCreateShader(type);
     const char* src = source.c_str();
     glShaderSource(shader, 1, &src, nullptr);
@@ -249,7 +228,8 @@ unsigned int OpenGL::CompileShader(const string& source, unsigned int type) {
     return shader;
 }
 
-unsigned int OpenGL::CreateShaderProgram(const string& vertexSource, const string& fragmentSource) {
+unsigned int OpenGL::CreateShaderProgram(const string& vertexSource, const string& fragmentSource)
+{
     unsigned int vertexShader = CompileShader(vertexSource, GL_VERTEX_SHADER);
     unsigned int fragmentShader = CompileShader(fragmentSource, GL_FRAGMENT_SHADER);
 

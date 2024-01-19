@@ -6,19 +6,25 @@
 
 class Camera : public Entity
 {
-public:
-    // Constructor
+    public:
     Camera();
+    ~Camera();
 
     float fov = 60;
-    float farClipPlane = 100;
-    float nearClipPlane = 0.1f;
-    Color backgroundColor;
+    float farClipPlane = 1000;
+    float nearClipPlane = 0.3f;
+    Color backgroundColor = Color(0, 0, 0, 0);
 
-    static bool exists();
-    static Camera& getInstance();
+    float GetAspect();
+    void ResetAspect();
+    void SetAspect(float aspect);
 
-private:
-    static Camera* instance;
+    static bool Exists();
+    static Camera& GetInstance();
+
+    private:
+    float customAspect = 0;
+    bool isUsingCustomAspect = false;
+    static Camera* Instance;
 };
 

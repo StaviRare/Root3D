@@ -35,9 +35,6 @@
     <Filter Include="Engine\Platform Independence Layer\Data Types">
       <UniqueIdentifier>{2c1247c3-fcce-491a-b998-745e5ea06a18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Platform Independence Layer\Graphics Wrappers">
-      <UniqueIdentifier>{4841e73a-a3d2-47c8-9a2e-7240b1163266}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Platform Independence Layer\Timer">
       <UniqueIdentifier>{4e3db151-5211-41bd-ae64-4f00d5532e35}</UniqueIdentifier>
     </Filter>
@@ -59,6 +56,12 @@
     <Filter Include="Engine\Core Systems\Debug">
       <UniqueIdentifier>{a1591100-082e-4637-a800-0f55e9bf2876}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Platform Independence Layer\Window">
+      <UniqueIdentifier>{85c749e4-a7d0-43cb-aa16-57dedc00fe47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Platform Independence Layer\Graphics">
+      <UniqueIdentifier>{4841e73a-a3d2-47c8-9a2e-7240b1163266}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileManager.cpp">
@@ -71,10 +74,10 @@
       <Filter>Engine\Game Layer\Gameplay Foundation</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsWrapper.cpp">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL.cpp">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
       <Filter>Engine\Platform Independence Layer\Timer</Filter>
@@ -104,7 +107,7 @@
       <Filter>Engine\Platform Independence Layer\Timer</Filter>
     </ClCompile>
     <ClCompile Include="RenderQueue.cpp">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="RenderCommandHandler.cpp">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
@@ -118,6 +121,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Debug.cpp">
       <Filter>Engine\Core Systems\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowWrapper.cpp">
+      <Filter>Engine\Platform Independence Layer\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="DesktopWindow.cpp">
+      <Filter>Engine\Platform Independence Layer\Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,13 +152,13 @@
       <Filter>Engine\Platform Independence Layer\File System</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsAPI.h">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsWrapper.h">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL.h">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">
       <Filter>Engine\Platform Independence Layer\Timer</Filter>
@@ -203,10 +212,10 @@
       <Filter>Engine\Platform Independence Layer\Timer</Filter>
     </ClInclude>
     <ClInclude Include="RenderQueue.h">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="RenderCommand.h">
-      <Filter>Engine\Platform Independence Layer\Graphics Wrappers</Filter>
+      <Filter>Engine\Platform Independence Layer\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="RenderCommandHandler.h">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
@@ -243,6 +252,18 @@
     </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowWrapper.h">
+      <Filter>Engine\Platform Independence Layer\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Engine\Platform Independence Layer\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="DesktopWindow.h">
+      <Filter>Engine\Platform Independence Layer\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="UserDefinedTypes.h">
+      <Filter>Engine\Platform Independence Layer\Data Types</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

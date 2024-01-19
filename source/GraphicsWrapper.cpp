@@ -30,7 +30,7 @@ void GraphicsWrapper::ExecuteRenderCommands()
     graphicsAPI->ExecuteRenderCommands();
 }
 
-void GraphicsWrapper::BindTexture(Texture& texture)
+void GraphicsWrapper::UnInitialize()
 {
-    graphicsAPI->BindTexture(texture);
+    graphicsAPI->UnInitialize();
 }

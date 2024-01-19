@@ -1,34 +1,67 @@
 #include "Camera.h"
 #include "Debug.h"
-#include <iostream>
+#include "WindowWrapper.h"
 
-Camera* Camera::instance = nullptr;
+Camera* Camera::Instance = nullptr;
 
 Camera::Camera()
 {
-    if (instance == nullptr)
+    if (Instance == nullptr)
     {
-        instance = this;
+        Instance = this;
     }
     else
     {
-        Debug::error("Error: Multiple instances of Camera are not supported.");
-        exit(1);
+        Debug::error("Multiple instances of Camera are not supported!");
     }
 }
 
-bool Camera::exists()
+Camera::~Camera()
 {
-    return instance != nullptr;
-}
-
-Camera& Camera::getInstance()
-{
-    if (instance == nullptr)
+    if (Instance == this)
     {
-        Debug::error("Error: No instance of Camera exists.");
-        exit(1);
+        Instance = nullptr;
+    }
+}
+
+bool Camera::Exists()
+{
+    return Instance != nullptr;
+}
+
+Camera& Camera::GetInstance()
+{
+    if (Instance == nullptr)
+    {
+        Debug::error("Camera instance does not exists!");
     }
 
-    return *instance;
+    return *Instance;
+}
+
+float Camera::GetAspect()
+{
+    float returnValue;
+
+    if (isUsingCustomAspect)
+    {
+        returnValue = customAspect;
+    }
+    else
+    {
+        returnValue = static_cast<float>( WindowWrapper::GetWidth() ) / WindowWrapper::GetHeight();
+    }
+
+    return returnValue;
+}
+
+void Camera::ResetAspect()
+{
+    isUsingCustomAspect = false;
+}
+
+void Camera::SetAspect(float aspect)
+{
+    customAspect = aspect;
+    isUsingCustomAspect = true;
 }

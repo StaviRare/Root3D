@@ -14,17 +14,16 @@ void RenderCommandHandler::Tick()
 {
     const std::set<Entity*>& entities = EntityPool::GetEntities();
 
-    if (Camera::exists())
+    if (Camera::Exists())
     {
-        Camera& camera = Camera::getInstance();
+        Camera& camera = Camera::GetInstance();
 
         Vector3 cameraUp(0.0f, 1.0f, 0.0f);
         Vector3 cameraTarget = camera.transform.position + camera.transform.getForward();
         Matrix4 view = Matrix4::LookAt(camera.transform.position, cameraTarget, cameraUp);
-        Matrix4 projection = Matrix4::Perspective(camera.fov, 1.7f, camera.nearClipPlane, camera.farClipPlane); // ASPECT RATIO!
+        Matrix4 projection = Matrix4::Perspective(camera.fov, camera.GetAspect(), camera.nearClipPlane, camera.farClipPlane);
 
-
-        // Hard coded, need object directional light
+        // ToDo - Remove this hard coded directional light. Create object.
         Vector3 lightDir(1.0f, 0.0f, 0.0f);
         Vector3 lightColor(1.0f, 1.0f, 1.0f);
         lightDir.normalize();
@@ -47,7 +46,6 @@ void RenderCommandHandler::Tick()
         renderOnce.directionalLightColor[2] = lightColor.z;
 
         RenderQueue::EnqueueOnce(renderOnce);
-
 
         for (const Entity* entity : entities)
         {
@@ -72,7 +70,6 @@ void RenderCommandHandler::Tick()
 
                 renderCommand.normals = meshData->mesh.GetNormals().data();
                 renderCommand.normalsSize = meshData->mesh.GetNormals().size();
-
 
                 Matrix4 model = Matrix4::Identity();
                 model = model.Scale(entity->transform.scale);
