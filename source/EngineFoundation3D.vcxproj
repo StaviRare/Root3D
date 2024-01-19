@@ -73,8 +73,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)\third_party\glew-2.2.0\include;$(SolutionDir)\third_party\glfw-3.3.8.bin.WIN32\include;$(SolutionDir)\third_party\stb;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\third_party\glew-2.2.0\lib\Release\Win32;$(SolutionDir)\third_party\glfw-3.3.8.bin.WIN32\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\third_party\glew-2.2.0\include;$(SolutionDir)\third_party\stb;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\third_party\glew-2.2.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\build\output</OutDir>
     <IntDir>$(SolutionDir)\build\intermediate</IntDir>
     <TargetName>$(ProjectName)</TargetName>
@@ -103,7 +103,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
