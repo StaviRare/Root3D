@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="DesktopInput.cpp" />
     <ClCompile Include="DesktopWindow.cpp" />
     <ClCompile Include="DirectoryManager.cpp" />
     <ClCompile Include="EntityPool.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="GraphicsWrapper.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="OpenGL.cpp" />
@@ -172,13 +174,13 @@
     <ClCompile Include="Stopwatch.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="WindowWrapper.cpp" />
-    <ClCompile Include="WindowsKeyboardHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="DesktopInput.h" />
     <ClInclude Include="DesktopWindow.h" />
     <ClInclude Include="DirectoryManager.h" />
     <ClInclude Include="Entity.h" />
@@ -189,7 +191,7 @@
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="GraphicsWrapper.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="IPlatformInput.h" />
     <ClInclude Include="Iterator.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Material.h" />
@@ -219,7 +221,6 @@
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowWrapper.h" />
-    <ClInclude Include="WindowsKeyboardHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

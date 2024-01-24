@@ -17,9 +17,6 @@
     <Filter Include="Engine\Game Layer\Gameplay Foundation\Components">
       <UniqueIdentifier>{3ff03da3-8664-47c6-9a9d-a5e8743a10a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Game Layer\Human Interface Devices">
-      <UniqueIdentifier>{8a945d64-d7e4-4420-8842-04e3a3ac8800}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Game Layer\Low-Level Renderer">
       <UniqueIdentifier>{9c3179cf-e12c-48b3-97f3-f9b239f0eac0}</UniqueIdentifier>
     </Filter>
@@ -62,6 +59,9 @@
     <Filter Include="Engine\Platform Independence Layer\Graphics">
       <UniqueIdentifier>{4841e73a-a3d2-47c8-9a2e-7240b1163266}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Platform Independence Layer\Human Interface Devices">
+      <UniqueIdentifier>{30dd679b-63e6-4506-a5d9-1390dc0081de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileManager.cpp">
@@ -87,9 +87,6 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine\Resource Management</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowsKeyboardHandler.cpp">
-      <Filter>Engine\Game Layer\Human Interface Devices</Filter>
     </ClCompile>
     <ClCompile Include="EntityPool.cpp">
       <Filter>Engine\Game Layer\Gameplay Foundation\Entities</Filter>
@@ -128,19 +125,16 @@
     <ClCompile Include="DesktopWindow.cpp">
       <Filter>Engine\Platform Independence Layer\Window</Filter>
     </ClCompile>
+    <ClCompile Include="DesktopInput.cpp">
+      <Filter>Engine\Platform Independence Layer\Human Interface Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Engine\Platform Independence Layer\Human Interface Devices</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshGenerator.h">
       <Filter>Engine\Game Layer\Gameplay Foundation</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Engine\Game Layer\Human Interface Devices</Filter>
-    </ClInclude>
-    <ClInclude Include="InputHandler.h">
-      <Filter>Engine\Game Layer\Human Interface Devices</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsKeyboardHandler.h">
-      <Filter>Engine\Game Layer\Human Interface Devices</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Engine\Game Layer\Low-Level Renderer</Filter>
@@ -264,6 +258,15 @@
     </ClInclude>
     <ClInclude Include="UserDefinedTypes.h">
       <Filter>Engine\Platform Independence Layer\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Engine\Platform Independence Layer\Human Interface Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="IPlatformInput.h">
+      <Filter>Engine\Platform Independence Layer\Human Interface Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="DesktopInput.h">
+      <Filter>Engine\Platform Independence Layer\Human Interface Devices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

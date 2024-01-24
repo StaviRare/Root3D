@@ -7,6 +7,7 @@
 #include "PlatformDetector.h"
 #include "RenderCommandHandler.h"
 #include "WindowWrapper.h"
+#include "Input.h"
 
 static Window* window;
 
@@ -16,6 +17,7 @@ void Core::Initialize()
 
     PlatformDetector::Initialize();
     Time::Initialize();
+    Input::Initialize();
     WindowWrapper::Initialize(960, 540);            // Hard coded. will use EngineConfig in future.
     GraphicsWrapper::Initialize(APIType::OpenGL);   // Hard coded. will use EngineConfig in future.
 
@@ -29,6 +31,7 @@ void Core::Tick()
     // Physics Simulation
 
     // Input Handling
+    Input::Tick();
     WindowWrapper::PollEvents();
 
     // Game Logic Processing
@@ -59,4 +62,5 @@ void Core::UnInitialize()
 
     GraphicsWrapper::UnInitialize();
     WindowWrapper::UnInitialize();
+    Input::UnInitialize();
 }

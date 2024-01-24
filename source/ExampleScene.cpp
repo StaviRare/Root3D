@@ -79,37 +79,37 @@ void handleCameraMovement()
     float deltaTime = Time::DeltaTime();
 
     // Move forward
-    if (Input::keyDown("w"))
+    if (Input::GetKey("w"))
     {
         camera.transform.position += camera.transform.getForward() * cameraMoveSpeed * deltaTime;
     }
 
     // Move back
-    if (Input::keyDown("s"))
+    if (Input::GetKey("s"))
     {
         camera.transform.position -= camera.transform.getForward() * cameraMoveSpeed * deltaTime;
     }
 
     // Look left
-    if (Input::keyDown("d"))
+    if (Input::GetKey("d"))
     {
         camera.transform.eulerAngles += Vector3(0, cameraLookSpeed * deltaTime, 0);
     }
 
     // Look right
-    if (Input::keyDown("a"))
+    if (Input::GetKey("a"))
     {
         camera.transform.eulerAngles -= Vector3(0, cameraLookSpeed * deltaTime, 0);
     }
 
     // Look up
-    if (Input::keyDown("e"))
+    if (Input::GetKey("e"))
     {
         camera.transform.eulerAngles += Vector3(cameraLookSpeed * deltaTime, 0, 0);
     }
 
     // Look down
-    if (Input::keyDown("q"))
+    if (Input::GetKey("q"))
     {
         camera.transform.eulerAngles -= Vector3(cameraLookSpeed * deltaTime, 0, 0);
     }

@@ -1,12 +1,19 @@
 #pragma once
 
-#include "WindowsKeyboardHandler.h"
+#include "Types.h"
+#include "IPlatformInput.h"
 
-class Input {
-public:
-    static bool keyDown(const std::string& key) {
-        // we can expand it with platform check and device check.
-        static WindowsKeyboardHandler handler;
-        return handler.keyDown(key);
-    }
+class Input
+{
+    public:
+    static void Initialize(); // This should be protected
+    static void Tick(); // This should be protected
+    static void UnInitialize(); // This should be protected
+
+    static bool GetKey(const string& key);
+    static bool GetKeyDown(const string& key);
+    static bool GetKeyUp(const string& key);
+
+    private:
+    static IPlatformInput* inputHandler;
 };
