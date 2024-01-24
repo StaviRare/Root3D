@@ -203,7 +203,7 @@ void OpenGL::BindTexture(Texture& texture)
         }
         else
         {
-            Debug::error("Failed to load texture");
+            Debug::LogError("Failed to load texture");
         }
     }
     else

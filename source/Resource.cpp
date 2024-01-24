@@ -79,7 +79,7 @@ std::vector<char> Resource::LoadResource(const std::string& resourcePath) {
 
     if (!file)
     {
-        Debug::error("Unable to open resource file: " + resourceFile);
+        Debug::LogError("Unable to open resource file: " + resourceFile);
         return {};
     }
 
@@ -117,7 +117,7 @@ std::vector<char> Resource::LoadResource(const std::string& resourcePath) {
         file.seekg(dataLength, std::ios::cur);
     }
 
-    Debug::error("Resource not found: " + resourcePath);
+    Debug::LogError("Resource not found: " + resourcePath);
 
     return {};
     

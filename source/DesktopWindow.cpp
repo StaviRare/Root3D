@@ -36,7 +36,7 @@ void DesktopWindow::Initialize(int w, int h)
 
     if (hWnd == NULL)
     {
-        Debug::error("hWnd is NULL. Unable to proceed");
+        Debug::LogError("hWnd is NULL. Unable to proceed");
         return;
     }
 
@@ -188,7 +188,7 @@ LRESULT DesktopWindow::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
             }
             else
             {
-                Debug::error("Window resize call back was not set!");
+                Debug::LogError("Window resize call back was not set!");
             }
 
             break;

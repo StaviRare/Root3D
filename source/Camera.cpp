@@ -12,7 +12,7 @@ Camera::Camera()
     }
     else
     {
-        Debug::error("Multiple instances of Camera are not supported!");
+        Debug::LogError("Multiple instances of Camera are not supported!");
     }
 }
 
@@ -33,7 +33,7 @@ Camera& Camera::GetInstance()
 {
     if (Instance == nullptr)
     {
-        Debug::error("Camera instance does not exists!");
+        Debug::LogError("Camera instance does not exists!");
     }
 
     return *Instance;
