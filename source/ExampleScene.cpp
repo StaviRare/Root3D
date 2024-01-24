@@ -50,7 +50,7 @@ void initPrimitives()
     // Entity 1
     Shader shader1 = Resource::LoadShader("shaders/Lit.glsl");
     Material material(shader1);
-    material.texture = Resource::LoadTexture("textures/profile.png");
+    material.texture = Resource::LoadTexture("textures/dev.png");
 
     entity.transform.position = Vector3(-1.0, 0, 0);
     //entity.transform.scale *= 1.5;
@@ -64,7 +64,7 @@ void initPrimitives()
     // Entity 2
     Shader shader2 = Resource::LoadShader("shaders/UnlitWobble.glsl");
     Material material2(shader2);
-    material2.texture = Resource::LoadTexture("textures/1.png");
+    material2.texture = Resource::LoadTexture("textures/dev_og.png");
 
     entity2.transform.position = Vector3(1.0f, 0, 0);
     Mesh mesh2 = MeshGenerator::GetCube();
