@@ -3,7 +3,7 @@
 Root3D is a 3D engine project with a focus on platform independence and core systems.  
 It's built to operate across various platforms. As it is a work in progress, please expect some unfinished parts.
 
-Designed with multi-platform use in mind, the project currently supports Windows. 
+Designed with multi-platform use in mind, the project currently supports Windows.  
 Future updates are planned to include support for Android and other platforms.
 
 ## Windows Usage Instructions
@@ -13,7 +13,7 @@ Future updates are planned to include support for Android and other platforms.
 4. Build and run.
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License.  
 See the [LICENSE](LICENSE.txt) file for details.
 
 ## Authors
