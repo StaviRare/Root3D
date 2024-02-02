@@ -1,14 +1,7 @@
-# Ignore build folder
+# Ignore generated build and asset files
 build/
+assets/packed/*
 
-# Ignore Visual Studio project settings and temporary files
-.vs/
-
-# Ignore executable files
-*.exe
-
-# Ignore program database files
-*.pdb
-
-# Ignore Python compiled files
+# Ignore temporary files
+*.vs/
 __pycache__/
