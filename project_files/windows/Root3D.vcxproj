@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\external\glew-2.1.0\src\glew.c" />
+    <ClCompile Include="..\..\dependencies\glew-2.1.0\src\glew.c" />
     <ClCompile Include="..\..\source\shared\Camera.cpp" />
     <ClCompile Include="..\..\source\shared\Core.cpp" />
     <ClCompile Include="..\..\source\shared\Debug.cpp" />
@@ -147,7 +147,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\build\$(Platform)_$(Configuration)\output</OutDir>
     <IntDir>$(SolutionDir)..\..\build\$(Platform)_$(Configuration)\intermediate</IntDir>
-    <IncludePath>$(VC_IncludePath);$(SolutionDir)..\..\external\stb;$(SolutionDir)..\..\external\glew-2.1.0\include;$(SolutionDir)..\..\source\shared;$(SolutionDir)..\..\source\windows;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(SolutionDir)..\..\dependencies\stb;$(SolutionDir)..\..\dependencies\glew-2.1.0\include;$(SolutionDir)..\..\source\shared;$(SolutionDir)..\..\source\windows;$(IncludePath)</IncludePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
     <ExternalIncludePath>
     </ExternalIncludePath>
@@ -156,7 +156,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\build\$(Platform)_$(Configuration)\output</OutDir>
     <IntDir>$(SolutionDir)..\..\build\$(Platform)_$(Configuration)\intermediate</IntDir>
-    <IncludePath>$(VC_IncludePath);$(SolutionDir)..\..\external\stb;$(SolutionDir)..\..\external\glew-2.1.0\include;$(SolutionDir)..\..\source\shared;$(SolutionDir)..\..\source\windows;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(SolutionDir)..\..\dependencies\stb;$(SolutionDir)..\..\dependencies\glew-2.1.0\include;$(SolutionDir)..\..\source\shared;$(SolutionDir)..\..\source\windows;$(IncludePath)</IncludePath>
     <ExternalIncludePath>
     </ExternalIncludePath>
   </PropertyGroup>
@@ -164,7 +164,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\build\$(Platform)_$(Configuration)\output</OutDir>
     <IntDir>$(SolutionDir)..\..\build\$(Platform)_$(Configuration)\intermediate</IntDir>
-    <IncludePath>$(VC_IncludePath);$(SolutionDir)..\..\external\stb;$(SolutionDir)..\..\external\glew-2.1.0\include;$(SolutionDir)..\..\source\shared;$(SolutionDir)..\..\source\windows;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(SolutionDir)..\..\dependencies\stb;$(SolutionDir)..\..\dependencies\glew-2.1.0\include;$(SolutionDir)..\..\source\shared;$(SolutionDir)..\..\source\windows;$(IncludePath)</IncludePath>
     <ExternalIncludePath>
     </ExternalIncludePath>
   </PropertyGroup>
@@ -172,7 +172,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\build\$(Platform)_$(Configuration)\output</OutDir>
     <IntDir>$(SolutionDir)..\..\build\$(Platform)_$(Configuration)\intermediate</IntDir>
-    <IncludePath>$(VC_IncludePath);$(SolutionDir)..\..\external\stb;$(SolutionDir)..\..\external\glew-2.1.0\include;$(SolutionDir)..\..\source\shared;$(SolutionDir)..\..\source\windows;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(SolutionDir)..\..\dependencies\stb;$(SolutionDir)..\..\dependencies\glew-2.1.0\include;$(SolutionDir)..\..\source\shared;$(SolutionDir)..\..\source\windows;$(IncludePath)</IncludePath>
     <ExternalIncludePath>
     </ExternalIncludePath>
   </PropertyGroup>

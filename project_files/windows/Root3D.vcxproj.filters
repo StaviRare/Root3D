@@ -16,9 +16,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\external\glew-2.1.0\src\glew.c">
-      <Filter>Third Party\glew</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\windows\main.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
@@ -87,6 +84,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\shared\WindowWrapper.cpp">
       <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\glew-2.1.0\src\glew.c">
+      <Filter>Third Party\glew</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
