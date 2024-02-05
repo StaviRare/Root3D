@@ -24,7 +24,6 @@
     <ClCompile Include="..\..\source\shared\Core.cpp" />
     <ClCompile Include="..\..\source\shared\Debug.cpp" />
     <ClCompile Include="..\..\source\shared\DesktopWindow.cpp" />
-    <ClCompile Include="..\..\source\shared\DirectoryManager.cpp" />
     <ClCompile Include="..\..\source\shared\EntityPool.cpp" />
     <ClCompile Include="..\..\source\shared\ExampleScene.cpp" />
     <ClCompile Include="..\..\source\shared\FileManager.cpp" />
@@ -40,6 +39,7 @@
     <ClCompile Include="..\..\source\shared\Stopwatch.cpp" />
     <ClCompile Include="..\..\source\shared\Time.cpp" />
     <ClCompile Include="..\..\source\shared\WindowWrapper.cpp" />
+    <ClCompile Include="..\..\source\windows\Directory.cpp" />
     <ClCompile Include="..\..\source\windows\Input.cpp" />
     <ClCompile Include="..\..\source\windows\main.cpp" />
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClInclude Include="..\..\source\shared\Core.h" />
     <ClInclude Include="..\..\source\shared\Debug.h" />
     <ClInclude Include="..\..\source\shared\DesktopWindow.h" />
-    <ClInclude Include="..\..\source\shared\DirectoryManager.h" />
+    <ClInclude Include="..\..\source\shared\Directory.h" />
     <ClInclude Include="..\..\source\shared\Entity.h" />
     <ClInclude Include="..\..\source\shared\EntityPool.h" />
     <ClInclude Include="..\..\source\shared\ExampleScene.h" />

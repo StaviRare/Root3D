@@ -1,11 +1,10 @@
-#include "Resource.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <windows.h>
 
-#include "stb_image.h"
 #include "Debug.h"
+#include "Directory.h"
+#include "Resource.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -76,7 +75,7 @@ Shader Resource::LoadShader(const string& path) {
 std::vector<char> Resource::LoadResource(const string& resourcePath)
 {
     std::vector<char> data;
-    const string resourceFile = GetResourcePath() + "/resources.bin";
+    const string resourceFile = Directory::GetResourcePath();
     std::ifstream file(resourceFile, std::ios::binary);
     bool isFileOpen = file.is_open();
     bool isResourceFound = false;
@@ -116,24 +115,4 @@ std::vector<char> Resource::LoadResource(const string& resourcePath)
     }
 
     return data;
-}
-
-
-string WideCharToMultiByteString(const std::wstring& wide) {
-    if (wide.empty()) return std::string();
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wide[0], (int)wide.size(), NULL, 0, NULL, NULL);
-    std::string strTo(size_needed, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &wide[0], (int)wide.size(), &strTo[0], size_needed, NULL, NULL);
-    return strTo;
-}
-
-// ToDo - This is windows code. Put in platform code.
-string Resource::GetResourcePath() 
-{
-    wchar_t buffer[MAX_PATH];
-    GetModuleFileNameW(NULL, buffer, MAX_PATH);
-    std::wstring widePath(buffer);
-    std::wstring::size_type pos = widePath.find_last_of(L"\\/");
-    std::wstring wideFolder = widePath.substr(0, pos);
-    return WideCharToMultiByteString(wideFolder);
 }
