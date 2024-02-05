@@ -27,8 +27,7 @@ void main()
 }
 
 
-// Separator
-//--SHADER-END--
+//=============SEPARATOR=============
 
 
 // Fragment Shader

@@ -35,8 +35,10 @@ Shader Resource::LoadShader(const string& path) {
 
     auto data = LoadResource(path);
 
-    if (!data.empty()) {
-        enum class ShaderType {
+    if (!data.empty())
+    {
+        enum class ShaderType
+        {
             NONE = -1,
             VERTEX = 0,
             FRAGMENT = 1
@@ -46,22 +48,26 @@ Shader Resource::LoadShader(const string& path) {
 
         std::string line;
         std::stringstream ss[2];
-        std::string shaderString(data.begin(), data.end()); // Convert vector<char> to string
+        std::string shaderString(data.begin(), data.end());
         std::istringstream fileStream(shaderString);
 
-        while (std::getline(fileStream, line)) {
-            if (line.find("--SHADER-END--") != std::string::npos) {
+        while (std::getline(fileStream, line))
+        {
+            if (line.find("==SEPARATOR==") != std::string::npos)
+            {
                 type = ShaderType::FRAGMENT; // Switch to fragment shader
                 continue; // Skip the separator line
             }
 
-            if (type != ShaderType::NONE) {
-                ss[static_cast<int>(type)] << line << '\n';
+            if (type != ShaderType::NONE)
+            {
+                ss[static_cast<int>( type )] << line << '\n';
             }
-            else {
+            else
+            {
                 // Default to vertex shader if no type has been set yet
                 type = ShaderType::VERTEX;
-                ss[static_cast<int>(type)] << line << '\n';
+                ss[static_cast<int>( type )] << line << '\n';
             }
         }
 
