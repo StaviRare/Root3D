@@ -26,7 +26,6 @@
     <ClCompile Include="..\..\source\shared\DesktopWindow.cpp" />
     <ClCompile Include="..\..\source\shared\EntityPool.cpp" />
     <ClCompile Include="..\..\source\shared\ExampleScene.cpp" />
-    <ClCompile Include="..\..\source\shared\FileManager.cpp" />
     <ClCompile Include="..\..\source\shared\GraphicsWrapper.cpp" />
     <ClCompile Include="..\..\source\shared\MeshGenerator.cpp" />
     <ClCompile Include="..\..\source\shared\OpenGL.cpp" />
@@ -40,6 +39,7 @@
     <ClCompile Include="..\..\source\shared\Time.cpp" />
     <ClCompile Include="..\..\source\shared\WindowWrapper.cpp" />
     <ClCompile Include="..\..\source\windows\Directory.cpp" />
+    <ClCompile Include="..\..\source\windows\File.cpp" />
     <ClCompile Include="..\..\source\windows\Input.cpp" />
     <ClCompile Include="..\..\source\windows\main.cpp" />
   </ItemGroup>
@@ -54,7 +54,7 @@
     <ClInclude Include="..\..\source\shared\Entity.h" />
     <ClInclude Include="..\..\source\shared\EntityPool.h" />
     <ClInclude Include="..\..\source\shared\ExampleScene.h" />
-    <ClInclude Include="..\..\source\shared\FileManager.h" />
+    <ClInclude Include="..\..\source\shared\File.h" />
     <ClInclude Include="..\..\source\shared\GraphicsAPI.h" />
     <ClInclude Include="..\..\source\shared\GraphicsWrapper.h" />
     <ClInclude Include="..\..\source\shared\Input.h" />

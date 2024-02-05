@@ -1,8 +1,9 @@
 #include <windows.h>
 #include "Directory.h"
 #include "Debug.h"
+#include "File.h"
 
-void Directory::Create(const std::string& path)
+void Directory::Create(const string& path)
 {
     std::wstring stemp = std::wstring(path.begin(), path.end());
     LPCWSTR sw = stemp.c_str();
@@ -13,7 +14,7 @@ void Directory::Create(const std::string& path)
     }
 }
 
-bool Directory::Exists(const std::string& path)
+bool Directory::Exists(const string& path)
 {
     std::wstring stemp = std::wstring(path.begin(), path.end());
     LPCWSTR sw = stemp.c_str();
@@ -27,9 +28,7 @@ string Directory::GetResourcePath()
     char buffer[MAX_PATH];
     GetModuleFileNameA(NULL, buffer, MAX_PATH);
     string::size_type pos = string(buffer).find_last_of("\\/");
-    string returnValue = string(buffer).substr(0, pos) + "/resources.bin"; // Temporary solution. Will need to be changed.
+    string resourcePath = string(buffer).substr(0, pos) + "/resources.bin"; // Temporary solution. Will need to change.
 
-    // ToDo! - Check if file exists.
-
-    return returnValue;
+    return resourcePath;
 }

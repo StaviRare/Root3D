@@ -78,6 +78,8 @@ Shader Resource::LoadShader(const string& path) {
     return shader;
 }
 
+// ToDo! - Rewrite this. Use File::Exists, and more.
+
 std::vector<char> Resource::LoadResource(const string& resourcePath)
 {
     std::vector<char> data;

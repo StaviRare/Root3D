@@ -37,9 +37,6 @@
     <ClCompile Include="..\..\source\shared\ExampleScene.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\shared\FileManager.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\shared\GraphicsWrapper.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
@@ -85,6 +82,9 @@
     <ClCompile Include="..\..\source\windows\Directory.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\windows\File.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\shared\Camera.h">
@@ -112,9 +112,6 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\ExampleScene.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\shared\FileManager.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\GraphicsAPI.h">
@@ -214,6 +211,9 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Directory.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\shared\File.h">
       <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
