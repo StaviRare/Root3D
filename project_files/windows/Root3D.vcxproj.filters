@@ -28,9 +28,6 @@
     <ClCompile Include="..\..\source\shared\Debug.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\shared\DesktopInput.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\shared\DesktopWindow.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
@@ -47,9 +44,6 @@
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\shared\GraphicsWrapper.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\shared\Input.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\shared\MeshGenerator.cpp">
@@ -88,6 +82,9 @@
     <ClCompile Include="..\..\dependencies\glew-2.1.0\src\glew.c">
       <Filter>Third Party\glew</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\windows\Input.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\shared\Camera.h">
@@ -103,9 +100,6 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Debug.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\shared\DesktopInput.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\DesktopWindow.h">
@@ -133,9 +127,6 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Input.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\shared\IPlatformInput.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Iterator.h">

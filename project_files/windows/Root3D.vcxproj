@@ -23,14 +23,12 @@
     <ClCompile Include="..\..\source\shared\Camera.cpp" />
     <ClCompile Include="..\..\source\shared\Core.cpp" />
     <ClCompile Include="..\..\source\shared\Debug.cpp" />
-    <ClCompile Include="..\..\source\shared\DesktopInput.cpp" />
     <ClCompile Include="..\..\source\shared\DesktopWindow.cpp" />
     <ClCompile Include="..\..\source\shared\DirectoryManager.cpp" />
     <ClCompile Include="..\..\source\shared\EntityPool.cpp" />
     <ClCompile Include="..\..\source\shared\ExampleScene.cpp" />
     <ClCompile Include="..\..\source\shared\FileManager.cpp" />
     <ClCompile Include="..\..\source\shared\GraphicsWrapper.cpp" />
-    <ClCompile Include="..\..\source\shared\Input.cpp" />
     <ClCompile Include="..\..\source\shared\MeshGenerator.cpp" />
     <ClCompile Include="..\..\source\shared\OpenGL.cpp" />
     <ClCompile Include="..\..\source\shared\PlatformDetector.cpp" />
@@ -42,6 +40,7 @@
     <ClCompile Include="..\..\source\shared\Stopwatch.cpp" />
     <ClCompile Include="..\..\source\shared\Time.cpp" />
     <ClCompile Include="..\..\source\shared\WindowWrapper.cpp" />
+    <ClCompile Include="..\..\source\windows\Input.cpp" />
     <ClCompile Include="..\..\source\windows\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -50,7 +49,6 @@
     <ClInclude Include="..\..\source\shared\Component.h" />
     <ClInclude Include="..\..\source\shared\Core.h" />
     <ClInclude Include="..\..\source\shared\Debug.h" />
-    <ClInclude Include="..\..\source\shared\DesktopInput.h" />
     <ClInclude Include="..\..\source\shared\DesktopWindow.h" />
     <ClInclude Include="..\..\source\shared\DirectoryManager.h" />
     <ClInclude Include="..\..\source\shared\Entity.h" />
@@ -60,7 +58,6 @@
     <ClInclude Include="..\..\source\shared\GraphicsAPI.h" />
     <ClInclude Include="..\..\source\shared\GraphicsWrapper.h" />
     <ClInclude Include="..\..\source\shared\Input.h" />
-    <ClInclude Include="..\..\source\shared\IPlatformInput.h" />
     <ClInclude Include="..\..\source\shared\Iterator.h" />
     <ClInclude Include="..\..\source\shared\List.h" />
     <ClInclude Include="..\..\source\shared\Material.h" />

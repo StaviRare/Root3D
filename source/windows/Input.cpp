@@ -1,9 +1,11 @@
+#include <array>
 #include <Windows.h>
+#include "Input.h"
 
-#include "DesktopInput.h"
-#include "Debug.h"
+static std::array<bool, 256> keyState;
+static std::array<bool, 256> keyStateLastFrame;
 
-void DesktopInput::Initialize()
+void Input::Initialize()
 {
 	for (int i = 0; i < 256; ++i)
 	{
@@ -12,7 +14,7 @@ void DesktopInput::Initialize()
 	}
 }
 
-void DesktopInput::Tick()
+void Input::Tick()
 {
 	keyStateLastFrame = keyState;
 
@@ -22,12 +24,12 @@ void DesktopInput::Tick()
 	}
 }
 
-void DesktopInput::UnInitialize()
+void Input::UnInitialize()
 {
 	// Nothing at the moment
 }
 
-bool DesktopInput::GetKey(const string& key)
+bool Input::GetKey(const string& key)
 {
 	if (key.length() != 1)
 	{
@@ -39,7 +41,7 @@ bool DesktopInput::GetKey(const string& key)
 	return keyState[vk];
 }
 
-bool DesktopInput::GetKeyDown(const string& key)
+bool Input::GetKeyDown(const string& key)
 {
 	if (key.length() != 1)
 	{
@@ -51,7 +53,7 @@ bool DesktopInput::GetKeyDown(const string& key)
 	return keyState[vk] && !keyStateLastFrame[vk];
 }
 
-bool DesktopInput::GetKeyUp(const string& key)
+bool Input::GetKeyUp(const string& key)
 {
 	if (key.length() != 1)
 	{
