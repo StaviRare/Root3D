@@ -1,46 +1,56 @@
 #pragma once
 
 #include <vector>
+#include "Vector2.h"
+#include "Vector3.h"
 
-class Mesh {
-public:
-    void SetVertices(const std::vector<float>& verts) 
+class Mesh
+{
+    public:
+
+    void SetVertices(const std::vector<Vector3>& verts)
     {
         vertices = verts;
     }
-    void SetTexCoords(const std::vector<float>& texCoords) 
+
+    void SetTexCoords(const std::vector<Vector2>& uv)
     {
-        this->texCoords = texCoords;
+        texCoords = uv;
     }
-    void SetNormals(const std::vector<float>& norms) 
+
+    void SetNormals(const std::vector<Vector3>& norms)
     {
         normals = norms;
     }
+
     void SetIndices(const std::vector<int>& inds)
     {
         indices = inds;
     }
 
-    const std::vector<float>& GetVertices() const 
+    const std::vector<Vector3>& GetVertices() const
     {
         return vertices;
     }
-    const std::vector<float>& GetTexCoords() const 
+
+    const std::vector<Vector2>& GetTexCoords() const
     {
         return texCoords;
     }
-    const std::vector<float>& GetNormals() const 
+
+    const std::vector<Vector3>& GetNormals() const
     {
         return normals;
     }
-    const std::vector<int>& GetIndices() const 
+
+    const std::vector<int>& GetIndices() const
     {
         return indices;
     }
 
-private:
-    std::vector<float> vertices;
-    std::vector<float> texCoords;
-    std::vector<float> normals;
+    private:
+    std::vector<Vector3> vertices;
+    std::vector<Vector2> texCoords;
+    std::vector<Vector3> normals;
     std::vector<int> indices;
 };

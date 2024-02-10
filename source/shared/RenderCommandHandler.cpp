@@ -62,14 +62,15 @@ void RenderCommandHandler::Tick()
                 renderCommand.indices = meshData->mesh.GetIndices().data();
                 renderCommand.indicesSize = meshData->mesh.GetIndices().size();
 
-                renderCommand.vertices = meshData->mesh.GetVertices().data();
-                renderCommand.verticesSize = meshData->mesh.GetVertices().size();
+                // Convert Vector3/2 to floats: size x3 (Vector3), x2 (Vector2).
+                renderCommand.vertices = reinterpret_cast<const float*>(meshData->mesh.GetVertices().data());
+                renderCommand.verticesSize = meshData->mesh.GetVertices().size() * 3;
 
-                renderCommand.texCoords = meshData->mesh.GetTexCoords().data();
-                renderCommand.texCoordsSize = meshData->mesh.GetTexCoords().size();
+                renderCommand.texCoords = reinterpret_cast<const float*>(meshData->mesh.GetTexCoords().data());
+                renderCommand.texCoordsSize = meshData->mesh.GetTexCoords().size() * 2;
 
-                renderCommand.normals = meshData->mesh.GetNormals().data();
-                renderCommand.normalsSize = meshData->mesh.GetNormals().size();
+                renderCommand.normals = reinterpret_cast<const float*>(meshData->mesh.GetNormals().data());
+                renderCommand.normalsSize = meshData->mesh.GetNormals().size() * 3;
 
                 Matrix4 model = Matrix4::Identity();
                 model = model.Scale(entity->transform.scale);
