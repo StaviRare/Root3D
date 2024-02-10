@@ -28,9 +28,6 @@
     <ClCompile Include="..\..\source\shared\Debug.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\shared\DesktopWindow.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\shared\EntityPool.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
@@ -70,9 +67,6 @@
     <ClCompile Include="..\..\source\shared\Time.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\shared\WindowWrapper.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\dependencies\glew-2.1.0\src\glew.c">
       <Filter>Third Party\glew</Filter>
     </ClCompile>
@@ -83,6 +77,9 @@
       <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\windows\File.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\windows\Screen.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
   </ItemGroup>
@@ -100,9 +97,6 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Debug.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\shared\DesktopWindow.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Entity.h">
@@ -204,16 +198,13 @@
     <ClInclude Include="..\..\source\shared\Vector3.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\shared\Window.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\shared\WindowWrapper.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\shared\Directory.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\File.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\shared\Screen.h">
       <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>

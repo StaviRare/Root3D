@@ -6,7 +6,7 @@
 #include "RenderQueue.h"
 #include "Debug.h"
 #include "Time.h"
-#include "WindowWrapper.h"
+#include "Screen.h"
 
 static int modelLoc = -1;
 static int viewLoc = -1;
@@ -31,7 +31,7 @@ OpenGL::~OpenGL()
 
 void OpenGL::Initialize()
 {
-    WindowWrapper::RegisterResizeCallback(OnWindowResize);
+    Screen::RegisterResizeCallback(OnWindowResize);
 
     initialized = glewInit() == GLEW_OK;
 
@@ -159,7 +159,7 @@ void OpenGL::ExecuteRenderCommands()
 
 void OpenGL::UnInitialize()
 {
-    WindowWrapper::UnRegisterResizeCallback(OnWindowResize);
+    Screen::UnRegisterResizeCallback(OnWindowResize);
 
     glDeleteBuffers(3, VBO);
     glDeleteBuffers(1, &EBO);

@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include "Debug.h"
-#include "WindowWrapper.h"
+#include "Screen.h"
 
 Camera* Camera::Instance = nullptr;
 
@@ -49,7 +49,7 @@ float Camera::GetAspect()
     }
     else
     {
-        returnValue = static_cast<float>( WindowWrapper::GetWidth() ) / WindowWrapper::GetHeight();
+        returnValue = static_cast<float>( Screen::GetWidth() ) / Screen::GetHeight();
     }
 
     return returnValue;
