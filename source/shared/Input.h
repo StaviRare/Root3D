@@ -4,12 +4,15 @@
 
 class Input
 {
-    public:
-    static void Initialize();       // This should be protected. Should be an instance managed by Core.
-    static void Tick();             // This should be protected. Should be an instance managed by Core.
-    static void UnInitialize();     // This should be protected. Should be an instance managed by Core.
+    friend class Core;
 
+    public:
     static bool GetKey(const string& key);
     static bool GetKeyDown(const string& key);
     static bool GetKeyUp(const string& key);
+
+    private:
+    static void Initialize();
+    static void Tick();
+    static void UnInitialize();
 };

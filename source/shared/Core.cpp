@@ -1,7 +1,6 @@
 #include "Core.h"
 #include "Debug.h"
 #include "Time.h"
-#include "Camera.h"
 #include "SceneManager.h"
 #include "GraphicsWrapper.h"
 #include "PlatformDetector.h"
@@ -21,7 +20,7 @@ void Core::Initialize()
 
     // Physics initialize
 
-    SceneManager::loadScene(0);
+    SceneManager::LoadScene(0);
 }
 
 void Core::Tick()
@@ -33,7 +32,7 @@ void Core::Tick()
     Screen::PollEvents();
 
     // Game Logic Processing
-    SceneManager::runScene();
+    SceneManager::RunScene();
 
     // Scene Rendering
     RenderCommandHandler::Tick();

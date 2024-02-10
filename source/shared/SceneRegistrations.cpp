@@ -6,7 +6,7 @@ struct SceneRegistrar
     SceneRegistrar()
     {
         // Register all scenes here
-        SceneManager::registerScene(0, [] { return new ExampleScene(); });
+        SceneManager::RegisterScene(0, [] { return new ExampleScene(); });
     }
 };
 

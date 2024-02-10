@@ -2,9 +2,8 @@
 
 class RenderCommandHandler
 {
-public:
+    friend class Core;
+
+    private:
     static void Tick();
-
-private:
-
 };

@@ -9,7 +9,7 @@ std::map<int, std::function<Scene* ()>>& SceneManager::getSceneRegistry()
     return sceneFactory;
 }
 
-void SceneManager::registerScene(int index, std::function<Scene* ()> constructor)
+void SceneManager::RegisterScene(int index, std::function<Scene* ()> constructor)
 {
     auto& registry = getSceneRegistry();
 
@@ -21,7 +21,7 @@ void SceneManager::registerScene(int index, std::function<Scene* ()> constructor
     registry[index] = constructor;
 }
 
-void SceneManager::loadScene(int index)
+void SceneManager::LoadScene(int index)
 {
     auto& registry = getSceneRegistry();
     auto it = registry.find(index);
@@ -38,7 +38,7 @@ void SceneManager::loadScene(int index)
     }
 }
 
-void SceneManager::runScene()
+void SceneManager::RunScene()
 {
     if (currentScene != nullptr)
     {

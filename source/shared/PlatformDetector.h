@@ -5,9 +5,13 @@
 
 class PlatformDetector
 {
+    friend class Core;
+
     public:
     static Platform GetPlatform();
     static string GetPlatformName();
+
+    private:
     static void Initialize();
 
     private:

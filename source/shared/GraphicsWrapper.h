@@ -1,7 +1,6 @@
 #pragma once
 #include "GraphicsAPI.h"
 
-// ToDo! - Handle this better
 enum class APIType
 {
     OpenGL,
@@ -10,13 +9,13 @@ enum class APIType
 
 class GraphicsWrapper // Change name to Graphics
 {
-public:
+    friend class Core;
+
+    private:
+    static GraphicsAPI* graphicsAPI;
+
     static void Initialize(APIType api);
     static void ClearScreen();
     static void ExecuteRenderCommands();
     static void UnInitialize();
-    
-
-private:
-    static GraphicsAPI* graphicsAPI;
 };
