@@ -146,10 +146,8 @@ void OpenGL::ExecuteRenderCommands()
                 projectionLoc = glGetUniformLocation(shaderProgram, "projection");
                 glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projectionMatrix);
 
-                // Light
-                int lightCount = 0;
-
-                for (int i = 0; i < std::min(lightCommands.size(), size_t(MAX_LIGHTS)); ++i)
+                // Light. Respects the shader's maximum light limit (MAX_LIGHTS)
+                for (size_t i = 0; i < std::min(lightCommands.size(), static_cast<size_t>(MAX_LIGHTS)); ++i)
                 {
                     const auto& light = lightCommands[i];
                     string uniformPrefix = "lights[" + std::to_string(i) + "].";
