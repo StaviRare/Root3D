@@ -1,45 +1,41 @@
 #include "RenderQueue.h"
 
-std::queue<ObjectRenderCommand> RenderQueue::queue;
-GlobalRenderCommand RenderQueue::onceCommand;
-bool RenderQueue::hasOnceCommand = false;
+GlobalRenderCommand RenderQueue::globalRenderCommand;
+std::vector<ObjectRenderCommand> RenderQueue::objectRenderCommands;
+std::vector<LightRenderCommand> RenderQueue::lightRenderCommands;
 
-void RenderQueue::Enqueue(const ObjectRenderCommand& command) {
-    queue.push(command);
+void RenderQueue::Clear()
+{
+    objectRenderCommands.clear();
+    lightRenderCommands.clear();
 }
 
-ObjectRenderCommand* RenderQueue::Dequeue() {
-    if (!queue.empty()) {
-        ObjectRenderCommand* command = &queue.front();
-        queue.pop();
-        return command;
-    }
-    return nullptr;
+void RenderQueue::AddGlobalRenderCommand(const GlobalRenderCommand& command)
+{
+    globalRenderCommand = command;
 }
 
-bool RenderQueue::IsEmpty() {
-    return queue.empty();
+void RenderQueue::AddObjectRenderCommand(const ObjectRenderCommand& command)
+{
+    objectRenderCommands.push_back(command);
 }
 
-size_t RenderQueue::Size() {
-    return queue.size();
+void RenderQueue::AddLightRenderCommand(const LightRenderCommand& command)
+{
+    lightRenderCommands.push_back(command);
 }
 
-void RenderQueue::Clear() {
-    while (!queue.empty()) {
-        queue.pop();
-    }
+const GlobalRenderCommand* RenderQueue::GetGlobalRenderCommand()
+{
+    return &globalRenderCommand;
 }
 
-void RenderQueue::EnqueueOnce(const GlobalRenderCommand& command) {
-    onceCommand = command;
-    hasOnceCommand = true;
+const std::vector<ObjectRenderCommand>& RenderQueue::GetObjectRenderCommands()
+{
+    return objectRenderCommands;
 }
 
-const GlobalRenderCommand* RenderQueue::GetOnceCommand() {
-    if (hasOnceCommand) {
-        hasOnceCommand = false; // Reset flag after fetching
-        return &onceCommand;
-    }
-    return nullptr;
+const std::vector<LightRenderCommand>& RenderQueue::GetLightRenderCommands()
+{
+    return lightRenderCommands;
 }

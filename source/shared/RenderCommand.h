@@ -3,7 +3,23 @@
 #include "Texture.h"
 #include "Shader.h"
 
-struct ObjectRenderCommand // object render command
+
+struct LightRenderCommand
+{
+    int type; // 0 - directional, 1 - point
+    float color[4];
+    float intensity;
+
+    // Directional
+    float direction[3];
+
+    // Point
+    float range;
+    float position[3];
+    float attenuation[3];
+};
+
+struct ObjectRenderCommand
 {
     Shader* shader;
     Texture* texture;
@@ -27,8 +43,6 @@ struct ObjectRenderCommand // object render command
 struct GlobalRenderCommand
 {
     float backgroundColor[4];
-    float directionalLightDirection[3];
-    float directionalLightColor[4];
     float viewMatrix[16];
     float projectionMatrix[16];
 };

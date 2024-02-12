@@ -207,5 +207,8 @@
     <ClInclude Include="..\..\source\shared\Screen.h">
       <Filter>Shared</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\shared\Light.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

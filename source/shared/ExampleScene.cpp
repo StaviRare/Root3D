@@ -11,9 +11,13 @@
 #include "Renderer.h"
 #include "SceneManager.h"
 #include "Resource.h"
+#include "Light.h"
 
 static Entity entity;
 static Entity entity2;
+static Entity lightEntity;
+static Entity lightEntity2;
+
 static Camera camera;
 static float cameraMoveSpeed = 3.00f;
 static float cameraLookSpeed = 2.00f;
@@ -72,6 +76,23 @@ void initPrimitives()
     meshData2->mesh = mesh2;
     Renderer* renderer2 = entity2.AddComponent<Renderer>();
     renderer2->material = material2;
+
+    // Point light
+    lightEntity.transform.eulerAngles = Vector3(0, 0, 0);
+    lightEntity.transform.position = Vector3(0, 0, 0);
+    Light* light = lightEntity.AddComponent<Light>();
+    light->type = LightType::Point;
+    light->color = Color(0, 1, 0);
+    light->range = 1.8f;
+    light->intensity = 1;
+
+    // Directional light
+    lightEntity2.transform.eulerAngles = Vector3(1, 0, 0);
+    lightEntity2.transform.position = Vector3(0, 0, 0);
+    Light* light2 = lightEntity2.AddComponent<Light>();
+    light2->type = LightType::Directional;
+    light2->color = Color(1, 0, 0);
+    light2->intensity = 1;
 }
 
 void handleCameraMovement()
@@ -117,5 +138,6 @@ void handleCameraMovement()
 
 void handleCubeTransform()
 {
-    entity.transform.eulerAngles += Vector3(1, 1, 0);
+    float deltaTime = Time::DeltaTime();
+    entity.transform.eulerAngles += Vector3(80 * deltaTime, 80 * deltaTime, 0);
 }
