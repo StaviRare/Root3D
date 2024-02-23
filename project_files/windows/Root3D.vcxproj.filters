@@ -25,9 +25,6 @@
     <ClCompile Include="..\..\source\shared\Core.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\shared\Debug.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\shared\EntityPool.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
@@ -80,6 +77,9 @@
       <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\windows\Screen.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\windows\Debug.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
   </ItemGroup>
