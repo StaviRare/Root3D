@@ -2,7 +2,7 @@
 #include "Debug.h"
 #include "Time.h"
 #include "SceneManager.h"
-#include "GraphicsWrapper.h"
+#include "Graphics.h"
 #include "PlatformDetector.h"
 #include "RenderCommandHandler.h"
 #include "Screen.h"
@@ -16,7 +16,7 @@ void Core::Initialize()
     Time::Initialize();
     Input::Initialize();
     Screen::Initialize(960, 540);            // Hard coded. will use EngineConfig in future.
-    GraphicsWrapper::Initialize(APIType::OpenGL);   // Hard coded. will use EngineConfig in future.
+    Graphics::Initialize(APIType::OpenGL);   // Hard coded. will use EngineConfig in future.
 
     // Physics initialize
 
@@ -36,8 +36,8 @@ void Core::Tick()
 
     // Scene Rendering
     RenderCommandHandler::Tick();
-    GraphicsWrapper::ClearScreen();
-    GraphicsWrapper::ExecuteRenderCommands();
+    Graphics::ClearScreen();
+    Graphics::ExecuteRenderCommands();
 
     // UI Rendering
 
@@ -57,7 +57,7 @@ void Core::UnInitialize()
     // Shut everything down, in reverse order
     // Physics.Uninitialize();
 
-    GraphicsWrapper::UnInitialize();
+    Graphics::UnInitialize();
     Screen::UnInitialize();
     Input::UnInitialize();
 }

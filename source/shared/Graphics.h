@@ -8,7 +8,7 @@ enum class APIType
     DirectX
 };
 
-class GraphicsWrapper // Change name to Graphics
+class Graphics
 {
     friend class Core;
 

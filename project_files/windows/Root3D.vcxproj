@@ -24,7 +24,7 @@
     <ClCompile Include="..\..\source\shared\Core.cpp" />
     <ClCompile Include="..\..\source\shared\EntityPool.cpp" />
     <ClCompile Include="..\..\source\shared\ExampleScene.cpp" />
-    <ClCompile Include="..\..\source\shared\GraphicsWrapper.cpp" />
+    <ClCompile Include="..\..\source\shared\Graphics.cpp" />
     <ClCompile Include="..\..\source\shared\MeshGenerator.cpp" />
     <ClCompile Include="..\..\source\shared\OpenGL.cpp" />
     <ClCompile Include="..\..\source\shared\PlatformDetector.cpp" />
@@ -54,7 +54,7 @@
     <ClInclude Include="..\..\source\shared\ExampleScene.h" />
     <ClInclude Include="..\..\source\shared\File.h" />
     <ClInclude Include="..\..\source\shared\GraphicsAPI.h" />
-    <ClInclude Include="..\..\source\shared\GraphicsWrapper.h" />
+    <ClInclude Include="..\..\source\shared\Graphics.h" />
     <ClInclude Include="..\..\source\shared\Input.h" />
     <ClInclude Include="..\..\source\shared\Iterator.h" />
     <ClInclude Include="..\..\source\shared\Light.h" />

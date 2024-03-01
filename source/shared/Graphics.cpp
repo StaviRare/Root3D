@@ -1,10 +1,10 @@
-#include "GraphicsWrapper.h"
+#include "Graphics.h"
 #include "OpenGL.h"
 #include "Debug.h"
 
-GraphicsAPI* GraphicsWrapper::graphicsAPI = nullptr;
+GraphicsAPI* Graphics::graphicsAPI = nullptr;
 
-void GraphicsWrapper::Initialize(APIType api)
+void Graphics::Initialize(APIType api)
 {
     if (api == APIType::OpenGL)
     {
@@ -21,17 +21,17 @@ void GraphicsWrapper::Initialize(APIType api)
     }
 }
 
-void GraphicsWrapper::ClearScreen()
+void Graphics::ClearScreen()
 {
     graphicsAPI->ClearScreen();
 }
 
-void GraphicsWrapper::ExecuteRenderCommands()
+void Graphics::ExecuteRenderCommands()
 {
     graphicsAPI->ExecuteRenderCommands();
 }
 
-void GraphicsWrapper::UnInitialize()
+void Graphics::UnInitialize()
 {
     graphicsAPI->UnInitialize();
 }

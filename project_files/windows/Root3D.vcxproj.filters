@@ -31,7 +31,7 @@
     <ClCompile Include="..\..\source\shared\ExampleScene.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\shared\GraphicsWrapper.cpp">
+    <ClCompile Include="..\..\source\shared\Graphics.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\shared\MeshGenerator.cpp">
@@ -111,7 +111,7 @@
     <ClInclude Include="..\..\source\shared\GraphicsAPI.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\shared\GraphicsWrapper.h">
+    <ClInclude Include="..\..\source\shared\Graphics.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Input.h">
