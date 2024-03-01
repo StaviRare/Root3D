@@ -30,16 +30,6 @@ static unsigned int VBO[3];
 // Max supported lights
 static const int MAX_LIGHTS = 100;
 
-OpenGL::OpenGL()
-{
-
-}
-
-OpenGL::~OpenGL()
-{
-
-}
-
 void OpenGL::Initialize()
 {
     Screen::RegisterResizeCallback(OnWindowResize);

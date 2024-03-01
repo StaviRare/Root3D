@@ -1,21 +1,19 @@
 #pragma once
-#include <list>
 
+#include <list>
 #include "Types.h"
 #include "GraphicsAPI.h"
+#include "Texture.h"
 
 class OpenGL : public GraphicsAPI
 {
-public:
-    OpenGL();
-    ~OpenGL();
-
+    public:
     void Initialize() override;
     void ClearScreen() override;
     void ExecuteRenderCommands() override;
     void UnInitialize() override;
 
-private:
+    private:
     std::list<unsigned int> shaderProgramIDs;
     void BindTexture(Texture& texture);
     static void OnWindowResize(int width, int height);

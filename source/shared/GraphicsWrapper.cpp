@@ -1,23 +1,24 @@
 #include "GraphicsWrapper.h"
 #include "OpenGL.h"
+#include "Debug.h"
 
 GraphicsAPI* GraphicsWrapper::graphicsAPI = nullptr;
 
-
 void GraphicsWrapper::Initialize(APIType api)
 {
-    graphicsAPI = new OpenGL();
+    if (api == APIType::OpenGL)
+    {
+        graphicsAPI = new OpenGL();
+    }
+    else
+    {
+        Debug::LogError("Unsupported Graphics API selected!");
+    }
 
-    //if (api == APIType::OpenGL)
-    //{
-    //    graphicsAPI = new OpenGL();
-    //}
-    //else if (api == APIType::DirectX)
-    //{
-    //    graphicsAPI = new DirectX();
-    //}
-
-    graphicsAPI->Initialize();
+    if (graphicsAPI != nullptr)
+    {
+        graphicsAPI->Initialize();
+    }
 }
 
 void GraphicsWrapper::ClearScreen()
