@@ -27,7 +27,6 @@
     <ClCompile Include="..\..\source\shared\Graphics.cpp" />
     <ClCompile Include="..\..\source\shared\MeshGenerator.cpp" />
     <ClCompile Include="..\..\source\shared\OpenGL.cpp" />
-    <ClCompile Include="..\..\source\shared\PlatformDetector.cpp" />
     <ClCompile Include="..\..\source\shared\RenderCommandHandler.cpp" />
     <ClCompile Include="..\..\source\shared\RenderQueue.cpp" />
     <ClCompile Include="..\..\source\shared\Resource.cpp" />
@@ -40,6 +39,7 @@
     <ClCompile Include="..\..\source\windows\File.cpp" />
     <ClCompile Include="..\..\source\windows\Input.cpp" />
     <ClCompile Include="..\..\source\windows\main.cpp" />
+    <ClCompile Include="..\..\source\windows\PlatformDetector.cpp" />
     <ClCompile Include="..\..\source\windows\Screen.cpp" />
   </ItemGroup>
   <ItemGroup>

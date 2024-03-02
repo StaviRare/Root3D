@@ -6,8 +6,6 @@ void PlatformDetector::Initialize()
 {
 #if defined(_WIN32) || defined(_WIN64)
     _currentPlatform = Platform::Windows;
-#elif __ANDROID__
-    _currentPlatform = Platform::Android;
 #else
     _currentPlatform = Platform::Unknown;
 #endif
@@ -20,15 +18,12 @@ Platform PlatformDetector::GetPlatform()
 
 string PlatformDetector::GetPlatformName()
 {
-    switch (_currentPlatform)
+    if (_currentPlatform == Platform::Windows)
     {
-        case Platform::Windows:
         return "Windows";
-
-        case Platform::Android:
-        return "Android";
-
-        default:
+    }
+    else
+    {
         return "Unknown";
     }
 }

@@ -40,9 +40,6 @@
     <ClCompile Include="..\..\source\shared\OpenGL.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\shared\PlatformDetector.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\shared\RenderCommandHandler.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
@@ -81,6 +78,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\windows\Debug.cpp">
       <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\windows\PlatformDetector.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
