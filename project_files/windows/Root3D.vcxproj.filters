@@ -80,7 +80,7 @@
       <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\windows\PlatformDetector.cpp">
-      <Filter>Shared</Filter>
+      <Filter>Platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
