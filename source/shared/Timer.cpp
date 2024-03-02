@@ -1,16 +1,16 @@
-#include "Time.h"
+#include "Timer.h"
 
-std::chrono::time_point<std::chrono::high_resolution_clock> Time::loopStartTime;
-std::chrono::time_point<std::chrono::high_resolution_clock> Time::loopEndTime;
-std::chrono::time_point<std::chrono::high_resolution_clock> Time::initTime;
-float Time::deltaTime = 0.0;
+float Timer::deltaTime = 0.0;
+std::chrono::time_point<std::chrono::high_resolution_clock> Timer::loopStartTime;
+std::chrono::time_point<std::chrono::high_resolution_clock> Timer::loopEndTime;
+std::chrono::time_point<std::chrono::high_resolution_clock> Timer::initTime;
 
-void Time::Initialize()
+void Timer::Initialize()
 {
     initTime = loopStartTime = std::chrono::high_resolution_clock::now();
 }
 
-void Time::CalculateLoopTime()
+void Timer::CalculateLoopTime()
 {
     loopEndTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<float> delta = loopEndTime - loopStartTime;
@@ -18,17 +18,17 @@ void Time::CalculateLoopTime()
     loopStartTime = loopEndTime;  // Prepare for the next loop
 }
 
-float Time::DeltaTime()
+float Timer::DeltaTime()
 {
     return deltaTime;
 }
 
-float Time::DoubleDeltaTime()
+float Timer::DoubleDeltaTime()
 {
     return 2.0f * deltaTime;
 }
 
-float Time::TimeSinceInit()
+float Timer::TimeSinceInit()
 {
     auto now = std::chrono::high_resolution_clock::now();
     std::chrono::duration<float> elapsed = now - initTime;

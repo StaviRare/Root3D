@@ -31,13 +31,7 @@
     <ClCompile Include="..\..\source\shared\ExampleScene.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\shared\Graphics.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\shared\MeshGenerator.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\shared\OpenGL.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\shared\RenderCommandHandler.cpp">
@@ -56,9 +50,6 @@
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\shared\Stopwatch.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\shared\Time.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dependencies\glew-2.1.0\src\glew.c">
@@ -81,6 +72,15 @@
     </ClCompile>
     <ClCompile Include="..\..\source\windows\PlatformDetector.cpp">
       <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\windows\Graphics.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\windows\OpenGL.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\shared\Timer.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,9 +141,6 @@
     <ClInclude Include="..\..\source\shared\MeshGenerator.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\shared\OpenGL.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\shared\Platform.h">
       <Filter>Shared</Filter>
     </ClInclude>
@@ -180,9 +177,6 @@
     <ClInclude Include="..\..\source\shared\Texture.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\shared\Time.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\shared\Transform.h">
       <Filter>Shared</Filter>
     </ClInclude>
@@ -208,6 +202,12 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Light.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\windows\OpenGL.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\shared\Timer.h">
       <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>

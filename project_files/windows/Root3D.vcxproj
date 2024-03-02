@@ -24,21 +24,21 @@
     <ClCompile Include="..\..\source\shared\Core.cpp" />
     <ClCompile Include="..\..\source\shared\EntityPool.cpp" />
     <ClCompile Include="..\..\source\shared\ExampleScene.cpp" />
-    <ClCompile Include="..\..\source\shared\Graphics.cpp" />
     <ClCompile Include="..\..\source\shared\MeshGenerator.cpp" />
-    <ClCompile Include="..\..\source\shared\OpenGL.cpp" />
     <ClCompile Include="..\..\source\shared\RenderCommandHandler.cpp" />
     <ClCompile Include="..\..\source\shared\RenderQueue.cpp" />
     <ClCompile Include="..\..\source\shared\Resource.cpp" />
     <ClCompile Include="..\..\source\shared\SceneManager.cpp" />
     <ClCompile Include="..\..\source\shared\SceneRegistrations.cpp" />
     <ClCompile Include="..\..\source\shared\Stopwatch.cpp" />
-    <ClCompile Include="..\..\source\shared\Time.cpp" />
+    <ClCompile Include="..\..\source\shared\Timer.cpp" />
     <ClCompile Include="..\..\source\windows\Debug.cpp" />
     <ClCompile Include="..\..\source\windows\Directory.cpp" />
     <ClCompile Include="..\..\source\windows\File.cpp" />
+    <ClCompile Include="..\..\source\windows\Graphics.cpp" />
     <ClCompile Include="..\..\source\windows\Input.cpp" />
     <ClCompile Include="..\..\source\windows\main.cpp" />
+    <ClCompile Include="..\..\source\windows\OpenGL.cpp" />
     <ClCompile Include="..\..\source\windows\PlatformDetector.cpp" />
     <ClCompile Include="..\..\source\windows\Screen.cpp" />
   </ItemGroup>
@@ -65,7 +65,6 @@
     <ClInclude Include="..\..\source\shared\Mesh.h" />
     <ClInclude Include="..\..\source\shared\MeshData.h" />
     <ClInclude Include="..\..\source\shared\MeshGenerator.h" />
-    <ClInclude Include="..\..\source\shared\OpenGL.h" />
     <ClInclude Include="..\..\source\shared\Platform.h" />
     <ClInclude Include="..\..\source\shared\PlatformDetector.h" />
     <ClInclude Include="..\..\source\shared\RenderCommand.h" />
@@ -79,12 +78,13 @@
     <ClInclude Include="..\..\source\shared\Shader.h" />
     <ClInclude Include="..\..\source\shared\Stopwatch.h" />
     <ClInclude Include="..\..\source\shared\Texture.h" />
-    <ClInclude Include="..\..\source\shared\Time.h" />
+    <ClInclude Include="..\..\source\shared\Timer.h" />
     <ClInclude Include="..\..\source\shared\Transform.h" />
     <ClInclude Include="..\..\source\shared\Types.h" />
     <ClInclude Include="..\..\source\shared\UserDefinedTypes.h" />
     <ClInclude Include="..\..\source\shared\Vector2.h" />
     <ClInclude Include="..\..\source\shared\Vector3.h" />
+    <ClInclude Include="..\..\source\windows\OpenGL.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

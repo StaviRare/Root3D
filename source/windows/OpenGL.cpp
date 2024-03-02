@@ -5,7 +5,7 @@
 #include "OpenGL.h"
 #include "RenderQueue.h"
 #include "Debug.h"
-#include "Time.h"
+#include "Timer.h"
 #include "Screen.h"
 
 // Shader uniform locations
@@ -102,7 +102,7 @@ void OpenGL::ExecuteRenderCommands()
                 timeLoc = glGetUniformLocation(shaderProgram, "time");
 
                 // Set the 'time' uniform in the shader to the total elapsed time since program initialization
-                glUniform1f(timeLoc, Time::TimeSinceInit());
+                glUniform1f(timeLoc, Timer::TimeSinceInit());
 
                 Texture* texture = command.texture;
 

@@ -1,6 +1,6 @@
 #include "ExampleScene.h"
 #include "Camera.h"
-#include "Time.h"
+#include "Timer.h"
 #include "Input.h"
 #include "Mesh.h"
 #include "Entity.h"
@@ -97,7 +97,7 @@ void initPrimitives()
 
 void handleCameraMovement()
 {
-    float deltaTime = Time::DeltaTime();
+    float deltaTime = Timer::DeltaTime();
 
     // Move forward
     if (Input::GetKey("w"))
@@ -138,6 +138,6 @@ void handleCameraMovement()
 
 void handleCubeTransform()
 {
-    float deltaTime = Time::DeltaTime();
+    float deltaTime = Timer::DeltaTime();
     entity.transform.eulerAngles += Vector3(80 * deltaTime, 80 * deltaTime, 0);
 }

@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-class Time
+class Timer
 {
     friend class Core;
 

@@ -1,6 +1,6 @@
 #include "Core.h"
 #include "Debug.h"
-#include "Time.h"
+#include "Timer.h"
 #include "SceneManager.h"
 #include "Graphics.h"
 #include "PlatformDetector.h"
@@ -13,7 +13,7 @@ void Core::Initialize()
     // LOAD CONFIG W/ JsonParser
 
     PlatformDetector::Initialize();
-    Time::Initialize();
+    Timer::Initialize();
     Input::Initialize();
     Screen::Initialize(960, 540);            // Hard coded. will use EngineConfig in future.
     Graphics::Initialize(APIType::OpenGL);   // Hard coded. will use EngineConfig in future.
@@ -49,7 +49,7 @@ void Core::Tick()
     // Decommissioning
 
     // Calculate loop time
-    Time::CalculateLoopTime();
+    Timer::CalculateLoopTime();
 }
 
 void Core::UnInitialize()
