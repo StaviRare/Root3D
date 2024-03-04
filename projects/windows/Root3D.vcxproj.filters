@@ -82,6 +82,9 @@
     <ClCompile Include="..\..\source\shared\Timer.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\windows\DirectX11.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\shared\Camera.h">
@@ -209,6 +212,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Timer.h">
       <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\windows\DirectX11.h">
+      <Filter>Platform</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

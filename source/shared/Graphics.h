@@ -5,7 +5,7 @@
 enum class APIType
 {
     OpenGL,
-    DirectX
+    DirectX11
 };
 
 class Graphics

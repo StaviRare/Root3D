@@ -1,5 +1,6 @@
 #include "Graphics.h"
 #include "OpenGL.h"
+#include "DirectX11.h"
 #include "Debug.h"
 
 GraphicsAPI* Graphics::graphicsAPI = nullptr;
@@ -9,6 +10,10 @@ void Graphics::Initialize(APIType api)
     if (api == APIType::OpenGL)
     {
         graphicsAPI = new OpenGL();
+    }
+    else if (api == APIType::DirectX11)
+    {
+        graphicsAPI = new DirectX11();
     }
     else
     {

@@ -13,6 +13,7 @@ class Screen
     static void SetResolution(int width, int height);
     static void RegisterResizeCallback(Func2Arg<int, int> ptr);
     static void UnRegisterResizeCallback(Func2Arg<int, int> ptr);
+    static void* GetNativeHandle();
 
     private:
     static void Initialize(int width, int height);

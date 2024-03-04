@@ -34,6 +34,7 @@
     <ClCompile Include="..\..\source\shared\Timer.cpp" />
     <ClCompile Include="..\..\source\windows\Debug.cpp" />
     <ClCompile Include="..\..\source\windows\Directory.cpp" />
+    <ClCompile Include="..\..\source\windows\DirectX11.cpp" />
     <ClCompile Include="..\..\source\windows\File.cpp" />
     <ClCompile Include="..\..\source\windows\Graphics.cpp" />
     <ClCompile Include="..\..\source\windows\Input.cpp" />
@@ -84,6 +85,7 @@
     <ClInclude Include="..\..\source\shared\UserDefinedTypes.h" />
     <ClInclude Include="..\..\source\shared\Vector2.h" />
     <ClInclude Include="..\..\source\shared\Vector3.h" />
+    <ClInclude Include="..\..\source\windows\DirectX11.h" />
     <ClInclude Include="..\..\source\windows\OpenGL.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

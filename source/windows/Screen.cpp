@@ -173,7 +173,12 @@ void Screen::PollEvents()
 
 void Screen::SwapFrameBuffers()
 {
-    SwapBuffers(deviceContext);
+    //SwapBuffers(deviceContext);
+}
+
+void* Screen::GetNativeHandle()
+{
+    return windowHandle;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
