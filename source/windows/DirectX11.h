@@ -27,6 +27,7 @@ class DirectX11 : public GraphicsAPI
     void CreateRenderTargetView();
     void SetupViewport(UINT width, UINT height);
     void CreateShadersAndInputLayout();
+    void CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer);
 
     void CompileShaderFromSource(const char* source, const char* entryPoint, const char* shaderModel, ID3DBlob** blobOut);
 
@@ -38,8 +39,11 @@ class DirectX11 : public GraphicsAPI
     ID3D11PixelShader* pixelShader = nullptr;
     ID3D11InputLayout* inputLayout = nullptr;
 
+    ID3D11Buffer* positionBuffer = nullptr;
+    ID3D11Buffer* colorBuffer = nullptr;
     ID3D11Buffer* indexBuffer = nullptr;
-    ID3D11Buffer* vertexBuffer = nullptr;
+
+
     ID3D11Buffer* constantBuffer = nullptr;
 
     bool initialized = false;

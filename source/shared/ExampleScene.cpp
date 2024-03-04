@@ -58,7 +58,7 @@ void initPrimitives()
 
     entity.transform.position = Vector3(-1.0, 0, 0);
     //entity.transform.scale *= 1.5;
-    Mesh mesh = MeshGenerator::GetCube();
+    Mesh mesh = MeshGenerator::GetQuad();
     MeshData* meshData = entity.AddComponent<MeshData>();
     meshData->mesh = mesh;
     Renderer* renderer = entity.AddComponent<Renderer>();
@@ -71,7 +71,7 @@ void initPrimitives()
     material2.texture = Resource::LoadTexture("textures/dev_og.png");
 
     entity2.transform.position = Vector3(1.0f, 0, 0);
-    Mesh mesh2 = MeshGenerator::GetCube();
+    Mesh mesh2 = MeshGenerator::GetQuad();
     MeshData* meshData2 = entity2.AddComponent<MeshData>();
     meshData2->mesh = mesh2;
     Renderer* renderer2 = entity2.AddComponent<Renderer>();

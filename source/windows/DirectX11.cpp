@@ -8,33 +8,22 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 
-static float debugRotation;
 
-
-struct Vertex
-{
-    DirectX::XMFLOAT3 position;
-    DirectX::XMFLOAT4 color;
-};
-
-struct ConstantBuffer
-{
-    DirectX::XMMATRIX worldViewProj;
-};
-
-// Simple vertex shader source code
 const char* vertexShaderSource = R"(
 cbuffer ConstantBuffer : register(b0) {
     matrix worldViewProj;
 };
+
 struct VS_INPUT {
     float3 Pos : POSITION;
     float4 Col : COLOR;
 };
+
 struct PS_INPUT {
     float4 Pos : SV_POSITION;
     float4 Col : COLOR;
 };
+
 PS_INPUT VS(VS_INPUT input) {
     PS_INPUT output;
     output.Pos = mul(float4(input.Pos, 1.0), worldViewProj);
@@ -49,11 +38,11 @@ struct PS_INPUT {
     float4 Pos : SV_POSITION;
     float4 Col : COLOR;
 };
+
 float4 PS(PS_INPUT input) : SV_Target {
     return input.Col;
 }
 )";
-
 
 void DirectX11::Initialize()
 {
@@ -65,19 +54,8 @@ void DirectX11::Initialize()
     SetupViewport(Screen::GetWidth(), Screen::GetHeight());
     CreateShadersAndInputLayout();
 
-    // Create the constant buffer for the worldViewProj matrix
-    D3D11_BUFFER_DESC bd = {};
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(ConstantBuffer);
-    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    bd.CPUAccessFlags = 0;
-    
-    HRESULT hr = device->CreateBuffer(&bd, nullptr, &constantBuffer);
-    
-    if (FAILED(hr))
-    {
-        // Handle error
-    }
+    DirectX::XMMATRIX initialData = DirectX::XMMatrixIdentity();
+    CreateBuffer(&initialData, sizeof(DirectX::XMMATRIX), D3D11_BIND_CONSTANT_BUFFER, &constantBuffer);
 
 
     D3D11_RASTERIZER_DESC rasterizerDesc = {};
@@ -95,11 +73,7 @@ void DirectX11::Initialize()
 
 void DirectX11::ClearScreen()
 {
-    //if (initialized)
-    //{
-    //    const float clearColor[4] = {0.0f, 0.2f, 0.4f, 1.0f};
-    //    context->ClearRenderTargetView(backBufferRTV, clearColor);
-    //}
+
 }
 
 void DirectX11::ExecuteRenderCommands()
@@ -134,72 +108,35 @@ void DirectX11::ExecuteRenderCommands()
                 context->VSSetShader(vertexShader, nullptr, 0);
                 context->PSSetShader(pixelShader, nullptr, 0);
 
-                // Define vertices
-                Vertex vertices[] =
+                float colors[] = 
                 {
-                    {DirectX::XMFLOAT3(-0.5f, -0.5f, 0.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)}, // Top left
-                    {DirectX::XMFLOAT3(0.5f, -0.5f, 0.0f), DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},   // Top right
-                    {DirectX::XMFLOAT3(0.5f, 0.5f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)}, // Bottom left
-                    {DirectX::XMFLOAT3(-0.5f, 0.5f, 0.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f)}    // Bottom right
+                    1.0f, 0.0f, 0.0f, 1.0f, // Red
+                    0.0f, 1.0f, 0.0f, 1.0f, // Green
+                    0.0f, 0.0f, 1.0f, 1.0f, // Blue
+                    1.0f, 1.0f, 0.0f, 1.0f  // Yellow
                 };
 
-                // Define indices for triangle strip
-                std::vector<unsigned short> indices = { 0, 1, 2, 2, 3, 0 };
+                CreateBuffer(colors, sizeof(colors), D3D11_BIND_VERTEX_BUFFER, &colorBuffer);
+                CreateBuffer(const_cast<int*>(command.indices), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
+                CreateBuffer(const_cast<float*>(command.vertices),  sizeof(float) * 3 * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &positionBuffer);
 
-                // Create a buffer for vertices
-                D3D11_BUFFER_DESC vertexBufferDesc = {};
-                vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                vertexBufferDesc.ByteWidth = sizeof(vertices);
-                vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+                UINT strides[2] = { sizeof(float) * 3, sizeof(float) * 4 };
+                UINT offsets[2] = { 0, 0 };
+                ID3D11Buffer* buffers[2] = { positionBuffer, colorBuffer };
 
-                D3D11_SUBRESOURCE_DATA vertexData = {};
-                vertexData.pSysMem = vertices;
-
-                ID3D11Buffer* frameVertexBuffer = nullptr;
-                HRESULT hr = device->CreateBuffer(&vertexBufferDesc, &vertexData, &frameVertexBuffer);
-                if (FAILED(hr))
-                {
-                    // Handle error
-                    return;
-                }
-
-                // Set the vertex buffer
-                UINT stride = sizeof(Vertex);
-                UINT offset = 0;
-                context->IASetVertexBuffers(0, 1, &frameVertexBuffer, &stride, &offset);
-
-                // Create a buffer for indices
-                D3D11_BUFFER_DESC indexBufferDesc = {};
-                indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                indexBufferDesc.ByteWidth = sizeof(unsigned short) * indices.size();
-                indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-                D3D11_SUBRESOURCE_DATA indexData = {};
-                indexData.pSysMem = indices.data();
-
-                ID3D11Buffer* indexBuffer = nullptr;
-                hr = device->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer);
-                if (FAILED(hr))
-                {
-                    // Handle error
-                    return;
-                }
-
-                // Set the index buffer
-                context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-                // Set primitive topology
+                context->IASetVertexBuffers(0, 2, buffers, strides, offsets);
+                context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
                 context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                context->DrawIndexed(command.indicesSize, 0, 0);
 
-                // Draw the indexed vertices
-                context->DrawIndexed(indices.size(), 0, 0);
 
-                // Release resources
-                if (frameVertexBuffer) frameVertexBuffer->Release();
+                if (positionBuffer) positionBuffer->Release();
+                if (colorBuffer) colorBuffer->Release();
                 if (indexBuffer) indexBuffer->Release();
             }
         }
 
+        RenderQueue::Clear();
         swapChain->Present(0, 0);
     }
 }
@@ -207,7 +144,6 @@ void DirectX11::ExecuteRenderCommands()
 void DirectX11::UnInitialize()
 {
     if (constantBuffer) constantBuffer->Release();
-    if (vertexBuffer) vertexBuffer->Release();
     if (inputLayout) inputLayout->Release();
     if (pixelShader) pixelShader->Release();
     if (vertexShader) vertexShader->Release();
@@ -218,6 +154,25 @@ void DirectX11::UnInitialize()
     initialized = false;
 }
 
+
+void DirectX11::CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer)
+{
+    D3D11_BUFFER_DESC desc = {};
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.ByteWidth = size;
+    desc.BindFlags = bindFlag;
+    desc.CPUAccessFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA initData = {};
+    initData.pSysMem = data;
+
+    HRESULT hr = device->CreateBuffer(&desc, &initData, buffer);
+
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create buffer.");
+    }
+}
 
 void DirectX11::CreateDeviceAndSwapChain(HWND hwnd)
 {
@@ -291,10 +246,9 @@ void DirectX11::CreateShadersAndInputLayout()
     CompileShaderFromSource(vertexShaderSource, "VS", "vs_4_0", &vsBlob);
     device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &vertexShader);
 
-    D3D11_INPUT_ELEMENT_DESC layout[] =
-    {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+    D3D11_INPUT_ELEMENT_DESC layout[] = {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     UINT numElements = ARRAYSIZE(layout);
