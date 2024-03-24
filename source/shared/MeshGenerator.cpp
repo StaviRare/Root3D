@@ -3,7 +3,8 @@
 #include "Vector2.h"
 #include "Vector3.h"
 
-Mesh MeshGenerator::GetQuad() {
+Mesh MeshGenerator::GetQuad() 
+{
     Mesh quadMesh;
 
     std::vector<Vector3> vertices = 
@@ -44,140 +45,126 @@ Mesh MeshGenerator::GetQuad() {
     return quadMesh;
 }
 
-Mesh MeshGenerator::GetCube() {
+Mesh MeshGenerator::GetCube() 
+{
     Mesh cubeMesh;
 
     std::vector<Vector3> vertices = 
     {
         // Front face
-        Vector3(-0.5f, -0.5f,  0.5f),
-        Vector3(0.5f, -0.5f,  0.5f),
-        Vector3(0.5f,  0.5f,  0.5f),
-        Vector3(-0.5f,  0.5f,  0.5f),
-
-        // Back face
-        Vector3(-0.5f, -0.5f, -0.5f),
-        Vector3(0.5f, -0.5f, -0.5f),
-        Vector3(0.5f,  0.5f, -0.5f),
-        Vector3(-0.5f,  0.5f, -0.5f),
-
-        // Left face
-        Vector3(-0.5f, -0.5f, -0.5f),
-        Vector3(-0.5f, -0.5f,  0.5f),
-        Vector3(-0.5f,  0.5f,  0.5f),
-        Vector3(-0.5f,  0.5f, -0.5f),
-
+        Vector3(0.5f, 0.5f, 0.5f), 
+        Vector3(-0.5f, 0.5f, 0.5f), 
+        Vector3(-0.5f, -0.5f, 0.5f), 
+        Vector3(0.5f, -0.5f, 0.5f),
+        // Up face
+        Vector3(0.5f, 0.5f, 0.5f), 
+        Vector3(0.5f, 0.5f, -0.5f), 
+        Vector3(-0.5f, 0.5f, -0.5f), 
+        Vector3(-0.5f, 0.5f, 0.5f),
         // Right face
-        Vector3(0.5f, -0.5f, -0.5f),
-        Vector3(0.5f, -0.5f,  0.5f),
-        Vector3(0.5f,  0.5f,  0.5f),
-        Vector3(0.5f,  0.5f, -0.5f),
-
-        // Top face
-        Vector3(-0.5f,  0.5f, -0.5f),
-        Vector3(0.5f,  0.5f, -0.5f),
-        Vector3(0.5f,  0.5f,  0.5f),
-        Vector3(-0.5f,  0.5f,  0.5f),
-
-        // Bottom face
+        Vector3(0.5f, 0.5f, 0.5f), 
+        Vector3(0.5f, -0.5f, 0.5f), 
+        Vector3(0.5f, -0.5f, -0.5f), 
+        Vector3(0.5f, 0.5f, -0.5f),
+        // Back face
+        Vector3(-0.5f, 0.5f, -0.5f), 
+        Vector3(0.5f, 0.5f, -0.5f), 
+        Vector3(0.5f, -0.5f, -0.5f), 
         Vector3(-0.5f, -0.5f, -0.5f),
-        Vector3(0.5f, -0.5f, -0.5f),
-        Vector3(0.5f, -0.5f,  0.5f),
-        Vector3(-0.5f, -0.5f,  0.5f)
+        // Down face
+        Vector3(-0.5f, -0.5f, 0.5f), 
+        Vector3(-0.5f, -0.5f, -0.5f), 
+        Vector3(0.5f, -0.5f, -0.5f), 
+        Vector3(0.5f, -0.5f, 0.5f),
+        // Left face
+        Vector3(-0.5f, -0.5f, 0.5f),
+        Vector3(-0.5f, 0.5f, 0.5f), 
+        Vector3(-0.5f, 0.5f, -0.5f), 
+        Vector3(-0.5f, -0.5f, -0.5f),
     };
 
     std::vector<Vector2> texCoords = 
     {
         // Front face
-        Vector2(0.0f, 1.0f),
-        Vector2(1.0f, 1.0f),
-        Vector2(1.0f, 0.0f),
-        Vector2(0.0f, 0.0f),
-
-        // Back face
-        Vector2(0.0f, 1.0f),
-        Vector2(1.0f, 1.0f),
-        Vector2(1.0f, 0.0f),
-        Vector2(0.0f, 0.0f),
-
-        // Left face
-        Vector2(0.0f, 1.0f),
-        Vector2(1.0f, 1.0f),
-        Vector2(1.0f, 0.0f),
-        Vector2(0.0f, 0.0f),
-
+        Vector2(1.f, 1.f), 
+        Vector2(0.f, 1.f), 
+        Vector2(0.f, 0.f), 
+        Vector2(1.f, 0.f),
+        // Up face
+        Vector2(1.f, 1.f), 
+        Vector2(0.f, 1.f), 
+        Vector2(0.f, 0.f), 
+        Vector2(1.f, 0.f),
         // Right face
-        Vector2(0.0f, 1.0f),
-        Vector2(1.0f, 1.0f),
-        Vector2(1.0f, 0.0f),
-        Vector2(0.0f, 0.0f),
-
-        // Top face
-        Vector2(0.0f, 1.0f),
-        Vector2(1.0f, 1.0f),
-        Vector2(1.0f, 0.0f),
-        Vector2(0.0f, 0.0f),
-
-        // Bottom face
-        Vector2(0.0f, 1.0f),
-        Vector2(1.0f, 1.0f),
-        Vector2(1.0f, 0.0f),
-        Vector2(0.0f, 0.0f)
+        Vector2(1.f, 1.f), 
+        Vector2(0.f, 1.f), 
+        Vector2(0.f, 0.f), 
+        Vector2(1.f, 0.f),
+        // Back face
+        Vector2(1.f, 1.f), 
+        Vector2(0.f, 1.f), 
+        Vector2(0.f, 0.f), 
+        Vector2(1.f, 0.f),
+        // Down face
+        Vector2(1.f, 1.f), 
+        Vector2(0.f, 1.f), 
+        Vector2(0.f, 0.f), 
+        Vector2(1.f, 0.f),
+        // Left face
+        Vector2(1.f, 1.f), 
+        Vector2(0.f, 1.f), 
+        Vector2(0.f, 0.f), 
+        Vector2(1.f, 0.f),
     };
 
     std::vector<Vector3> normals = 
     {
-        // Front face
+        // Front face normals
+        Vector3(0.0f, 0.0f, 1.0f), 
+        Vector3(0.0f, 0.0f, 1.0f), 
+        Vector3(0.0f, 0.0f, 1.0f), 
         Vector3(0.0f, 0.0f, 1.0f),
-        Vector3(0.0f, 0.0f, 1.0f),
-        Vector3(0.0f, 0.0f, 1.0f),
-        Vector3(0.0f, 0.0f, 1.0f),
-
-        // Back face
-        Vector3(0.0f, 0.0f, -1.0f),
-        Vector3(0.0f, 0.0f, -1.0f),
-        Vector3(0.0f, 0.0f, -1.0f),
-        Vector3(0.0f, 0.0f, -1.0f),
-
-        // Left face
-        Vector3(-1.0f, 0.0f, 0.0f),
-        Vector3(-1.0f, 0.0f, 0.0f),
-        Vector3(-1.0f, 0.0f, 0.0f),
-        Vector3(-1.0f, 0.0f, 0.0f),
-
-        // Right face
-        Vector3(1.0f, 0.0f, 0.0f),
-        Vector3(1.0f, 0.0f, 0.0f),
-        Vector3(1.0f, 0.0f, 0.0f),
-        Vector3(1.0f, 0.0f, 0.0f),
-
-        // Top face
+        // Up face normals
+        Vector3(0.0f, 1.0f, 0.0f), 
+        Vector3(0.0f, 1.0f, 0.0f), 
+        Vector3(0.0f, 1.0f, 0.0f), 
         Vector3(0.0f, 1.0f, 0.0f),
-        Vector3(0.0f, 1.0f, 0.0f),
-        Vector3(0.0f, 1.0f, 0.0f),
-        Vector3(0.0f, 1.0f, 0.0f),
-
-        // Bottom face
+        // Right face normals
+        Vector3(1.0f, 0.0f, 0.0f), 
+        Vector3(1.0f, 0.0f, 0.0f), 
+        Vector3(1.0f, 0.0f, 0.0f), 
+        Vector3(1.0f, 0.0f, 0.0f),
+        // Back face normals
+        Vector3(0.0f, 0.0f, -1.0f), 
+        Vector3(0.0f, 0.0f, -1.0f), 
+        Vector3(0.0f, 0.0f, -1.0f), 
+        Vector3(0.0f, 0.0f, -1.0f),
+        // Down face normals
+        Vector3(0.0f, -1.0f, 0.0f), 
+        Vector3(0.0f, -1.0f, 0.0f), 
+        Vector3(0.0f, -1.0f, 0.0f), 
         Vector3(0.0f, -1.0f, 0.0f),
-        Vector3(0.0f, -1.0f, 0.0f),
-        Vector3(0.0f, -1.0f, 0.0f),
-        Vector3(0.0f, -1.0f, 0.0f)
+        // Left face normals
+        Vector3(-1.0f, 0.0f, 0.0f), 
+        Vector3(-1.0f, 0.0f, 0.0f), 
+        Vector3(-1.0f, 0.0f, 0.0f), 
+        Vector3(-1.0f, 0.0f, 0.0f),
     };
 
     std::vector<int> indices = 
     {
         // Front face
-        0, 1, 2, 2, 3, 0,
-        // Back face
-        4, 5, 6, 6, 7, 4,
-        // Left face
-        8, 9, 10, 10, 11, 8,
+        0, 1, 2, 0, 2, 3,
+        // Up face
+        4, 5, 6, 4, 6, 7,
         // Right face
-        12, 13, 14, 14, 15, 12,
-        // Top face
-        16, 17, 18, 18, 19, 16,
-        // Bottom face
-        20, 21, 22, 22, 23, 20
+        8, 9, 10, 8, 10, 11,
+        // Back face
+        12, 13, 14, 12, 14, 15,
+        // Down face
+        16, 17, 18, 16, 18, 19,
+        // Left face
+        20, 21, 22, 20, 22, 23,
     };
 
     cubeMesh.SetVertices(vertices);
