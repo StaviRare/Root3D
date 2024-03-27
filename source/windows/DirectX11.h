@@ -3,6 +3,7 @@
 #include "GraphicsAPI.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include "Texture.h"
 
 // Forward declarations to reduce the need for including DirectX headers in other files.
 struct ID3D11Device;
@@ -29,7 +30,7 @@ class DirectX11 : public GraphicsAPI
     void SetupViewport(UINT width, UINT height);
     void CreateShadersAndInputLayout();
     void CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer);
-
+    void BindTexture(Texture& texture);
     void CompileShaderFromSource(const char* source, const char* entryPoint, const char* shaderModel, ID3DBlob** blobOut);
 
     ID3D11Device* device = nullptr;
@@ -39,13 +40,13 @@ class DirectX11 : public GraphicsAPI
     ID3D11VertexShader* vertexShader = nullptr;
     ID3D11PixelShader* pixelShader = nullptr;
     ID3D11InputLayout* inputLayout = nullptr;
+    ID3D11DepthStencilView* depthStencilView = nullptr;
 
-    ID3D11Buffer* positionBuffer = nullptr;
-    ID3D11Buffer* colorBuffer = nullptr;
+    ID3D11Buffer* vertexBuffer = nullptr;
     ID3D11Buffer* indexBuffer = nullptr;
-
-
+    ID3D11Buffer* texCoordBuffer = nullptr;
     ID3D11Buffer* constantBuffer = nullptr;
+    //ID3D11Buffer* colorBuffer = nullptr;
 
     bool initialized = false;
 };
