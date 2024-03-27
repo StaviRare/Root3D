@@ -1,5 +1,5 @@
 #include "MeshGenerator.h"
-#include "Math.h"
+#include "Calc.h"
 #include "Vector2.h"
 #include "Vector3.h"
 
@@ -189,15 +189,15 @@ Mesh MeshGenerator::GetSphere()
 
     for (unsigned int lat = 0; lat <= latitudeBands; ++lat)
     {
-        float theta = lat * Math::PI / latitudeBands;
-        float sinTheta = Math::Sin(theta);
-        float cosTheta = Math::Cos(theta);
+        float theta = lat * Calc::PI / latitudeBands;
+        float sinTheta = Calc::Sin(theta);
+        float cosTheta = Calc::Cos(theta);
 
         for (unsigned int lon = 0; lon <= longitudeBands; ++lon)
         {
-            float phi = lon * 2 * Math::PI / longitudeBands - Math::PI / 2;
-            float sinPhi = Math::Sin(phi);
-            float cosPhi = Math::Cos(phi);
+            float phi = lon * 2 * Calc::PI / longitudeBands - Calc::PI / 2;
+            float sinPhi = Calc::Sin(phi);
+            float cosPhi = Calc::Cos(phi);
 
             Vector3 position(cosPhi * sinTheta, cosTheta, sinPhi * sinTheta);
             Vector2 uv(1 - ( float(lon) / longitudeBands ), float(lat) / latitudeBands);

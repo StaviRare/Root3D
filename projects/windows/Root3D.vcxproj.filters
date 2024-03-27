@@ -129,7 +129,7 @@
     <ClInclude Include="..\..\source\shared\Material.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\shared\Math.h">
+    <ClInclude Include="..\..\source\shared\Calc.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\shared\Matrix4.h">

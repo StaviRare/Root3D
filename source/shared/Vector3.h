@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sstream>
-#include "Math.h"
+#include "Calc.h"
 
 class Vector3
 {
@@ -14,7 +14,7 @@ public:
 
     float magnitude() const
     {
-        return Math::Sqrt(x * x + y * y + z * z);
+        return Calc::Sqrt(x * x + y * y + z * z);
     }
 
     Vector3 normalized() const

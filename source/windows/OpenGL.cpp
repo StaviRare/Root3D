@@ -1,8 +1,6 @@
 #include <map>
 #include <iostream>
 #include <GL/glew.h>
-
-#define NOMINMAX // ToDo - Make it work without it.
 #include <Windows.h>
 
 #include "OpenGL.h"
@@ -10,6 +8,7 @@
 #include "Debug.h"
 #include "Timer.h"
 #include "Screen.h"
+#include "Calc.h"
 
 // Shader uniform locations
 static int modelLoc = -1;
@@ -146,7 +145,7 @@ void OpenGL::ExecuteRenderCommands()
                 glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projectionMatrix);
 
                 // Light. Respects the shader's maximum light limit (MAX_LIGHTS)
-                for (size_t i = 0; i < std::min(lightCommands.size(), static_cast<size_t>(MAX_LIGHTS)); ++i)
+                for (size_t i = 0; i < Calc::Min(lightCommands.size(), static_cast<size_t>(MAX_LIGHTS)); ++i)
                 {
                     const auto& light = lightCommands[i];
                     string uniformPrefix = "lights[" + std::to_string(i) + "].";
@@ -180,7 +179,7 @@ void OpenGL::ExecuteRenderCommands()
 
                 // Don't forget to set the 'numLights' uniform to inform the shader how many lights there are
                 numLightsLoc = glGetUniformLocation(shaderProgram, "numLights");
-                glUniform1i(numLightsLoc, std::min(static_cast<int>(lightCommands.size()), MAX_LIGHTS));
+                glUniform1i(numLightsLoc, Calc::Min(static_cast<int>(lightCommands.size()), MAX_LIGHTS));
 
                 // Draw the mesh
                 glBindVertexArray(VAO);

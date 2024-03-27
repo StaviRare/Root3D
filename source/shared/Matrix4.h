@@ -35,9 +35,9 @@ public:
 
     Matrix4 Rotate(const Vector3& angles) const {
         // Convert angles to radians
-        float radX = angles.x * Math::PI / 180.0f;
-        float radY = angles.y * Math::PI / 180.0f;
-        float radZ = angles.z * Math::PI / 180.0f;
+        float radX = angles.x * Calc::PI / 180.0f;
+        float radY = angles.y * Calc::PI / 180.0f;
+        float radZ = angles.z * Calc::PI / 180.0f;
 
         // Rotation matrices for each axis
         Matrix4 rotX, rotY, rotZ;
@@ -70,7 +70,7 @@ public:
 
     static Matrix4 Perspective(float fov, float aspectRatio, float nearPlane, float farPlane) {
         Matrix4 projection;
-        float radFov = fov * Math::PI / 180.0f; // Not sure we want that here
+        float radFov = fov * Calc::PI / 180.0f; // Not sure we want that here
         float tanHalfFovy = tan(radFov / 2.0f);
 
         projection.m[0][0] = 1.0f / (aspectRatio * tanHalfFovy);
