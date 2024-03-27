@@ -171,11 +171,6 @@ void Screen::PollEvents()
     }
 }
 
-void Screen::SwapFrameBuffers()
-{
-    //SwapBuffers(deviceContext);
-}
-
 void* Screen::GetNativeHandle()
 {
     return windowHandle;

@@ -19,4 +19,5 @@ class Graphics
     static void ClearScreen();
     static void ExecuteRenderCommands();
     static void UnInitialize();
+    static void SwapFrameBuffers();
 };

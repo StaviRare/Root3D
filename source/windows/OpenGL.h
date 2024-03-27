@@ -11,6 +11,7 @@ class OpenGL : public GraphicsAPI
     void Initialize() override;
     void ClearScreen() override;
     void ExecuteRenderCommands() override;
+    void SwapFrameBuffers() override;
     void UnInitialize() override;
 
     private:

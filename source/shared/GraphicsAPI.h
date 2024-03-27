@@ -7,6 +7,7 @@ class GraphicsAPI
     virtual void ClearScreen() = 0;
     virtual void ExecuteRenderCommands() = 0;
     virtual void UnInitialize() = 0;
+    virtual void SwapFrameBuffers() = 0;
 
     protected:
     bool initialized = false;

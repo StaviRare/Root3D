@@ -2,6 +2,9 @@
 #include <iostream>
 #include <GL/glew.h>
 
+#define NOMINMAX // ToDo - Make it work without it.
+#include <Windows.h>
+
 #include "OpenGL.h"
 #include "RenderQueue.h"
 #include "Debug.h"
@@ -30,11 +33,17 @@ static unsigned int VBO[3];
 // Max supported lights
 static const int MAX_LIGHTS = 100;
 
+static HDC deviceContext;
+
 void OpenGL::Initialize()
 {
     Screen::RegisterResizeCallback(OnWindowResize);
 
-    initialized = glewInit() == GLEW_OK;
+    void* nativeHandle = Screen::GetNativeHandle();
+    HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(nativeHandle));
+    deviceContext = GetDC(hwnd);
+
+    initialized = glewInit() == GLEW_OK && deviceContext != nullptr;
 
     if (initialized)
     {
@@ -185,6 +194,11 @@ void OpenGL::ExecuteRenderCommands()
             RenderQueue::Clear();
         }
     }
+}
+
+void OpenGL::SwapFrameBuffers()
+{
+    SwapBuffers(deviceContext);
 }
 
 void OpenGL::UnInitialize()

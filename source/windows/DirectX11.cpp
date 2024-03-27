@@ -137,8 +137,12 @@ void DirectX11::ExecuteRenderCommands()
         }
 
         RenderQueue::Clear();
-        swapChain->Present(0, 0);
     }
+}
+
+void DirectX11::SwapFrameBuffers()
+{
+    swapChain->Present(0, 0);
 }
 
 void DirectX11::UnInitialize()

@@ -42,7 +42,7 @@ void Core::Tick()
     // UI Rendering
 
     // End of Frame Tasks
-    Screen::SwapFrameBuffers();
+    Graphics::SwapFrameBuffers();
 
     // Game Pausing
 

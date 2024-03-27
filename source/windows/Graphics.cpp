@@ -36,6 +36,11 @@ void Graphics::ExecuteRenderCommands()
     graphicsAPI->ExecuteRenderCommands();
 }
 
+void Graphics::SwapFrameBuffers()
+{
+    graphicsAPI->SwapFrameBuffers();
+}
+
 void Graphics::UnInitialize()
 {
     graphicsAPI->UnInitialize();

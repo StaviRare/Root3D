@@ -19,5 +19,4 @@ class Screen
     static void Initialize(int width, int height);
     static void UnInitialize();
     static void PollEvents();
-    static void SwapFrameBuffers();
 };

@@ -20,6 +20,7 @@ class DirectX11 : public GraphicsAPI
     void Initialize();
     void ClearScreen();
     void ExecuteRenderCommands();
+    void SwapFrameBuffers();
     void UnInitialize();
 
     private:
