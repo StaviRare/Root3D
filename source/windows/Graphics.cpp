@@ -3,45 +3,64 @@
 #include "DirectX11.h"
 #include "Debug.h"
 
-GraphicsAPI* Graphics::graphicsAPI = nullptr;
+APIType Graphics:: _currentType;
+GraphicsAPI* Graphics::_currentAPI = nullptr;
 
-void Graphics::Initialize(APIType api)
+string Graphics::TypeName()
 {
-    if (api == APIType::OpenGL)
+    switch (_currentType)
     {
-        graphicsAPI = new OpenGL();
+        case ( APIType::OpenGL ):
+        return "OpenGL";
+
+        case ( APIType::DirectX11 ):
+        return "DirectX11";
+
+        default:
+        return "Null";
     }
-    else if (api == APIType::DirectX11)
+}
+
+void Graphics::Initialize(APIType type)
+{
+    switch (type)
     {
-        graphicsAPI = new DirectX11();
+        case ( APIType::OpenGL ):
+        _currentAPI = new OpenGL();
+        break;
+
+        case ( APIType::DirectX11 ):
+        _currentAPI = new DirectX11();
+        break;
+    }
+
+    if (_currentAPI != nullptr)
+    {
+        _currentType = type;
+        _currentAPI->Initialize();
     }
     else
     {
         Debug::LogError("Unsupported Graphics API selected!");
     }
-
-    if (graphicsAPI != nullptr)
-    {
-        graphicsAPI->Initialize();
-    }
 }
 
 void Graphics::ClearScreen()
 {
-    graphicsAPI->ClearScreen();
+    _currentAPI->ClearScreen();
 }
 
 void Graphics::ExecuteRenderCommands()
 {
-    graphicsAPI->ExecuteRenderCommands();
+    _currentAPI->ExecuteRenderCommands();
 }
 
 void Graphics::SwapFrameBuffers()
 {
-    graphicsAPI->SwapFrameBuffers();
+    _currentAPI->SwapFrameBuffers();
 }
 
 void Graphics::UnInitialize()
 {
-    graphicsAPI->UnInitialize();
+    _currentAPI->UnInitialize();
 }
