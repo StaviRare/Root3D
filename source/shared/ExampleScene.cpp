@@ -52,7 +52,7 @@ void initCamera()
 void initPrimitives()
 {
     // Entity 1
-    Shader shader1 = Resource::LoadShader("shaders/Lit.glsl");
+    Shader shader1 = Resource::LoadShader("shaders/glsl/Lit.glsl");
     Material material(shader1);
     material.texture = Resource::LoadTexture("textures/dev.png");
 
@@ -66,7 +66,7 @@ void initPrimitives()
 
 
     // Entity 2
-    Shader shader2 = Resource::LoadShader("shaders/UnlitWobble.glsl");
+    Shader shader2 = Resource::LoadShader("shaders/glsl/UnlitWobble.glsl");
     Material material2(shader2);
     material2.texture = Resource::LoadTexture("textures/dev_og.png");
 
