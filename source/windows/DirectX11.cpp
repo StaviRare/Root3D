@@ -8,48 +8,6 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 
-
-const char* vertexShaderSource = R"(
-cbuffer ConstantBuffer : register(b0) {
-    matrix worldViewProj;
-};
-
-struct VS_INPUT {
-    float3 Pos : POSITION;
-    float4 Col : COLOR;
-    float2 Tex : TEXCOORD0;
-};
-
-struct PS_INPUT {
-    float4 Pos : SV_POSITION;
-    float4 Col : COLOR;
-    float2 Tex : TEXCOORD0;
-};
-
-PS_INPUT VS(VS_INPUT input) {
-    PS_INPUT output;
-    output.Pos = mul(float4(input.Pos, 1.0), worldViewProj);
-    output.Col = input.Col;
-    output.Tex = input.Tex;
-    return output;
-}
-)";
-
-// Simple pixel shader source code
-const char* pixelShaderSource = R"(
-Texture2D ObjTexture : register(t0);
-SamplerState ObjSampler : register(s0);
-
-struct PS_INPUT {
-    float4 Pos : SV_POSITION;
-    float2 Tex : TEXCOORD0;
-};
-
-float4 PS(PS_INPUT input) : SV_Target {
-    return ObjTexture.Sample(ObjSampler, input.Tex);
-}
-)";
-
 void DirectX11::Initialize()
 {
     HRESULT hr = E_FAIL; // for safety.
@@ -60,7 +18,6 @@ void DirectX11::Initialize()
     CreateDeviceAndSwapChain(hwnd);
     CreateRenderTargetView();
     SetupViewport(Screen::GetWidth(), Screen::GetHeight());
-    CreateShadersAndInputLayout();
 
     DirectX::XMMATRIX initialData = DirectX::XMMatrixIdentity();
     CreateBuffer(&initialData, sizeof(DirectX::XMMATRIX), D3D11_BIND_CONSTANT_BUFFER, &constantBuffer);
@@ -156,39 +113,58 @@ void DirectX11::ExecuteRenderCommands()
 
             for (const auto& command : objectCommands)
             {
-                DirectX::XMMATRIX modelMatrix = DirectX::XMMATRIX(command.modelMatrix);
-                DirectX::XMMATRIX worldViewProj = modelMatrix * viewMatrix * projectionMatrix;
-                worldViewProj = DirectX::XMMatrixTranspose(worldViewProj);
-
-                context->UpdateSubresource(constantBuffer, 0, nullptr, &worldViewProj, 0, 0);
-                context->VSSetConstantBuffers(0, 1, &constantBuffer);
-
-                // Set pipeline state
-                context->IASetInputLayout(inputLayout);
-                context->VSSetShader(vertexShader, nullptr, 0);
-                context->PSSetShader(pixelShader, nullptr, 0);
-
-                if (command.texture)
+                if (command.shader->ID == 0)
                 {
-                    BindTexture(*( command.texture ));
+                    command.shader->ID = CreateShaderProgram(command.shader->vertexCode, command.shader->fragmentCode);
                 }
 
-                CreateBuffer(const_cast<int*>(command.indices), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
-                CreateBuffer(const_cast<float*>(command.vertices), sizeof(float) * 3 * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
-                CreateBuffer(const_cast<float*>(command.texCoords), sizeof(float) * 2 * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
+                // Shader
+                ShaderProgram* shaderProgram = nullptr;
 
-                UINT strides[2] = { sizeof(float) * 3, sizeof(float) * 2 }; // Update stride for texture coordinates
-                UINT offsets[2] = { 0, 0 };
-                ID3D11Buffer* buffers[2] = { vertexBuffer, texCoordBuffer };
+                for (auto& sp : shaderMap)
+                {
+                    if (sp.ID == command.shader->ID)
+                    {
+                        shaderProgram = &sp;
+                        break;
+                    }
+                }
 
-                context->IASetVertexBuffers(0, 2, buffers, strides, offsets);
-                context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-                context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-                context->DrawIndexed(command.indicesSize, 0, 0);
+                if (shaderProgram != nullptr)
+                {
+                    context->IASetInputLayout(shaderProgram->inputLayout);
+                    context->VSSetShader(shaderProgram->vertexShader, nullptr, 0);
+                    context->PSSetShader(shaderProgram->pixelShader, nullptr, 0);
 
-                if (indexBuffer) indexBuffer->Release();
-                if (vertexBuffer) vertexBuffer->Release();
-                if (texCoordBuffer) texCoordBuffer->Release();
+                    // Projection
+                    DirectX::XMMATRIX modelMatrix = DirectX::XMMATRIX(command.modelMatrix);
+                    DirectX::XMMATRIX worldViewProj = modelMatrix * viewMatrix * projectionMatrix;
+                    worldViewProj = DirectX::XMMatrixTranspose(worldViewProj);
+                    context->UpdateSubresource(constantBuffer, 0, nullptr, &worldViewProj, 0, 0);
+                    context->VSSetConstantBuffers(0, 1, &constantBuffer);
+
+                    if (command.texture)
+                    {
+                        BindTexture(*( command.texture ));
+                    }
+
+                    CreateBuffer(const_cast<int*>( command.indices ), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
+                    CreateBuffer(const_cast<float*>( command.vertices ), sizeof(float) * 3 * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
+                    CreateBuffer(const_cast<float*>( command.texCoords ), sizeof(float) * 2 * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
+
+                    UINT strides[2] = {sizeof(float) * 3, sizeof(float) * 2}; // Update stride for texture coordinates
+                    UINT offsets[2] = {0, 0};
+                    ID3D11Buffer* buffers[2] = {vertexBuffer, texCoordBuffer};
+
+                    context->IASetVertexBuffers(0, 2, buffers, strides, offsets);
+                    context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+                    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                    context->DrawIndexed(command.indicesSize, 0, 0);
+
+                    if (indexBuffer) indexBuffer->Release();
+                    if (vertexBuffer) vertexBuffer->Release();
+                    if (texCoordBuffer) texCoordBuffer->Release();
+                }
             }
         }
 
@@ -204,14 +180,20 @@ void DirectX11::SwapFrameBuffers()
 void DirectX11::UnInitialize()
 {
     if (constantBuffer) constantBuffer->Release();
-    if (inputLayout) inputLayout->Release();
-    if (pixelShader) pixelShader->Release();
-    if (vertexShader) vertexShader->Release();
     if (backBufferRTV) backBufferRTV->Release();
     if (swapChain) swapChain->Release();
     if (context) context->Release();
     if (device) device->Release();
     if (depthStencilView) depthStencilView->Release();
+
+    for (auto program : shaderMap)
+    {
+        if (program.inputLayout) program.inputLayout->Release();
+        if (program.pixelShader) program.pixelShader->Release();
+        if (program.vertexShader) program.vertexShader->Release();
+    }
+
+    shaderMap.clear();
 
     initialized = false;
 }
@@ -269,7 +251,6 @@ void DirectX11::BindTexture(Texture& texture)
     d3dTexture->Release();
 }
 
-
 void DirectX11::CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer)
 {
     D3D11_BUFFER_DESC desc = {};
@@ -325,7 +306,6 @@ void DirectX11::CreateRenderTargetView()
 
     if (FAILED(hr))
     {
-
         return;
     }
 
@@ -335,7 +315,6 @@ void DirectX11::CreateRenderTargetView()
 
     if (FAILED(hr))
     {
-
         return;
     }
 
@@ -355,71 +334,11 @@ void DirectX11::SetupViewport(UINT width, UINT height)
     context->RSSetViewports(1, &vp);
 }
 
-void DirectX11::CreateShadersAndInputLayout()
-{
-    // Compile vertex shader
-    ID3DBlob* vsBlob = nullptr;
-    CompileShaderFromSource(vertexShaderSource, "VS", "vs_4_0", &vsBlob);
-    
-    if (!vsBlob)
-    {
-        Debug::LogError("Failed to compile vertex shader.");
-        return;
-    }
-
-    // Create vertex shader
-    HRESULT hr = device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &vertexShader);
-    
-    if (FAILED(hr))
-    {
-        Debug::LogError("Failed to create vertex shader.");
-        vsBlob->Release();
-        return;
-    }
-
-    // Define input layout for vertex data
-    D3D11_INPUT_ELEMENT_DESC layout[] = 
-    {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
-    };
-
-    // Create input layout
-    hr = device->CreateInputLayout(layout, ARRAYSIZE(layout), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &inputLayout);
-    vsBlob->Release(); // Release the vertex shader blob after creating the input layout
-
-    if (FAILED(hr))
-    {
-        Debug::LogError("Failed to create input layout.");
-        return;
-    }
-
-    // Compile pixel shader
-    ID3DBlob* psBlob = nullptr;
-    CompileShaderFromSource(pixelShaderSource, "PS", "ps_4_0", &psBlob);
-    
-    if (!psBlob)
-    {
-        Debug::LogError("Failed to compile pixel shader.");
-        return;
-    }
-
-    // Create pixel shader
-    hr = device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &pixelShader);
-    psBlob->Release();
-    
-    if (FAILED(hr))
-    {
-        Debug::LogError("Failed to create pixel shader.");
-        return;
-    }
-}
-
-void DirectX11::CompileShaderFromSource(const char* source, const char* entryPoint, const char* shaderModel, ID3DBlob** blobOut)
+void DirectX11::CompileShader(const string& source, const char* entryPoint, const char* shaderModel, ID3DBlob** blobOut)
 {
     ID3DBlob* errorBlob = nullptr;
-    HRESULT hr = D3DCompile(source, strlen(source), nullptr, nullptr, nullptr, entryPoint, shaderModel, 0, 0, blobOut, &errorBlob);
+    const char* src = source.c_str();
+    HRESULT hr = D3DCompile(src, strlen(src), nullptr, nullptr, nullptr, entryPoint, shaderModel, 0, 0, blobOut, &errorBlob);
 
     if (FAILED(hr))
     {
@@ -432,5 +351,76 @@ void DirectX11::CompileShaderFromSource(const char* source, const char* entryPoi
         *blobOut = nullptr; // return null blob on failure
     }
 
-    if (errorBlob) errorBlob->Release();
+    if (errorBlob)
+    {
+        errorBlob->Release();
+    }
+}
+
+unsigned int DirectX11::CreateShaderProgram(const string& vertexSource, const string& fragmentSource)
+{
+    // Compile vertex shader
+    ShaderProgram shaderProgram;
+    ID3DBlob* vsBlob = nullptr;
+    CompileShader(vertexSource, "VS", "vs_4_0", &vsBlob);
+
+    if (!vsBlob)
+    {
+        Debug::LogError("Failed to compile vertex shader.");
+        return 0;
+    }
+
+    // Create vertex shader
+    HRESULT hr = device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &shaderProgram.vertexShader);
+
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create vertex shader.");
+        vsBlob->Release();
+        return 0;
+    }
+
+    // Define input layout for vertex data
+    D3D11_INPUT_ELEMENT_DESC layout[] = 
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+    };
+
+    // Create input layout
+    hr = device->CreateInputLayout(layout, ARRAYSIZE(layout), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &shaderProgram.inputLayout);
+    vsBlob->Release(); // Release the vertex shader blob after creating the input layout
+
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create input layout.");
+        return 0;
+    }
+
+    // Compile pixel shader
+    ID3DBlob* psBlob = nullptr;
+    CompileShader(fragmentSource, "PS", "ps_4_0", &psBlob);
+
+    if (!psBlob)
+    {
+        Debug::LogError("Failed to compile pixel shader.");
+        return 0;
+    }
+
+    // Create pixel shader
+    hr = device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &shaderProgram.pixelShader);
+    psBlob->Release();
+
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create pixel shader.");
+        return 0;
+    }
+
+    nextShaderID++;
+    shaderProgram.ID = nextShaderID;
+    shaderMap.push_back(shaderProgram);
+
+    return nextShaderID;
 }

@@ -12,6 +12,7 @@
 #include "SceneManager.h"
 #include "Resource.h"
 #include "Light.h"
+#include "Graphics.h"
 
 static Entity entity;
 static Entity entity2;
@@ -51,9 +52,23 @@ void initCamera()
 
 void initPrimitives()
 {
-    // Entity 1
-    Shader shader1 = Resource::LoadShader("shaders/glsl/Lit.glsl");
-    Material material(shader1);
+    Shader unlitShader;
+    string graphicsAPI = Graphics::TypeName();
+
+    if (graphicsAPI == "OpenGL")
+    {
+        unlitShader = Resource::LoadShader("shaders/glsl/Unlit.glsl");
+    }
+    else if (graphicsAPI == "DirectX11")
+    {
+        unlitShader = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
+    }
+    else
+    {
+        Debug::LogError("Could not figure out where unlit shader is.");
+    }
+
+    Material material(unlitShader);
     material.texture = Resource::LoadTexture("textures/dev.png");
 
     entity.transform.position = Vector3(-1.0, 0, 0);
