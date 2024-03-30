@@ -52,39 +52,41 @@ void initCamera()
 
 void initPrimitives()
 {
-    Shader unlitShader;
+    Shader shader1;
+    Shader shader2;
     string graphicsAPI = Graphics::TypeName();
 
     if (graphicsAPI == "OpenGL")
     {
-        unlitShader = Resource::LoadShader("shaders/glsl/Unlit.glsl");
+        shader1 = Resource::LoadShader("shaders/glsl/Lit.glsl");
+        shader2 = Resource::LoadShader("shaders/glsl/UnlitWobble.glsl");
     }
     else if (graphicsAPI == "DirectX11")
     {
-        unlitShader = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
+        shader1 = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
+        shader2 = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
     }
     else
     {
-        Debug::LogError("Could not figure out where unlit shader is.");
+        Debug::LogError("Unsupported graphics API. Shaders not set.");
     }
 
-    Material material(unlitShader);
-    material.texture = Resource::LoadTexture("textures/dev.png");
 
+    // Entity 1:
+    Material material(shader1);
+    material.texture = Resource::LoadTexture("textures/dev.png");
     entity.transform.position = Vector3(-1.0, 0, 0);
-    //entity.transform.scale *= 1.5;
     Mesh mesh = MeshGenerator::GetCube();
     MeshData* meshData = entity.AddComponent<MeshData>();
     meshData->mesh = mesh;
     Renderer* renderer = entity.AddComponent<Renderer>();
     renderer->material = material;
+    //entity.transform.scale *= 1.5;
 
 
-    // Entity 2
-    Shader shader2 = Resource::LoadShader("shaders/glsl/UnlitWobble.glsl");
+    // Entity 2:
     Material material2(shader2);
     material2.texture = Resource::LoadTexture("textures/dev_og.png");
-
     entity2.transform.position = Vector3(1.0f, 0, 0);
     Mesh mesh2 = MeshGenerator::GetCube();
     MeshData* meshData2 = entity2.AddComponent<MeshData>();
