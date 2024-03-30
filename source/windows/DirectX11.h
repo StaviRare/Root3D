@@ -25,6 +25,13 @@ struct ShaderProgram
     ID3D11VertexShader* vertexShader = nullptr;
 };
 
+struct MVPBuffer // Model-View-Projection
+{
+    DirectX::XMMATRIX model;
+    DirectX::XMMATRIX view;
+    DirectX::XMMATRIX projection;
+};
+
 
 class DirectX11 : public GraphicsAPI
 {
@@ -53,10 +60,11 @@ class DirectX11 : public GraphicsAPI
     ID3D11Buffer* vertexBuffer = nullptr;
     ID3D11Buffer* indexBuffer = nullptr;
     ID3D11Buffer* texCoordBuffer = nullptr;
-    ID3D11Buffer* constantBuffer = nullptr;
-    //ID3D11Buffer* colorBuffer = nullptr;
+    ID3D11Buffer* normalBuffer = nullptr;
+    ID3D11Buffer* mvpBuffer = nullptr;
 
     bool initialized = false;
     unsigned int nextShaderID = 0;
     std::list<ShaderProgram> shaderMap;
+    MVPBuffer mvpBufferData;
 };
