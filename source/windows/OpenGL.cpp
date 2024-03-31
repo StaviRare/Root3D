@@ -47,6 +47,9 @@ void OpenGL::Initialize()
     if (initialized)
     {
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CW);
+        glCullFace(GL_FRONT);
 
         // Create vertex array and buffers
         glGenVertexArrays(1, &VAO);
