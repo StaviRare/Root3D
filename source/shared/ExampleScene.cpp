@@ -63,7 +63,7 @@ void initPrimitives()
     }
     else if (graphicsAPI == "DirectX11")
     {
-        shader1 = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
+        shader1 = Resource::LoadShader("shaders/hlsl/Lit.hlsl");
         shader2 = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
     }
     else

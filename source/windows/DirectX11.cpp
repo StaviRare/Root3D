@@ -10,20 +10,21 @@
 
 void DirectX11::Initialize()
 {
-    HRESULT hr = E_FAIL; // for safety.
+    HRESULT hr = E_FAIL;
 
-    void* nativeHandle = Screen::GetNativeHandle();
-    HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(nativeHandle));
-
+    // Setup Device and Swap Chain
+    HWND hwnd = reinterpret_cast<HWND>( const_cast<void*>( Screen::GetNativeHandle() ) );
     CreateDeviceAndSwapChain(hwnd);
+
+    // Initialize Render Target and Viewport
     CreateRenderTargetView();
     SetupViewport(Screen::GetWidth(), Screen::GetHeight());
 
-    DirectX::XMMATRIX initialData = DirectX::XMMatrixIdentity();
-    CreateBuffer(&initialData, sizeof(MVPBuffer), D3D11_BIND_CONSTANT_BUFFER, &mvpBuffer);
+    // Setup Model-View-Projection (MVP) buffer
+    XMMATRIX initialMVP = DirectX::XMMatrixIdentity();
+    CreateBuffer(&initialMVP, sizeof(MVPBuffer), D3D11_BIND_CONSTANT_BUFFER, &mvpBuffer);
 
-    // Create a Depth Stencil Texture
-    ID3D11Texture2D* depthStencilTexture = nullptr;
+    // Setup Depth Stencil Texture
     D3D11_TEXTURE2D_DESC descDepth = {};
     descDepth.Width = Screen::GetWidth();
     descDepth.Height = Screen::GetHeight();
@@ -31,58 +32,60 @@ void DirectX11::Initialize()
     descDepth.ArraySize = 1;
     descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     descDepth.SampleDesc.Count = 1;
-    descDepth.SampleDesc.Quality = 0;
     descDepth.Usage = D3D11_USAGE_DEFAULT;
     descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    hr = device->CreateTexture2D(&descDepth, nullptr, &depthStencilTexture);
-    
-    if (FAILED(hr)) 
-    {         
-        Debug::LogError("Create a Depth Stencil Texture ERROR");
+    ID3D11Texture2D* depthStencilTexture = nullptr;
+
+    if (FAILED(device->CreateTexture2D(&descDepth, nullptr, &depthStencilTexture)))
+    {
+        Debug::LogError("Failed to create Depth Stencil Texture");
+        return;
     }
 
-    // Create a Depth Stencil View
+    // Setup Depth Stencil View
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
     descDSV.Format = descDepth.Format;
     descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     descDSV.Texture2D.MipSlice = 0;
-    hr = device->CreateDepthStencilView(depthStencilTexture, &descDSV, &depthStencilView);
-    
-    if (FAILED(hr)) 
-    {        
-        Debug::LogError("Create a Depth Stencil View ERROR");
+
+    if (FAILED(device->CreateDepthStencilView(depthStencilTexture, &descDSV, &depthStencilView)))
+    {
+        Debug::LogError("Failed to create Depth Stencil View");
+        depthStencilTexture->Release();
+        return;
     }
 
-    depthStencilTexture->Release(); // no longer needed
+    depthStencilTexture->Release();
 
-    // Bind the Depth Stencil View
     context->OMSetRenderTargets(1, &backBufferRTV, depthStencilView);
 
-    // Configure Depth Stencil State
-    D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-    dsDesc.DepthEnable = true;
-    dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
+    // Configure and Set Depth Stencil State
+    D3D11_DEPTH_STENCIL_DESC dsDesc = {true, D3D11_DEPTH_WRITE_MASK_ALL, D3D11_COMPARISON_LESS};
     ID3D11DepthStencilState* depthStencilState = nullptr;
-    hr = device->CreateDepthStencilState(&dsDesc, &depthStencilState);
     
-    if (FAILED(hr))
+    if (FAILED(device->CreateDepthStencilState(&dsDesc, &depthStencilState)))
     {
-        Debug::LogError("Configure Depth Stencil State ERROR");
+        Debug::LogError("Failed to configure Depth Stencil State");
+        return;
     }
 
     context->OMSetDepthStencilState(depthStencilState, 1);
 
-    D3D11_RASTERIZER_DESC rasterizerDesc = {};
-    rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-    rasterizerDesc.CullMode = D3D11_CULL_BACK;
-    rasterizerDesc.FrontCounterClockwise = TRUE;
-    rasterizerDesc.DepthClipEnable = TRUE;
+    // Setup and Apply Rasterizer State
+    D3D11_RASTERIZER_DESC rasterizerDesc = {D3D11_FILL_SOLID, D3D11_CULL_BACK, TRUE, TRUE};
     ID3D11RasterizerState* rasterizerState = nullptr;
-    device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+    
+    if (FAILED(device->CreateRasterizerState(&rasterizerDesc, &rasterizerState)))
+    {
+        Debug::LogError("Failed to configure Rasterizer State");
+        return;
+    }
+
     context->RSSetState(rasterizerState);
     rasterizerState->Release();
+
+    // Setup Lighting Buffer
+    CreateBuffer(&lightBufferData, sizeof(LightBuffer), D3D11_BIND_CONSTANT_BUFFER, &lightBuffer);
 
     initialized = true;
 }
@@ -101,17 +104,25 @@ void DirectX11::ExecuteRenderCommands()
         if (onceCmd)
         {
             const float* bg = onceCmd->backgroundColor;
-            const float* vm = onceCmd->viewMatrix;
-            const float* pm = onceCmd->projectionMatrix;
+            const float* viewMatrix = onceCmd->viewMatrix;
+            const float* projectionMatrix = onceCmd->projectionMatrix;
 
             context->ClearRenderTargetView(backBufferRTV, bg);
             
             auto lightCommands = RenderQueue::GetLightRenderCommands();
             auto objectCommands = RenderQueue::GetObjectRenderCommands();
 
+            // LightBuffer (b1)
+            // ToDo - Work with multiple lights
+            const auto& light = lightCommands[1];
+            lightBufferData.LightColor = XMFLOAT3(light.color[0], light.color[1], light.color[2]);
+            lightBufferData.LightDirection = XMFLOAT3(light.direction[0], light.direction[1], light.direction[2]);
+            context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
+            context->PSSetConstantBuffers(1, 1, &lightBuffer);
+
             for (const auto& command : objectCommands)
             {
-                // Shader. Move to shaderManager //
+                // ToDo - Move shader related logic to ShaderManager
 
                 if (command.shader->ID == 0)
                 {
@@ -129,19 +140,16 @@ void DirectX11::ExecuteRenderCommands()
                     }
                 }
 
-                // Shader. Move to shaderManager //
-
                 if (shaderProgram != nullptr)
                 {
                     context->IASetInputLayout(shaderProgram->inputLayout);
                     context->VSSetShader(shaderProgram->vertexShader, nullptr, 0);
                     context->PSSetShader(shaderProgram->pixelShader, nullptr, 0);
 
-                    
-                    mvpBufferData.model = DirectX::XMMatrixTranspose(DirectX::XMMATRIX(command.modelMatrix));
-                    mvpBufferData.view = DirectX::XMMatrixTranspose(DirectX::XMMATRIX(vm));
-                    mvpBufferData.projection = DirectX::XMMatrixTranspose(DirectX::XMMATRIX(pm));
-
+                    // MVPBuffer (b0)
+                    mvpBufferData.model = DirectX::XMMatrixTranspose(XMMATRIX(command.modelMatrix));
+                    mvpBufferData.view = DirectX::XMMatrixTranspose(XMMATRIX(viewMatrix));
+                    mvpBufferData.projection = DirectX::XMMatrixTranspose(XMMATRIX(projectionMatrix));
                     context->UpdateSubresource(mvpBuffer, 0, nullptr, &mvpBufferData, 0, 0);
                     context->VSSetConstantBuffers(0, 1, &mvpBuffer);
 
@@ -233,9 +241,9 @@ void DirectX11::BindTexture(Texture& texture)
     // Create texture
     ID3D11Texture2D* d3dTexture = nullptr;
     HRESULT hr = device->CreateTexture2D(&desc, &initData, &d3dTexture);
+    
     if (FAILED(hr))
     {
-        // Handle error
         Debug::LogError("Failed to create texture.");
         return;
     }
@@ -243,9 +251,9 @@ void DirectX11::BindTexture(Texture& texture)
     // Create shader resource view
     ID3D11ShaderResourceView* textureView = nullptr;
     hr = device->CreateShaderResourceView(d3dTexture, nullptr, &textureView);
+    
     if (FAILED(hr))
     {
-        // Handle error
         Debug::LogError("Failed to create shader resource view.");
         d3dTexture->Release();
         return;
@@ -253,7 +261,6 @@ void DirectX11::BindTexture(Texture& texture)
 
     // Bind the texture view to slot 0 of the pixel shader
     context->PSSetShaderResources(0, 1, &textureView);
-    //Debug::Log("Texture bound successfully.");
 
     // Release the resources
     textureView->Release();
@@ -275,7 +282,7 @@ void DirectX11::CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID
 
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create buffer.");
+        Debug::LogError("Failed to create buffer. Error code: " + std::to_string(hr));
     }
 }
 
@@ -304,7 +311,7 @@ void DirectX11::CreateDeviceAndSwapChain(HWND hwnd)
 
     if (FAILED(hr))
     {
-
+        Debug::LogError("Failed to create device and swap chain. Error code: " + std::to_string(hr));
     }
 }
 
@@ -315,6 +322,7 @@ void DirectX11::CreateRenderTargetView()
 
     if (FAILED(hr))
     {
+        Debug::LogError("Failed to create render target view. Error code: " + std::to_string(hr));
         return;
     }
 
@@ -324,6 +332,7 @@ void DirectX11::CreateRenderTargetView()
 
     if (FAILED(hr))
     {
+        Debug::LogError("Failed to create render target view. Error code: " + std::to_string(hr));
         return;
     }
 
@@ -347,20 +356,29 @@ void DirectX11::CompileShader(const string& source, const char* entryPoint, cons
 {
     ID3DBlob* errorBlob = nullptr;
     const char* src = source.c_str();
-    HRESULT hr = D3DCompile(src, strlen(src), nullptr, nullptr, nullptr, entryPoint, shaderModel, 0, 0, blobOut, &errorBlob);
+    HRESULT hr = D3DCompile(src, source.size(), nullptr, nullptr, nullptr, entryPoint, shaderModel, 0, 0, blobOut, &errorBlob);
 
     if (FAILED(hr))
     {
-        if (errorBlob)
+        string errorMessage = "Shader compilation failed. ";
+        
+        if (errorBlob != nullptr)
         {
-            OutputDebugStringA(reinterpret_cast<const char*>( errorBlob->GetBufferPointer() ));
+            errorMessage += "Error Details: " + string(static_cast<const char*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize());
             errorBlob->Release();
         }
+        else
+        {
+            errorMessage += "No error details available.";
+        }
 
-        *blobOut = nullptr; // return null blob on failure
+        // Ensure the blobOut is null to indicate failure
+        *blobOut = nullptr;
+
+        Debug::LogError(errorMessage);
     }
 
-    if (errorBlob)
+    if (errorBlob != nullptr)
     {
         errorBlob->Release();
     }

@@ -1,21 +1,14 @@
 #pragma once
 
 #include <list>
-#include "GraphicsAPI.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include "GraphicsAPI.h"
 #include "Texture.h"
 #include "Types.h"
 
-// Forward declarations to reduce the need for including DirectX headers in other files.
-struct ID3D11Device;
-struct ID3D11DeviceContext;
-struct IDXGISwapChain;
-struct ID3D11RenderTargetView;
-struct ID3D11VertexShader;
-struct ID3D11PixelShader;
-struct ID3D11InputLayout;
-struct ID3D11Buffer;
+using DirectX::XMFLOAT3;
+using DirectX::XMMATRIX;
 
 struct ShaderProgram
 {
@@ -25,13 +18,22 @@ struct ShaderProgram
     ID3D11VertexShader* vertexShader = nullptr;
 };
 
-struct MVPBuffer // Model-View-Projection
+// Model-View-Projection
+struct MVPBuffer
 {
-    DirectX::XMMATRIX model;
-    DirectX::XMMATRIX view;
-    DirectX::XMMATRIX projection;
+    XMMATRIX model;
+    XMMATRIX view;
+    XMMATRIX projection;
 };
 
+// Uses padding to meet DirectX 16-byte alignment requirements.
+struct LightBuffer 
+{
+    XMFLOAT3 LightDirection;
+    float padding1;
+    XMFLOAT3 LightColor;
+    float padding2;
+};
 
 class DirectX11 : public GraphicsAPI
 {
@@ -62,9 +64,11 @@ class DirectX11 : public GraphicsAPI
     ID3D11Buffer* texCoordBuffer = nullptr;
     ID3D11Buffer* normalBuffer = nullptr;
     ID3D11Buffer* mvpBuffer = nullptr;
+    ID3D11Buffer* lightBuffer = nullptr;
 
     bool initialized = false;
     unsigned int nextShaderID = 0;
     std::list<ShaderProgram> shaderMap;
     MVPBuffer mvpBufferData;
+    LightBuffer lightBufferData;
 };
