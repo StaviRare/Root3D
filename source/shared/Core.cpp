@@ -10,13 +10,11 @@
 
 void Core::Initialize()
 {
-    // LOAD CONFIG W/ JsonParser
-
     PlatformDetector::Initialize();
     Timer::Initialize();
     Input::Initialize();
-    Screen::Initialize(960, 540);            // Hard coded. will use EngineConfig in future.
-    Graphics::Initialize(APIType::DirectX11);   // Hard coded. will use EngineConfig in future.
+    Screen::Initialize();
+    Graphics::Initialize();
 
     // Physics initialize
 

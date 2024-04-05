@@ -16,7 +16,7 @@ class Screen
     static void* GetNativeHandle();
 
     private:
-    static void Initialize(int width, int height);
+    static void Initialize();
     static void UnInitialize();
     static void PollEvents();
 };

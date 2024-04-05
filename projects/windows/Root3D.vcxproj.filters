@@ -216,5 +216,8 @@
     <ClInclude Include="..\..\source\windows\DirectX11.h">
       <Filter>Platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\shared\Config.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

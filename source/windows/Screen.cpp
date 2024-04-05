@@ -2,6 +2,7 @@
 #include <vector>
 #include "Screen.h"
 #include "Debug.h"
+#include "Config.h"
 
 static int width;
 static int height;
@@ -74,10 +75,12 @@ void Screen::UnRegisterResizeCallback(Func2Arg<int, int> ptr)
 	callbacks.erase(std::remove(callbacks.begin(), callbacks.end(), ptr), callbacks.end());
 }
 
-void Screen::Initialize(int w, int h)
+void Screen::Initialize()
 {
-    width = w;
-    height = h;
+    AppConfig config = Config::Application();
+
+    width = config.ScreenWidth;
+    height = config.ScreenHeight;
 
     HINSTANCE hInstance = GetModuleHandle(nullptr);
     LPCWSTR className = L"MyWindowClass"; // Changed to wide-char string
@@ -96,7 +99,7 @@ void Screen::Initialize(int w, int h)
         className,                              // Window class
         L"Root3D",                              // Window title - wide-char string
         WS_OVERLAPPEDWINDOW,                    // Window style
-        CW_USEDEFAULT, CW_USEDEFAULT, w, h,
+        CW_USEDEFAULT, CW_USEDEFAULT, width, height,
         NULL,                                   // Parent window    
         NULL,                                   // Menu
         hInstance,                              // Instance handle

@@ -21,7 +21,7 @@ class Graphics
     static APIType _currentType;
     static GraphicsAPI* _currentAPI;
 
-    static void Initialize(APIType api);
+    static void Initialize();
     static void ClearScreen();
     static void ExecuteRenderCommands();
     static void UnInitialize();

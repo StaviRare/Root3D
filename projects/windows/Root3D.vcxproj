@@ -47,6 +47,7 @@
     <ClInclude Include="..\..\source\shared\Camera.h" />
     <ClInclude Include="..\..\source\shared\Color.h" />
     <ClInclude Include="..\..\source\shared\Component.h" />
+    <ClInclude Include="..\..\source\shared\Config.h" />
     <ClInclude Include="..\..\source\shared\Core.h" />
     <ClInclude Include="..\..\source\shared\Debug.h" />
     <ClInclude Include="..\..\source\shared\Directory.h" />

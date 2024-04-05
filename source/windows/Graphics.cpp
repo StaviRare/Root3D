@@ -2,6 +2,7 @@
 #include "OpenGL.h"
 #include "DirectX11.h"
 #include "Debug.h"
+#include "Config.h"
 
 APIType Graphics:: _currentType;
 GraphicsAPI* Graphics::_currentAPI = nullptr;
@@ -21,8 +22,11 @@ string Graphics::TypeName()
     }
 }
 
-void Graphics::Initialize(APIType type)
+void Graphics::Initialize()
 {
+    AppConfig config = Config::Application();
+    APIType type = config.RenderingAPI;
+
     switch (type)
     {
         case ( APIType::OpenGL ):
