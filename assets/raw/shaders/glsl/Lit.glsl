@@ -14,8 +14,8 @@ uniform mat4 projection;
 
 void main()
 {
-	FragPos = vec3(model * vec4(aPos, 1.0)); // Calculate world position of vertex
-	Normal = mat3(transpose(inverse(model))) * aNormal; // Calculate normal
+	FragPos = vec3(model * vec4(aPos, 1.0));
+	Normal = mat3(transpose(inverse(model))) * aNormal;
 
 	gl_Position = projection * view * model * vec4(aPos, 1.0);
 	TexCoord = aTexCoord;
@@ -28,7 +28,7 @@ void main()
 // Fragment Shader
 #version 330 core
 
-#define MAX_LIGHTS 100
+#define MAX_LIGHTS 20
 
 struct Light 
 {

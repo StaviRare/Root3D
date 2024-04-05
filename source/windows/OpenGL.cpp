@@ -29,9 +29,6 @@ static unsigned int VAO;
 static unsigned int EBO;
 static unsigned int VBO[3];
 
-// Max supported lights
-static const int MAX_LIGHTS = 100;
-
 static HDC deviceContext;
 
 void OpenGL::Initialize()

@@ -4,6 +4,7 @@
 #include "Debug.h"
 #include "Timer.h"
 #include "RenderQueue.h"
+#include "Calc.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
@@ -111,15 +112,40 @@ void DirectX11::ExecuteRenderCommands()
             
             auto lightCommands = RenderQueue::GetLightRenderCommands();
             auto objectCommands = RenderQueue::GetObjectRenderCommands();
-
+            
             // LightBuffer (b1)
-            // ToDo - Work with multiple lights
-            const auto& light = lightCommands[1];
-            lightBufferData.LightColor = XMFLOAT3(light.color[0], light.color[1], light.color[2]);
-            lightBufferData.LightDirection = XMFLOAT3(light.direction[0], light.direction[1], light.direction[2]);
-            context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
-            context->PSSetConstantBuffers(1, 1, &lightBuffer);
+            lightBufferData.numLights = lightCommands.size();
 
+            for (size_t i = 0; i < Calc::Min(lightCommands.size(), static_cast<size_t>( MAX_LIGHTS )); ++i)
+            {
+                lightBufferData.lights[i].type = lightCommands[i].type;
+                lightBufferData.lights[i].color = XMFLOAT3(
+                    lightCommands[i].color[0], 
+                    lightCommands[i].color[1], 
+                    lightCommands[i].color[2]);
+
+                lightBufferData.lights[i].intensity = lightCommands[i].intensity;
+                lightBufferData.lights[i].direction = XMFLOAT3(
+                    lightCommands[i].direction[0], 
+                    lightCommands[i].direction[1], 
+                    lightCommands[i].direction[2]);
+
+                lightBufferData.lights[i].range = lightCommands[i].range;
+                lightBufferData.lights[i].position = XMFLOAT3(
+                    lightCommands[i].position[0], 
+                    lightCommands[i].position[1], 
+                    lightCommands[i].position[2]);
+
+                lightBufferData.lights[i].attenuation = XMFLOAT3(
+                    lightCommands[i].attenuation[0], 
+                    lightCommands[i].attenuation[1], 
+                    lightCommands[i].attenuation[2]);
+
+                context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
+                context->PSSetConstantBuffers(1, 1, &lightBuffer);
+            }
+
+            // Objects
             for (const auto& command : objectCommands)
             {
                 // ToDo - Move shader related logic to ShaderManager
@@ -157,7 +183,7 @@ void DirectX11::ExecuteRenderCommands()
                     {
                         BindTexture(*( command.texture ));
                     }
-
+                    //
                     CreateBuffer(const_cast<int*>( command.indices ), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
                     CreateBuffer(const_cast<float*>( command.vertices ), sizeof(float) * 3 * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
                     CreateBuffer(const_cast<float*>( command.texCoords ), sizeof(float) * 2 * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);

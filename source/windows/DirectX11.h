@@ -27,12 +27,29 @@ struct MVPBuffer
 };
 
 // Uses padding to meet DirectX 16-byte alignment requirements.
+struct Light
+{
+    int type;
+    XMFLOAT3 padding;
+    XMFLOAT3 color;
+    float padding2;
+    float intensity;
+    XMFLOAT3 padding3;
+    XMFLOAT3 position;
+    float padding4;
+    XMFLOAT3 direction;
+    float padding5;
+    XMFLOAT3 attenuation;
+    float padding6;
+    float range;
+    XMFLOAT3 padding7;
+};
+
 struct LightBuffer 
 {
-    XMFLOAT3 LightDirection;
-    float padding1;
-    XMFLOAT3 LightColor;
-    float padding2;
+    Light lights[20];
+    int numLights;
+    XMFLOAT3 padding6;
 };
 
 class DirectX11 : public GraphicsAPI
@@ -71,4 +88,6 @@ class DirectX11 : public GraphicsAPI
     std::list<ShaderProgram> shaderMap;
     MVPBuffer mvpBufferData;
     LightBuffer lightBufferData;
+
+    const int MAX_LIGHTS = 20;
 };

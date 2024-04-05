@@ -21,7 +21,7 @@ class Config
         AppConfig returnValue;
         returnValue.ScreenWidth = 960;
         returnValue.ScreenHeight = 540;
-        returnValue.MaxLights = 20; // Not yet implemented.
+        returnValue.MaxLights = 20; // Not yet implemented. ShaderManager will handle that.
         returnValue.RenderingAPI = APIType::DirectX11;
 
         return returnValue;

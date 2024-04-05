@@ -20,4 +20,5 @@ class OpenGL : public GraphicsAPI
     static void OnWindowResize(int width, int height);
     unsigned int CompileShader(const string& source, unsigned int type);
     unsigned int CreateShaderProgram(const string& vertexSource, const string& fragmentSource);
+    const int MAX_LIGHTS = 20;
 };
