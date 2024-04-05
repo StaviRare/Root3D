@@ -156,5 +156,5 @@ void handleCameraMovement()
 void handleCubeTransform()
 {
     float deltaTime = Timer::DeltaTime();
-    entity.transform.eulerAngles += Vector3(80 * deltaTime, 80 * deltaTime, 0);
+    entity.transform.eulerAngles += Vector3(80 , 80, 0) * deltaTime;
 }
