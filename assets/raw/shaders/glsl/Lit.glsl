@@ -57,7 +57,7 @@ vec3 calculateLightEffect(const Light light, const vec3 normal, const vec3 fragP
 
     if (light.type == 0) // Directional
 	{
-        vec3 lightDir = normalize(-light.direction);
+        vec3 lightDir = normalize(light.direction);
         float diff = max(dot(normal, lightDir), 0.0);
         lightEffect += diff * light.color * light.intensity;
     }

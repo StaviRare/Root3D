@@ -82,7 +82,7 @@ float3 calculateLightEffect(Light light, float3 norm, float3 fragPos)
 
     if (light.type == 0) // Directional Light
     {
-        float3 lightDir = normalize(-light.direction);
+        float3 lightDir = normalize(light.direction);
         float diff = max(dot(norm, lightDir), 0.0);
         lightEffect = diff * light.color * light.intensity;
     }
