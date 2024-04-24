@@ -35,7 +35,7 @@ Shader Resource::LoadShader(const string& path) {
 
     auto data = LoadResource(path);
 
-    if (!data.empty())
+    if (data.empty() == false)
     {
         enum class ShaderType
         {
@@ -117,9 +117,20 @@ std::vector<char> Resource::LoadResource(const string& resourcePath)
         }
     }
 
-    if (!isResourceFound && !resourceFile.empty())
+    if(resourceFile.empty() == false)
     {
-        Debug::LogError("Resource not found: " + resourcePath);
+        if (isResourceFound == false)
+        {
+            Debug::LogError("Resource not found: " + resourcePath);
+        }
+        else
+        {
+            Debug::Log("Resource loaded: " + resourcePath);
+        }
+    }
+    else
+    {
+        Debug::LogError("Resource file not found!");
     }
 
     return data;
