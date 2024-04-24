@@ -1,8 +1,19 @@
-# Ignore generated build and asset files
+# Repository
 build/
 assets/packed/*
 !assets/packed/.gitkeep
 
-# Ignore temporary files
+# Operating System
+.DS_Store
+
+# Android Development
+.gradle
+.idea/
+.cxx
+local.properties
+
+# Visual Studio
 *.vs/
+
+# Python Files
 __pycache__/

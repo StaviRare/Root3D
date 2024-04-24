@@ -7,6 +7,7 @@ enum class APIType
 {
     Null,
     OpenGL,
+    OpenGLES1,
     DirectX11
 };
 

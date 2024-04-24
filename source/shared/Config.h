@@ -1,28 +1,47 @@
 #pragma once
 
 #include "Graphics.h"
+#include "PlatformDetector.h"
 
-struct AppConfig
+struct RuntimeSettings
 {
-    // Screen:
-    int ScreenWidth;
-    int ScreenHeight;
+    // Window
+    int ScreenWidth = -1;
+    int ScreenHeight = -1;
+    bool FullScreen = true;
 
-    // Grpahics
-    int MaxLights;
-    APIType RenderingAPI;
+    // Graphics
+    int MaxLights = 10;
+    APIType RenderingAPI = APIType::Null;
 };
 
 class Config
 {
     public:
-    static AppConfig Application()
+    static RuntimeSettings Runtime()
     {
-        AppConfig returnValue;
-        returnValue.ScreenWidth = 960;
-        returnValue.ScreenHeight = 540;
-        returnValue.MaxLights = 20; // Not yet implemented. ShaderManager will handle that.
-        returnValue.RenderingAPI = APIType::DirectX11;
+        RuntimeSettings returnValue;
+
+        auto platform = PlatformDetector::GetPlatform();
+
+        // MaxLights - Not yet implemented. ShaderManager will handle that.
+
+        switch (platform)
+        {
+            case Platform::Windows:
+                returnValue.ScreenWidth = 960;
+                returnValue.ScreenHeight = 540;
+                returnValue.MaxLights = 20;
+                returnValue.RenderingAPI = APIType::DirectX11;
+            break;
+
+            case Platform::Android:
+                returnValue.ScreenWidth = 960;
+                returnValue.ScreenHeight = 540;
+                returnValue.MaxLights = 20;
+                returnValue.RenderingAPI = APIType::OpenGLES1;
+            break;
+        }
 
         return returnValue;
     }

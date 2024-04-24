@@ -66,6 +66,10 @@ void initPrimitives()
         shader1 = Resource::LoadShader("shaders/hlsl/Lit.hlsl");
         shader2 = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
     }
+    else if(graphicsAPI == "OpenGLES1")
+    {
+        Debug::LogWarning("No shaders in OpenGLES1");
+    }
     else
     {
         Debug::LogError("Unsupported graphics API. Shaders not set.");
@@ -86,7 +90,7 @@ void initPrimitives()
 
     // Entity 2:
     Material material2(shader2);
-    material2.texture = Resource::LoadTexture("textures/dev_og.png");
+    material2.texture = Resource::LoadTexture("textures/dev.png");
     entity2.transform.position = Vector3(1.0f, 0, 0);
     Mesh mesh2 = MeshGenerator::GetCube();
     MeshData* meshData2 = entity2.AddComponent<MeshData>();
@@ -94,7 +98,7 @@ void initPrimitives()
     Renderer* renderer2 = entity2.AddComponent<Renderer>();
     renderer2->material = material2;
 
-    // Point light
+    //// Point light
     lightEntity.transform.eulerAngles = Vector3(0, 0, 0);
     lightEntity.transform.position = Vector3(0, 0, 0);
     Light* light = lightEntity.AddComponent<Light>();
@@ -104,7 +108,7 @@ void initPrimitives()
     light->intensity = 1;
 
     // Directional light
-    lightEntity2.transform.eulerAngles = Vector3(1, 0, 0);
+    lightEntity2.transform.eulerAngles = Vector3(-1, 0, 0);
     lightEntity2.transform.position = Vector3(0, 0, 0);
     Light* light2 = lightEntity2.AddComponent<Light>();
     light2->type = LightType::Directional;
@@ -156,5 +160,13 @@ void handleCameraMovement()
 void handleCubeTransform()
 {
     float deltaTime = Timer::DeltaTime();
-    entity.transform.eulerAngles += Vector3(80 , 80, 0) * deltaTime;
+    float timeSinceInit = Timer::TimeSinceInit();
+
+    // Rotate
+    entity.transform.eulerAngles += Vector3(80, 80, 0) * deltaTime;
+
+    //// Move
+    //float amplitude = -1.0f;
+    //entity.transform.position.z += amplitude * Calc::Sin(timeSinceInit) * deltaTime;
+    
 }

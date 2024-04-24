@@ -77,7 +77,7 @@ void Screen::UnRegisterResizeCallback(Func2Arg<int, int> ptr)
 
 void Screen::Initialize()
 {
-    AppConfig config = Config::Application();
+    RuntimeSettings config = Config::Runtime();
 
     width = config.ScreenWidth;
     height = config.ScreenHeight;

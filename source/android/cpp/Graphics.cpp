@@ -1,6 +1,5 @@
 #include "Graphics.h"
-#include "OpenGL.h"
-#include "DirectX11.h"
+#include "OpenGLES1.h"
 #include "Debug.h"
 #include "Config.h"
 
@@ -11,14 +10,11 @@ string Graphics::TypeName()
 {
     switch (_currentType)
     {
-        case ( APIType::OpenGL ):
-        return "OpenGL";
-
-        case ( APIType::DirectX11 ):
-        return "DirectX11";
+        case ( APIType::OpenGLES1 ):
+            return "OpenGLES1";
 
         default:
-        return "Null";
+            return "Null";
     }
 }
 
@@ -29,13 +25,9 @@ void Graphics::Initialize()
 
     switch (type)
     {
-        case ( APIType::OpenGL ):
-        _currentAPI = new OpenGL();
-        break;
-
-        case ( APIType::DirectX11 ):
-        _currentAPI = new DirectX11();
-        break;
+        case ( APIType::OpenGLES1 ):
+            _currentAPI = new OpenGLES1();
+            break;
     }
 
     if (_currentAPI != nullptr)
