@@ -1,15 +1,13 @@
 import os
 import struct
 
-# Constants
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-RESOURCE_FOLDER = os.path.join(CURRENT_DIR, '..', 'assets', 'raw')
-OUTPUT_DIR = os.path.join(CURRENT_DIR, '..', 'assets', 'packed')
+RESOURCE_FOLDER = os.path.join('..', 'assets', 'raw')
+OUTPUT_DIR = os.path.join('..', 'assets', 'packed')
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'resources.bin')
 
 def package_resources(resource_folder, output_file):
     if not os.path.exists(resource_folder):
-        print(f"Error: Resource folder not found at {resource_folder}")
+        print(f"** Error: Resource folder not found at {resource_folder}")
         return
 
     if not os.path.exists(os.path.dirname(output_file)):
@@ -28,8 +26,8 @@ def package_resources(resource_folder, output_file):
                     f.write(struct.pack('<I', len(resource_data)))
                     f.write(resource_data)
     
-    print("Resources packaged successfully.")
-    print(f"Output file: {output_file}")
+    print("** Resources packaged successfully. Output location:")
+    print(os.path.abspath(output_file))
 
 # Main Program
 package_resources(RESOURCE_FOLDER, OUTPUT_FILE)

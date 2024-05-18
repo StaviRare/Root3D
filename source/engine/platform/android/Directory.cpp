@@ -1,21 +1,23 @@
-#include "Directory.h"
-#include "Debug.h"
-#include "File.h"
 #include <android/asset_manager.h>
-#include "JniBridge.h"
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <sys/stat.h>
+
+#include "JniBridge.h"
+#include "Directory.h"
+#include "Debug.h"
+#include "File.h"
 
 void Directory::Create(const string& path)
 {
-    // ToDo - Implement
+    mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
 bool Directory::Exists(const string& path)
 {
-    // ToDo - Implement
-    return false;
+    struct stat info;
+    return stat(path.c_str(), &info) == 0 && S_ISDIR(info.st_mode);
 }
 
 // ToDo! - Delete resource file after play.
@@ -33,7 +35,7 @@ string Directory::GetResourcePath()
     AAsset* asset = AAssetManager_open(mgr, filename, AASSET_MODE_BUFFER);
     if (asset == nullptr)
     {
-        Debug::LogError("Failed to open asset: " + std::string(filename));
+        Debug::LogError("Failed to open asset: " + string(filename));
         return "Failed to open asset.";
     }
 
@@ -41,7 +43,7 @@ string Directory::GetResourcePath()
     off_t assetLength = AAsset_getLength(asset);
     if (assetLength == 0)
     {
-        Debug::LogError("Asset '" + std::string(filename) + "' is empty or not readable");
+        Debug::LogError("Asset '" + string(filename) + "' is empty or not readable");
         AAsset_close(asset);
         return "Asset is empty or not readable.";
     }
@@ -52,16 +54,28 @@ string Directory::GetResourcePath()
     AAsset_close(asset);
 
     // Determine a writable directory for saving the asset
-    std::string writableDir = "/data/data/com.example.root3d/files/"; // Example directory, adjust as needed
+    string writableDir = "/data/data/com.example.root3d/files/";
+
+    // Check if the directory exists, if not, create it
+    if (!Directory::Exists(writableDir))
+    {
+        Directory::Create(writableDir);
+        Debug::Log("Asset directory created: " + writableDir);
+    }
+    else
+    {
+        Debug::LogWarning("Asset directory already exists: " + writableDir);
+    }
 
     // Create a file path for saving the asset
-    std::string filePath = writableDir + filename;
+    string filePath = writableDir + filename;
 
     // Save asset contents to file
     std::ofstream outFile(filePath, std::ios::binary);
     if (!outFile)
     {
         Debug::LogError("Failed to create file for saving asset: " + filePath);
+        Debug::LogError("Error details: " + string(std::strerror(errno)));
         return "Failed to create file for saving asset.";
     }
     outFile.write(buffer.data(), assetLength);

@@ -1,7 +1,9 @@
 # Repository
 build/
-assets/packed/*
-!assets/packed/.gitkeep
+workspaces/
+assets/packed/resources.bin
+tools/windows/build-tools/resources/
+tools/android/build-tools/resources/
 
 # Operating System
 .DS_Store
