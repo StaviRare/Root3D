@@ -35,35 +35,43 @@ workspace "root3d"
 
     filter {} -- Clear filter to apply settings to all configurations and platforms
 
-    project "Root3D"
+project "Root3D"
+    language "C++"
+    
+	files {
+        SOURCE_DIR .. "app/windows/**.h",
+        SOURCE_DIR .. "app/windows/**.cpp",
+        SOURCE_DIR .. "engine/core/**.h",
+        SOURCE_DIR .. "engine/core/**.cpp",
+        SOURCE_DIR .. "engine/platform/shared/**.h",
+        SOURCE_DIR .. "engine/platform/shared/**.cpp",
+        SOURCE_DIR .. "engine/platform/windows/**.h",
+        SOURCE_DIR .. "engine/platform/windows/**.cpp",
+        SOURCE_DIR .. "game/**.h",
+        SOURCE_DIR .. "game/**.cpp",
+        EXTERNAL_DIR .. "glew-2.1.0/src/**.c"
+    }
+    
+	includedirs {
+        SOURCE_DIR .. "engine/core/",
+        SOURCE_DIR .. "engine/platform/shared/",
+        SOURCE_DIR .. "engine/platform/windows/",
+        SOURCE_DIR .. "game/",
+        EXTERNAL_DIR .. "stb/include/",
+        EXTERNAL_DIR .. "glew-2.1.0/include/"
+    }
+	
+    links { "opengl32" }
+
+    filter "configurations:Debug"
         kind "ConsoleApp"
-        language "C++"
-
-        files {
-            SOURCE_DIR .. "app/windows/**.h",
-            SOURCE_DIR .. "app/windows/**.cpp",
-            SOURCE_DIR .. "engine/core/**.h",
-            SOURCE_DIR .. "engine/core/**.cpp",
-            SOURCE_DIR .. "engine/platform/shared/**.h",
-            SOURCE_DIR .. "engine/platform/shared/**.cpp",
-            SOURCE_DIR .. "engine/platform/windows/**.h",
-            SOURCE_DIR .. "engine/platform/windows/**.cpp",
-            SOURCE_DIR .. "game/**.h",
-            SOURCE_DIR .. "game/**.cpp",
-            EXTERNAL_DIR .. "glew-2.1.0/src/**.c"
-        }
-
-        includedirs {
-            SOURCE_DIR .. "engine/core/",
-            SOURCE_DIR .. "engine/platform/shared/",
-            SOURCE_DIR .. "engine/platform/windows/",
-            SOURCE_DIR .. "game/",
-            EXTERNAL_DIR .. "stb/include/",
-            EXTERNAL_DIR .. "glew-2.1.0/include/"
-        }
-
-        links { "opengl32" }
-
         postbuildcommands {
-             'copy "%{wks.location}..\\..\\assets\\packed\\resources.bin" "%{cfg.targetdir}\\"'
+            'copy "%{wks.location}..\\..\\assets\\packed\\resources.bin" "%{cfg.targetdir}\\"'
+        }
+
+    filter "configurations:Release"
+        kind "WindowedApp"
+        linkoptions { "/SUBSYSTEM:WINDOWS" }
+        postbuildcommands {
+            'copy "%{wks.location}..\\..\\assets\\packed\\resources.bin" "%{cfg.targetdir}\\"'
         }
