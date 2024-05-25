@@ -17,10 +17,15 @@ class Vector2
         return Calc::Sqrt(x * x + y * y);
     }
 
+    float sqrMagnitude() const
+    {
+        return x * x + y * y;
+    }
+
     Vector2 normalized() const
     {
         float mag = magnitude();
-
+        
         if (mag > 0)
         {
             return Vector2(x / mag, y / mag);
@@ -32,7 +37,7 @@ class Vector2
     void normalize()
     {
         float mag = magnitude();
-
+        
         if (mag > 0)
         {
             x /= mag;
@@ -105,6 +110,34 @@ class Vector2
     {
         x *= scalar;
         y *= scalar;
+
+        return *this;
+    }
+
+    Vector2 operator-() const
+    {
+        return Vector2(-x, -y);
+    }
+
+    bool operator==(const Vector2& rhs) const
+    {
+        return x == rhs.x && y == rhs.y;
+    }
+
+    bool operator!=(const Vector2& rhs) const
+    {
+        return !( *this == rhs );
+    }
+
+    Vector2 operator/(float scalar) const
+    {
+        return Vector2(x / scalar, y / scalar);
+    }
+
+    Vector2& operator/=(float scalar)
+    {
+        x /= scalar;
+        y /= scalar;
 
         return *this;
     }
