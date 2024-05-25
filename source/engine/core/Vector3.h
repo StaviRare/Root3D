@@ -2,15 +2,15 @@
 
 #include <sstream>
 #include "Calc.h"
+#include "Types.h"
 
 class Vector3
 {
-public:
+    public:
     float x, y, z;
 
     Vector3(float _x = 0, float _y = 0, float _z = 0) : x(_x), y(_y), z(_z)
-    {
-    }
+    {}
 
     float magnitude() const
     {
@@ -20,7 +20,7 @@ public:
     Vector3 normalized() const
     {
         float mag = magnitude();
-        
+
         if (mag > 0)
         {
             return Vector3(x / mag, y / mag, z / mag);
@@ -41,7 +41,8 @@ public:
         }
     }
 
-    Vector3 cross(const Vector3& other) const {
+    Vector3 cross(const Vector3& other) const
+    {
         return Vector3(
             y * other.z - z * other.y,
             z * other.x - x * other.z,
@@ -49,15 +50,30 @@ public:
         );
     }
 
-    float dot(const Vector3& other) const {
+    float dot(const Vector3& other) const
+    {
         return x * other.x + y * other.y + z * other.z;
     }
 
-    std::string toString() const
+    string toString() const
     {
         std::ostringstream oss;
         oss << "(" << x << ", " << y << ", " << z << ")";
         return oss.str();
+    }
+
+    Vector3& operator=(const Vector3& rhs)
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+
+        x = rhs.x;
+        y = rhs.y;
+        z = rhs.z;
+
+        return *this;
     }
 
     Vector3 operator+(const Vector3& rhs) const

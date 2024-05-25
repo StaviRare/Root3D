@@ -2,15 +2,15 @@
 
 #include <sstream>
 #include "Calc.h"
+#include "Types.h"
 
 class Vector2
 {
-public:
+    public:
     float x, y;
 
     Vector2(float _x = 0, float _y = 0) : x(_x), y(_y)
-    {
-    }
+    {}
 
     float magnitude() const
     {
@@ -40,19 +40,34 @@ public:
         }
     }
 
-    float cross(const Vector2& other) const {
+    float cross(const Vector2& other) const
+    {
         return x * other.y - y * other.x;
     }
 
-    float dot(const Vector2& other) const {
+    float dot(const Vector2& other) const
+    {
         return x * other.x + y * other.y;
     }
 
-    std::string toString() const
+    string toString() const
     {
         std::ostringstream oss;
         oss << "(" << x << ", " << y << ")";
         return oss.str();
+    }
+
+    Vector2& operator=(const Vector2& rhs)
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+
+        x = rhs.x;
+        y = rhs.y;
+
+        return *this;
     }
 
     Vector2 operator+(const Vector2& rhs) const
