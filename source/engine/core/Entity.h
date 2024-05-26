@@ -7,23 +7,30 @@
 #include "Transform.h"
 #include "Component.h"
 #include "Entitypool.h"
+#include "Types.h"
 
 class Entity
 {
-public:
+    friend EntityPool;
+
+    private:
+    uniqueID ID = -1;
+
+    public:
     Transform transform;
     std::vector<Component*> components;
+    uniqueID GetID() const { return ID; }
 
     template <typename T>
     T* AddComponent()
     {
-        static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
+        static_assert( std::is_base_of<Component, T>::value, "T must be a subclass of Component" );
 
         for (Component* existingComponent : components)
         {
-            if (dynamic_cast<T*>(existingComponent) != nullptr)
+            if (dynamic_cast<T*>( existingComponent ) != nullptr)
             {
-                return dynamic_cast<T*>(existingComponent);
+                return dynamic_cast<T*>( existingComponent );
             }
         }
 
@@ -35,13 +42,13 @@ public:
     template <typename T>
     T* GetComponent() const
     {
-        static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
+        static_assert( std::is_base_of<Component, T>::value, "T must be a subclass of Component" );
 
         for (Component* existingComponent : components)
         {
-            if (typeid(*existingComponent) == typeid(T))
+            if (typeid( *existingComponent ) == typeid( T ))
             {
-                return dynamic_cast<T*>(existingComponent);
+                return dynamic_cast<T*>( existingComponent );
             }
         }
         return nullptr;
@@ -50,11 +57,11 @@ public:
     template <typename T>
     bool RemoveComponent()
     {
-        static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
+        static_assert( std::is_base_of<Component, T>::value, "T must be a subclass of Component" );
 
         for (size_t i = 0; i < components.size(); ++i)
         {
-            if (typeid(*components[i]) == typeid(T))
+            if (typeid( *components[i] ) == typeid( T ))
             {
                 delete components[i];
                 components.erase(components.begin() + i);
