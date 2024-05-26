@@ -7,6 +7,7 @@
 #include "RenderCommandHandler.h"
 #include "Screen.h"
 #include "Input.h"
+//#include "Physics.h"
 
 void Core::Initialize()
 {
@@ -15,46 +16,36 @@ void Core::Initialize()
     Input::Initialize();
     Screen::Initialize();
     Graphics::Initialize();
-
-    // Physics initialize
-
+    //Physics::Initialize();
     SceneManager::LoadScene(0);
 }
 
 void Core::Tick()
 {
-    // Physics Simulation
+    // Calculate loop time
+    Timer::CalculateLoopTime();
 
-    // Input Handling
+    // Handle fixed update
+    while (Timer::accumulatedTime >= Timer::fixedTimeStep)
+    {
+        //Physics::Simulate();
+        Timer::UpdateFixedTime();
+    }
+
+    // Handle variable update
     Input::Tick();
     Screen::PollEvents();
-
-    // Game Logic Processing
     SceneManager::RunScene();
-
-    // Scene Rendering
     RenderCommandHandler::Tick();
     Graphics::ClearScreen();
     Graphics::ExecuteRenderCommands();
-
-    // UI Rendering
-
-    // End of Frame Tasks
     Graphics::SwapFrameBuffers();
-
-    // Game Pausing
-
-    // Decommissioning
-
-    // Calculate loop time
-    Timer::CalculateLoopTime();
 }
 
 void Core::UnInitialize()
 {
     // Shut everything down, in reverse order
-    // Physics.Uninitialize();
-
+    //Physics::UnInitialize();
     Graphics::UnInitialize();
     Screen::UnInitialize();
     Input::UnInitialize();
