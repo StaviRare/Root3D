@@ -62,9 +62,8 @@ void DirectX11::Initialize()
 
     // Configure and Set Depth Stencil State
     D3D11_DEPTH_STENCIL_DESC dsDesc = {true, D3D11_DEPTH_WRITE_MASK_ALL, D3D11_COMPARISON_LESS};
-    ID3D11DepthStencilState* depthStencilState = nullptr;
-    
-    if (FAILED(device->CreateDepthStencilState(&dsDesc, &depthStencilState)))
+    hr = device->CreateDepthStencilState(&dsDesc, &depthStencilState);
+    if (FAILED(hr))
     {
         Debug::LogError("Failed to configure Depth Stencil State");
         return;
@@ -74,9 +73,8 @@ void DirectX11::Initialize()
 
     // Setup and Apply Rasterizer State
     D3D11_RASTERIZER_DESC rasterizerDesc = {D3D11_FILL_SOLID, D3D11_CULL_BACK, TRUE, TRUE};
-    ID3D11RasterizerState* rasterizerState = nullptr;
-    
-    if (FAILED(device->CreateRasterizerState(&rasterizerDesc, &rasterizerState)))
+    hr = device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+    if (FAILED(hr))
     {
         Debug::LogError("Failed to configure Rasterizer State");
         return;
@@ -109,10 +107,10 @@ void DirectX11::ExecuteRenderCommands()
             const float* projectionMatrix = onceCmd->projectionMatrix;
 
             context->ClearRenderTargetView(backBufferRTV, bg);
-            
+
             auto lightCommands = RenderQueue::GetLightRenderCommands();
             auto objectCommands = RenderQueue::GetObjectRenderCommands();
-            
+
             // LightBuffer (b1)
             lightBufferData.numLights = lightCommands.size();
 
@@ -120,25 +118,25 @@ void DirectX11::ExecuteRenderCommands()
             {
                 lightBufferData.lights[i].type = lightCommands[i].type;
                 lightBufferData.lights[i].color = XMFLOAT3(
-                    lightCommands[i].color[0], 
-                    lightCommands[i].color[1], 
+                    lightCommands[i].color[0],
+                    lightCommands[i].color[1],
                     lightCommands[i].color[2]);
 
                 lightBufferData.lights[i].intensity = lightCommands[i].intensity;
                 lightBufferData.lights[i].direction = XMFLOAT3(
-                    lightCommands[i].direction[0], 
-                    lightCommands[i].direction[1], 
+                    lightCommands[i].direction[0],
+                    lightCommands[i].direction[1],
                     lightCommands[i].direction[2]);
 
                 lightBufferData.lights[i].range = lightCommands[i].range;
                 lightBufferData.lights[i].position = XMFLOAT3(
-                    lightCommands[i].position[0], 
-                    lightCommands[i].position[1], 
+                    lightCommands[i].position[0],
+                    lightCommands[i].position[1],
                     lightCommands[i].position[2]);
 
                 lightBufferData.lights[i].attenuation = XMFLOAT3(
-                    lightCommands[i].attenuation[0], 
-                    lightCommands[i].attenuation[1], 
+                    lightCommands[i].attenuation[0],
+                    lightCommands[i].attenuation[1],
                     lightCommands[i].attenuation[2]);
 
                 context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
@@ -183,11 +181,12 @@ void DirectX11::ExecuteRenderCommands()
                     {
                         BindTexture(*( command.texture ));
                     }
-                    //
+
+                    // Create and bind buffers
                     CreateBuffer(const_cast<int*>( command.indices ), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
                     CreateBuffer(const_cast<float*>( command.vertices ), sizeof(float) * 3 * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
                     CreateBuffer(const_cast<float*>( command.texCoords ), sizeof(float) * 2 * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
-                    CreateBuffer(const_cast<float*>( command.normals ), sizeof(float) * 3 * command.normalsSize , D3D11_BIND_VERTEX_BUFFER, &normalBuffer);
+                    CreateBuffer(const_cast<float*>( command.normals ), sizeof(float) * 3 * command.normalsSize, D3D11_BIND_VERTEX_BUFFER, &normalBuffer);
 
                     UINT strides[3] = {
                         sizeof(float) * 3, // Position
@@ -203,9 +202,10 @@ void DirectX11::ExecuteRenderCommands()
                     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
                     context->DrawIndexed(command.indicesSize, 0, 0);
 
+                    // Release buffers
                     if (indexBuffer) indexBuffer->Release();
                     if (vertexBuffer) vertexBuffer->Release();
-                    if (normalBuffer) texCoordBuffer->Release();
+                    if (normalBuffer) normalBuffer->Release();
                     if (texCoordBuffer) texCoordBuffer->Release();
                 }
             }
@@ -222,6 +222,7 @@ void DirectX11::SwapFrameBuffers()
 
 void DirectX11::UnInitialize()
 {
+    if (depthStencilState) depthStencilState->Release();
     if (mvpBuffer) mvpBuffer->Release();
     if (backBufferRTV) backBufferRTV->Release();
     if (swapChain) swapChain->Release();
@@ -229,7 +230,7 @@ void DirectX11::UnInitialize()
     if (device) device->Release();
     if (depthStencilView) depthStencilView->Release();
 
-    for (auto program : shaderMap)
+    for (auto& program : shaderMap)
     {
         if (program.inputLayout) program.inputLayout->Release();
         if (program.pixelShader) program.pixelShader->Release();

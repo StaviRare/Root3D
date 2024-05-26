@@ -75,6 +75,8 @@ class DirectX11 : public GraphicsAPI
     IDXGISwapChain* swapChain = nullptr;
     ID3D11RenderTargetView* backBufferRTV = nullptr;
     ID3D11DepthStencilView* depthStencilView = nullptr;
+    ID3D11DepthStencilState* depthStencilState = nullptr;
+    ID3D11RasterizerState* rasterizerState = nullptr;
 
     ID3D11Buffer* vertexBuffer = nullptr;
     ID3D11Buffer* indexBuffer = nullptr;
