@@ -13,6 +13,9 @@ struct RuntimeSettings
     // Graphics
     int MaxLights = 10;
     APIType RenderingAPI = APIType::Null;
+
+    // Physics
+    float Gravity = -9.81f;
 };
 
 class Config
@@ -38,7 +41,7 @@ class Config
             case Platform::Android:
                 returnValue.ScreenWidth = 960;
                 returnValue.ScreenHeight = 540;
-                returnValue.MaxLights = 20;
+                returnValue.MaxLights = 10;
                 returnValue.RenderingAPI = APIType::OpenGLES1;
             break;
         }
