@@ -78,5 +78,9 @@ void Graphics::UnInitialize()
     if (_currentAPI != nullptr)
     {
         _currentAPI->UnInitialize();
+
+        delete _currentAPI;
+        _currentAPI = nullptr;
+        _currentType = APIType::Null;
     }
 }
