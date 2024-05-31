@@ -51,20 +51,32 @@ void Graphics::Initialize()
 
 void Graphics::ClearScreen()
 {
-    _currentAPI->ClearScreen();
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->ClearScreen();
+    }
 }
 
 void Graphics::ExecuteRenderCommands()
 {
-    _currentAPI->ExecuteRenderCommands();
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->ExecuteRenderCommands();
+    }
 }
 
 void Graphics::SwapFrameBuffers()
 {
-    _currentAPI->SwapFrameBuffers();
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->SwapFrameBuffers();
+    }
 }
 
 void Graphics::UnInitialize()
 {
-    _currentAPI->UnInitialize();
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->UnInitialize();
+    }
 }
