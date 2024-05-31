@@ -41,6 +41,11 @@ class Calc
         return std::cos(angle);
     }
 
+    static float CopySign(float magnitude, float sign)
+    {
+        return std::copysign(magnitude, sign);
+    }
+
     static float DegToRad(float degrees)
     {
         return degrees * DEG_TO_RAD;
