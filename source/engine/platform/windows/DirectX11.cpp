@@ -81,7 +81,6 @@ void DirectX11::Initialize()
     }
 
     context->RSSetState(rasterizerState);
-    rasterizerState->Release();
 
     // Setup Lighting Buffer
     CreateBuffer(&lightBufferData, sizeof(LightBuffer), D3D11_BIND_CONSTANT_BUFFER, &lightBuffer);
@@ -222,22 +221,28 @@ void DirectX11::SwapFrameBuffers()
 
 void DirectX11::UnInitialize()
 {
-    if (depthStencilState) depthStencilState->Release();
-    if (mvpBuffer) mvpBuffer->Release();
-    if (backBufferRTV) backBufferRTV->Release();
-    if (swapChain) swapChain->Release();
-    if (context) context->Release();
-    if (device) device->Release();
-    if (depthStencilView) depthStencilView->Release();
-
     for (auto& program : shaderMap)
     {
         if (program.inputLayout) program.inputLayout->Release();
         if (program.pixelShader) program.pixelShader->Release();
-        if (program.vertexShader) program.vertexShader->Release();
+        if (program.vertexShader)program.vertexShader->Release();
     }
 
     shaderMap.clear();
+
+    if (rasterizerState) rasterizerState->Release();
+    if (depthStencilState) depthStencilState->Release();
+    if (mvpBuffer) mvpBuffer->Release();
+    if (lightBuffer) lightBuffer->Release();
+    if (normalBuffer) normalBuffer->Release();
+    if (texCoordBuffer) texCoordBuffer->Release();
+    if (indexBuffer) indexBuffer->Release();
+    if (vertexBuffer) vertexBuffer->Release();
+    if (depthStencilView) depthStencilView->Release();
+    if (backBufferRTV) backBufferRTV->Release();
+    if (swapChain) swapChain->Release();
+    if (context) context->Release();
+    if (device) device->Release();
 
     initialized = false;
 }
