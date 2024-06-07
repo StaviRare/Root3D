@@ -181,11 +181,10 @@ void DirectX11::ExecuteRenderCommands()
                         BindTexture(*( command.texture ));
                     }
 
-                    // Create and bind buffers
                     CreateBuffer(const_cast<int*>( command.indices ), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
-                    CreateBuffer(const_cast<float*>( command.vertices ), sizeof(float) * 3 * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
-                    CreateBuffer(const_cast<float*>( command.texCoords ), sizeof(float) * 2 * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
-                    CreateBuffer(const_cast<float*>( command.normals ), sizeof(float) * 3 * command.normalsSize, D3D11_BIND_VERTEX_BUFFER, &normalBuffer);
+                    CreateBuffer(const_cast<float*>( command.vertices ), sizeof(float) * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
+                    CreateBuffer(const_cast<float*>( command.texCoords ), sizeof(float) * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
+                    CreateBuffer(const_cast<float*>( command.normals ), sizeof(float) * command.normalsSize, D3D11_BIND_VERTEX_BUFFER, &normalBuffer);
 
                     UINT strides[3] = {
                         sizeof(float) * 3, // Position
