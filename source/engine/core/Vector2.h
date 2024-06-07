@@ -25,19 +25,16 @@ class Vector2
     Vector2 normalized() const
     {
         float mag = magnitude();
-        
         if (mag > 0)
         {
             return Vector2(x / mag, y / mag);
         }
-
         return *this;
     }
 
     void normalize()
     {
         float mag = magnitude();
-        
         if (mag > 0)
         {
             x /= mag;
@@ -75,6 +72,47 @@ class Vector2
         return *this;
     }
 
+    Vector2 operator*(float scalar) const
+    {
+        return Vector2(x * scalar, y * scalar);
+    }
+
+    Vector2& operator*=(float scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+
+        return *this;
+    }
+
+    Vector2 operator/(float scalar) const
+    {
+        return Vector2(x / scalar, y / scalar);
+    }
+
+    Vector2& operator/=(float scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+
+        return *this;
+    }
+
+    Vector2 operator-() const
+    {
+        return Vector2(-x, -y);
+    }
+
+    bool operator==(const Vector2& rhs) const
+    {
+        return x == rhs.x && y == rhs.y;
+    }
+
+    bool operator!=(const Vector2& rhs) const
+    {
+        return !( *this == rhs );
+    }
+
     Vector2 operator+(const Vector2& rhs) const
     {
         return Vector2(x + rhs.x, y + rhs.y);
@@ -101,43 +139,15 @@ class Vector2
         return *this;
     }
 
-    Vector2 operator*(float scalar) const
+    Vector2 operator*(const Vector2& other) const
     {
-        return Vector2(x * scalar, y * scalar);
+        return Vector2(x * other.x, y * other.y);
     }
 
-    Vector2& operator*=(float scalar)
+    Vector2& operator*=(const Vector2& other)
     {
-        x *= scalar;
-        y *= scalar;
-
-        return *this;
-    }
-
-    Vector2 operator-() const
-    {
-        return Vector2(-x, -y);
-    }
-
-    bool operator==(const Vector2& rhs) const
-    {
-        return x == rhs.x && y == rhs.y;
-    }
-
-    bool operator!=(const Vector2& rhs) const
-    {
-        return !( *this == rhs );
-    }
-
-    Vector2 operator/(float scalar) const
-    {
-        return Vector2(x / scalar, y / scalar);
-    }
-
-    Vector2& operator/=(float scalar)
-    {
-        x /= scalar;
-        y /= scalar;
+        x *= other.x;
+        y *= other.y;
 
         return *this;
     }

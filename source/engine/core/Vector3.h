@@ -77,6 +77,49 @@ class Vector3
         return *this;
     }
 
+    Vector3 operator*(float scalar) const
+    {
+        return Vector3(x * scalar, y * scalar, z * scalar);
+    }
+
+    Vector3& operator*=(float scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
+
+        return *this;
+    }
+
+    Vector3 operator/(float scalar) const
+    {
+        return Vector3(x / scalar, y / scalar, z / scalar);
+    }
+
+    Vector3& operator/=(float scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
+
+        return *this;
+    }
+
+    Vector3 operator-() const
+    {
+        return Vector3(-x, -y, -z);
+    }
+
+    bool operator==(const Vector3& rhs) const
+    {
+        return x == rhs.x && y == rhs.y && z == rhs.z;
+    }
+
+    bool operator!=(const Vector3& rhs) const
+    {
+        return !( *this == rhs );
+    }
+
     Vector3 operator+(const Vector3& rhs) const
     {
         return Vector3(x + rhs.x, y + rhs.y, z + rhs.z);
@@ -105,45 +148,16 @@ class Vector3
         return *this;
     }
 
-    Vector3 operator*(float scalar) const
+    Vector3 operator*(const Vector3& other) const
     {
-        return Vector3(x * scalar, y * scalar, z * scalar);
+        return Vector3(x * other.x, y * other.y, z * other.z);
     }
 
-    Vector3& operator*=(float scalar)
+    Vector3& operator*=(const Vector3& other)
     {
-        x *= scalar;
-        y *= scalar;
-        z *= scalar;
-
-        return *this;
-    }
-
-    Vector3 operator-() const
-    {
-        return Vector3(-x, -y, -z);
-    }
-
-    bool operator==(const Vector3& rhs) const
-    {
-        return x == rhs.x && y == rhs.y && z == rhs.z;
-    }
-
-    bool operator!=(const Vector3& rhs) const
-    {
-        return !( *this == rhs );
-    }
-
-    Vector3 operator/(float scalar) const
-    {
-        return Vector3(x / scalar, y / scalar, z / scalar);
-    }
-
-    Vector3& operator/=(float scalar)
-    {
-        x /= scalar;
-        y /= scalar;
-        z /= scalar;
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
 
         return *this;
     }
