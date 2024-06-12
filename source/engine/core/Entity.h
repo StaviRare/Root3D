@@ -19,7 +19,10 @@ class Entity
     public:
     Transform transform;
     std::vector<Component*> components;
-    uniqueID GetID() const { return ID; }
+    uniqueID GetID() const
+    {
+        return ID;
+    }
 
     template <typename T>
     T* AddComponent()
@@ -46,7 +49,7 @@ class Entity
 
         for (Component* existingComponent : components)
         {
-            if (typeid( *existingComponent ) == typeid( T ))
+            if (dynamic_cast<T*>( existingComponent ) != nullptr)
             {
                 return dynamic_cast<T*>( existingComponent );
             }
