@@ -8,6 +8,8 @@
 
 void OpenGLES1::Initialize()
 {
+    Screen::RegisterResizeCallback(OnWindowResize);
+
     // display / surface
     EGLHandles* handles = static_cast<EGLHandles*>(Screen::GetNativeHandle());
     EGLDisplay display = handles->display;
@@ -154,7 +156,7 @@ void OpenGLES1::SwapFrameBuffers()
 
 void OpenGLES1::UnInitialize()
 {
-
+    Screen::UnRegisterResizeCallback(OnWindowResize);
 }
 
 void OpenGLES1::BindTexture(Texture& texture)
@@ -195,4 +197,9 @@ void OpenGLES1::BindTexture(Texture& texture)
         // Bind existing texture
         glBindTexture(GL_TEXTURE_2D, texture.textureID);
     }
+}
+
+void OpenGLES1::OnWindowResize(int width, int height)
+{
+    glViewport(0, 0, width, height);
 }

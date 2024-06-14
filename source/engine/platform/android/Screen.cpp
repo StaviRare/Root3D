@@ -33,9 +33,18 @@ void Screen::SetFullScreen(bool enable)
     // Implement
 }
 
-void Screen::SetResolution(int width, int height)
+void Screen::SetResolution(int newWidth, int newHeight)
 {
-    // Implement
+    width = newWidth;
+    height = newHeight;
+
+    for (const auto &callback: callbacks)
+    {
+        if (callback)
+        {
+            callback(width, height);
+        }
+    }
 }
 
 void Screen::RegisterResizeCallback(Func2Arg<int, int> ptr)
@@ -73,25 +82,25 @@ void Screen::Initialize()
     if (display == EGL_NO_DISPLAY)
     {
         Debug::LogError("Failed to get default display.");
-        //return false;
+        return;
     }
 
     if (!eglInitialize(display, nullptr, nullptr))
     {
         Debug::LogError("Failed to initialize EGL.");
-        //return false;
+        return;
     }
 
     if (!eglChooseConfig(display, attribs, &config, 1, &numConfigs))
     {
         Debug::LogError("Failed to choose config.");
-        //return false;
+        return;
     }
 
     if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
     {
         Debug::LogError("Failed to get config attrib.");
-        //return false;
+        return;
     }
 
     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
@@ -101,7 +110,7 @@ void Screen::Initialize()
     if (surface == EGL_NO_SURFACE)
     {
         Debug::LogError("Failed to create window surface.");
-        //return false;
+        return;
     }
 
     context = eglCreateContext(display, config, EGL_NO_CONTEXT, nullptr);
@@ -109,22 +118,18 @@ void Screen::Initialize()
     if (context == EGL_NO_CONTEXT)
     {
         Debug::LogError("Failed to create EGL context.");
-        //return false;
+        return;
     }
 
     if (!eglMakeCurrent(display, surface, surface, context))
     {
         Debug::LogError("Failed to make context current.");
-        //return false;
+        return;
     }
-
-
 
 
     eglQuerySurface(display, surface, EGL_WIDTH, &width);
     eglQuerySurface(display, surface, EGL_HEIGHT, &height);
-
-    //return true;
 }
 
 void Screen::UnInitialize()

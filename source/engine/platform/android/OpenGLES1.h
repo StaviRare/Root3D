@@ -25,5 +25,5 @@ public:
 private:
     const int MAX_LIGHTS = 20;
     void BindTexture(Texture& texture);
-
+    static void OnWindowResize(int width, int height);
 };
