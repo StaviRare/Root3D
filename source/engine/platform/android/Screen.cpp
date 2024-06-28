@@ -8,7 +8,6 @@
 #include "Config.h"
 #include "OpenGLES1.h"
 
-
 static int width;
 static int height;
 static std::vector<Func2Arg<int, int>> callbacks;
@@ -17,6 +16,8 @@ static EGLHandles eglHandles;
 static EGLDisplay display = EGL_NO_DISPLAY;
 static EGLSurface surface = EGL_NO_SURFACE;
 static EGLContext context = EGL_NO_CONTEXT;
+
+bool CreateEGLSurface();
 
 const int Screen::GetWidth()
 {
@@ -38,7 +39,13 @@ void Screen::SetResolution(int newWidth, int newHeight)
     width = newWidth;
     height = newHeight;
 
-    for (const auto &callback: callbacks)
+    // Recreate the EGL surface with the new resolution
+    if (!CreateEGLSurface())
+    {
+        Debug::LogError("Failed to recreate EGL surface.");
+    }
+
+    for (const auto &callback : callbacks)
     {
         if (callback)
         {
@@ -62,21 +69,6 @@ void Screen::UnRegisterResizeCallback(Func2Arg<int, int> ptr)
 
 void Screen::Initialize()
 {
-    ANativeWindow* window = JniBridge::GetNativeWindow();
-
-    const EGLint attribs[] =
-    {
-    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-    EGL_BLUE_SIZE, 8,
-    EGL_GREEN_SIZE, 8,
-    EGL_RED_SIZE, 8,
-    EGL_NONE
-    };
-
-    EGLConfig config;
-    EGLint numConfigs;
-    EGLint format;
-
     display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
     if (display == EGL_NO_DISPLAY)
@@ -91,29 +83,7 @@ void Screen::Initialize()
         return;
     }
 
-    if (!eglChooseConfig(display, attribs, &config, 1, &numConfigs))
-    {
-        Debug::LogError("Failed to choose config.");
-        return;
-    }
-
-    if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
-    {
-        Debug::LogError("Failed to get config attrib.");
-        return;
-    }
-
-    ANativeWindow_setBuffersGeometry(window, 0, 0, format);
-
-    surface = eglCreateWindowSurface(display, config, window, nullptr);
-
-    if (surface == EGL_NO_SURFACE)
-    {
-        Debug::LogError("Failed to create window surface.");
-        return;
-    }
-
-    context = eglCreateContext(display, config, EGL_NO_CONTEXT, nullptr);
+    context = eglCreateContext(display, nullptr, EGL_NO_CONTEXT, nullptr);
 
     if (context == EGL_NO_CONTEXT)
     {
@@ -121,15 +91,10 @@ void Screen::Initialize()
         return;
     }
 
-    if (!eglMakeCurrent(display, surface, surface, context))
+    if (!CreateEGLSurface())
     {
-        Debug::LogError("Failed to make context current.");
-        return;
+        Debug::LogError("Failed to create initial EGL surface.");
     }
-
-
-    eglQuerySurface(display, surface, EGL_WIDTH, &width);
-    eglQuerySurface(display, surface, EGL_HEIGHT, &height);
 }
 
 void Screen::UnInitialize()
@@ -141,19 +106,18 @@ void Screen::UnInitialize()
         if (context != EGL_NO_CONTEXT)
         {
             eglDestroyContext(display, context);
+            context = EGL_NO_CONTEXT;
         }
 
         if (surface != EGL_NO_SURFACE)
         {
             eglDestroySurface(display, surface);
+            surface = EGL_NO_SURFACE;
         }
 
         eglTerminate(display);
+        display = EGL_NO_DISPLAY;
     }
-
-    display = EGL_NO_DISPLAY;
-    surface = EGL_NO_SURFACE;
-    context = EGL_NO_CONTEXT;
 }
 
 void Screen::PollEvents()
@@ -165,4 +129,65 @@ void* Screen::GetNativeHandle() {
     eglHandles.display = display;
     eglHandles.surface = surface;
     return &eglHandles;
+}
+
+bool CreateEGLSurface()
+{
+    if (surface != EGL_NO_SURFACE)
+    {
+        eglDestroySurface(display, surface);
+    }
+
+    ANativeWindow* window = JniBridge::GetNativeWindow();
+    if (window == nullptr)
+    {
+        Debug::LogError("Failed to get native window.");
+        return false;
+    }
+
+    const EGLint attribs[] =
+            {
+                    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+                    EGL_BLUE_SIZE, 8,
+                    EGL_GREEN_SIZE, 8,
+                    EGL_RED_SIZE, 8,
+                    EGL_NONE
+            };
+
+    EGLConfig config;
+    EGLint numConfigs;
+    EGLint format;
+
+    if (!eglChooseConfig(display, attribs, &config, 1, &numConfigs))
+    {
+        Debug::LogError("Failed to choose config.");
+        return false;
+    }
+
+    if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
+    {
+        Debug::LogError("Failed to get config attrib.");
+        return false;
+    }
+
+    ANativeWindow_setBuffersGeometry(window, width, height, format);
+
+    surface = eglCreateWindowSurface(display, config, window, nullptr);
+
+    if (surface == EGL_NO_SURFACE)
+    {
+        Debug::LogError("Failed to create window surface.");
+        return false;
+    }
+
+    if (!eglMakeCurrent(display, surface, surface, context))
+    {
+        Debug::LogError("Failed to make context current.");
+        return false;
+    }
+
+    eglQuerySurface(display, surface, EGL_WIDTH, &width);
+    eglQuerySurface(display, surface, EGL_HEIGHT, &height);
+
+    return true;
 }

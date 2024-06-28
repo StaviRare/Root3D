@@ -5,7 +5,7 @@ plugins {
 android {
     compileSdk = 34
     ndkVersion = "25.1.8937393"
-    namespace = "com.example.root3d"
+    namespace = "com.root3d.player"
     buildDir = file("../../../build/android")
 
     defaultConfig {

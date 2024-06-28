@@ -7,8 +7,12 @@
 class JniBridge
 {
     public:
-    static void Initialize(JNIEnv* env, jobject surface, jobject assetManagerObj);
-    static void Uninitialize();
+    static void SetSurface(JNIEnv* env, jobject surface);
+    static void SetAssetManager(JNIEnv* env, jobject assetManagerObj);
+    static void Initialize();
+    static void Tick();
+    static void UnInitialize();
+    static void Resize(int width, int height);
     static ANativeWindow* GetNativeWindow();
     static AAssetManager* GetAssetManager();
 

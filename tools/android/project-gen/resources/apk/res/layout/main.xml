@@ -10,20 +10,4 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" />
 
-	<TextView
-		android:id="@+id/textView"
-		android:layout_width="228dp"
-		android:layout_height="62dp"
-		android:layout_gravity="center"
-		android:layout_marginTop="40dp"
-		android:gravity="center"
-		android:text="Root3D"
-		android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-		android:textSize="34sp"
-		android:textStyle="bold"
-		android:typeface="normal"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.497"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

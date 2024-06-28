@@ -1,55 +1,66 @@
 #include "JniBridge.h"
 #include "Debug.h"
 #include "Core.h"
+#include "Screen.h"
 
 ANativeWindow* JniBridge::window = nullptr;
 AAssetManager* JniBridge::assetManager = nullptr;
 
-void JniBridge::Initialize(JNIEnv* env, jobject surface, jobject assetManagerObj)
+void JniBridge::SetSurface(JNIEnv* env, jobject surface)
 {
-    bool canInitialize = true;
-
-    if (surface) // Fixes issue when changing orientation
+    if (surface)
     {
         if (window)
         {
             ANativeWindow_release(window);
         }
-
         window = ANativeWindow_fromSurface(env, surface);
-        assetManager = AAssetManager_fromJava(env, assetManagerObj);
-
-        if (assetManager)
-        {
-            Debug::Log("Asset manager initialized");
-        }
-        else
-        {
-            canInitialize = false;
-            Debug::LogError("Asset manager was no initialized!");
-        }
 
         if (window)
         {
-            Debug::Log("Surface set and renderer initialized");
+            Debug::Log("Surface set");
         }
         else
         {
-            canInitialize = false;
-            Debug::LogError("Surface was no initialized!");
-        }
-
-        if (canInitialize)
-        {
-            Core::Initialize();
+            Debug::LogError("Surface was not initialized!");
         }
     }
 }
 
-void JniBridge::Uninitialize()
+void JniBridge::SetAssetManager(JNIEnv* env, jobject assetManagerObj)
 {
-    Debug::Log("Uninitializing");
+    assetManager = AAssetManager_fromJava(env, assetManagerObj);
 
+    if (assetManager)
+    {
+        Debug::Log("Asset manager initialized");
+    }
+    else
+    {
+        Debug::LogError("Asset manager was not initialized!");
+    }
+}
+
+void JniBridge::Initialize()
+{
+    if (window && assetManager)
+    {
+        Debug::Log("Initializing");
+        Core::Initialize();
+    }
+    else
+    {
+        Debug::LogError("Initialization failed due to missing resources");
+    }
+}
+
+void JniBridge::Tick()
+{
+    Core::Tick();
+}
+
+void JniBridge::UnInitialize()
+{
     Core::UnInitialize();
 
     if (window)
@@ -57,6 +68,11 @@ void JniBridge::Uninitialize()
         ANativeWindow_release(window);
         window = nullptr;
     }
+}
+
+void JniBridge::Resize(int width, int height)
+{
+    Screen::SetResolution(width, height);
 }
 
 ANativeWindow* JniBridge::GetNativeWindow()
@@ -71,38 +87,33 @@ AAssetManager* JniBridge::GetAssetManager()
 
 extern "C"
 {
-    JNIEXPORT void JNICALL Java_com_example_root3d_MainActivity_nativeOnStart(JNIEnv* env, jobject obj)
-    {
-        Debug::Log("OnNativeStart");
-    }
+JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeSetSurface(JNIEnv *env, jobject obj, jobject surface)
+{
+    JniBridge::SetSurface(env, surface);
+}
 
-    JNIEXPORT void JNICALL Java_com_example_root3d_MainActivity_nativeOnResume(JNIEnv* env, jobject obj)
-    {
-        Debug::Log("OnNativeResume");
-    }
+JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeSetAssetManager(JNIEnv *env, jobject obj, jobject assetManager)
+{
+    JniBridge::SetAssetManager(env, assetManager);
+}
 
-    JNIEXPORT void JNICALL Java_com_example_root3d_MainActivity_nativeOnPause(JNIEnv* env, jobject obj)
-    {
-        Debug::Log("OnNativePause");
-    }
+JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeInitialize(JNIEnv *env, jobject obj)
+{
+    JniBridge::Initialize();
+}
 
-    JNIEXPORT void JNICALL Java_com_example_root3d_MainActivity_nativeOnStop(JNIEnv* env, jobject obj)
-    {
-        Debug::Log("OnNativeStop");
-    }
+JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeTick(JNIEnv* env, jobject obj)
+{
+    JniBridge::Tick();
+}
 
-    JNIEXPORT void JNICALL Java_com_example_root3d_MainActivity_nativeInitialize(JNIEnv* env, jobject obj, jobject surface, jobject assetManager)
-    {
-        JniBridge::Initialize(env, surface, assetManager);
-    }
+JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeUnInitialize(JNIEnv* env, jobject obj)
+{
+    JniBridge::UnInitialize();
+}
 
-    JNIEXPORT void JNICALL Java_com_example_root3d_MainActivity_nativeTick(JNIEnv* env, jobject obj)
-    {
-        Core::Tick();
-    }
-
-    JNIEXPORT void JNICALL Java_com_example_root3d_MainActivity_nativeUninitialize(JNIEnv* env, jobject obj)
-    {
-        JniBridge::Uninitialize();
-    }
+JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeResize(JNIEnv* env, jobject obj, int width, int height)
+{
+    JniBridge::Resize(width, height);
+}
 }

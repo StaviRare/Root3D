@@ -155,18 +155,26 @@ void handleCameraMovement()
     {
         camera.transform.eulerAngles -= Vector3(cameraLookSpeed * deltaTime, 0, 0);
     }
-} 
+}
+
+static bool toTarget1 = false;
+static float target1 = 0.0f;
+static float target2 = -7.0f;
 
 void handleCubeTransform()
 {
     float deltaTime = Timer::DeltaTime();
-    float timeSinceInit = Timer::TimeSinceInit();
 
     // Rotate
     entity.transform.eulerAngles += Vector3(80, 80, 0) * deltaTime;
 
-    //// Move
-    //float amplitude = -1.0f;
-    //entity.transform.position.z += amplitude * Calc::Sin(timeSinceInit) * deltaTime;
-    
+    // Move
+    float currentTarget = toTarget1 ? target1 : target2;
+    float direction = (currentTarget - entity.transform.position.z > 0) ? 1.0f : -1.0f;
+    entity.transform.position.z += direction * deltaTime * 2.0f;
+
+    if (fabs(currentTarget - entity.transform.position.z) < 0.1f)
+    {
+        toTarget1 = !toTarget1;
+    }
 }
