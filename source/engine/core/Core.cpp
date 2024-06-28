@@ -7,7 +7,7 @@
 #include "RenderCommandHandler.h"
 #include "Screen.h"
 #include "Input.h"
-//#include "Physics.h"
+#include "Physics.h"
 
 void Core::Initialize()
 {
@@ -16,7 +16,7 @@ void Core::Initialize()
     Input::Initialize();
     Screen::Initialize();
     Graphics::Initialize();
-    //Physics::Initialize();
+    Physics::Initialize();
     SceneManager::LoadScene(0);
 }
 
@@ -28,7 +28,7 @@ void Core::Tick()
     // Handle fixed update
     while (Timer::accumulatedTime >= Timer::fixedTimeStep)
     {
-        //Physics::Simulate();
+        Physics::Simulate();
         Timer::UpdateFixedTime();
     }
 
@@ -45,7 +45,7 @@ void Core::Tick()
 void Core::UnInitialize()
 {
     // Shut everything down, in reverse order
-    //Physics::UnInitialize();
+    Physics::UnInitialize();
     Graphics::UnInitialize();
     Screen::UnInitialize();
     Input::UnInitialize();

@@ -89,9 +89,11 @@ void RenderCommandHandler::Tick()
                 objectCommand.normals = reinterpret_cast<const float*>(meshData->mesh.GetNormals().data());
                 objectCommand.normalsSize = meshData->mesh.GetNormals().size() * 3;
 
+                Quaternion q = Quaternion::ToLHS(entity->transform.rotation);
+
                 Matrix4 model = Matrix4::Identity();
                 model = model.Scale(entity->transform.scale);
-                model = model.Rotate(entity->transform.eulerAngles);
+                model = model.Rotate(q);
                 model = model.Translate(entity->transform.position);
                 
                 model.CopyToArray(objectCommand.modelMatrix);

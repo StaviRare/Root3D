@@ -3,7 +3,7 @@
 #include "Types.h"
 #include "GraphicsAPI.h"
 
-enum class APIType
+enum class GraphicsType
 {
     Null,
     OpenGL,
@@ -19,9 +19,10 @@ class Graphics
     static string TypeName();
 
     private:
-    static APIType _currentType;
     static GraphicsAPI* _currentAPI;
+    static GraphicsType _currentType;
 
+    private:
     static void Initialize();
     static void ClearScreen();
     static void ExecuteRenderCommands();

@@ -20,32 +20,58 @@ class Quaternion
         return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
-    const Vector3 ToEuler() const
+    static Quaternion ToLHS(const Quaternion& rhsQuat)
     {
-        // Roll (x-axis rotation)
-        float sinr_cosp = 2 * ( w * x + y * z );
-        float cosr_cosp = 1 - 2 * ( x * x + y * y );
-        float roll = std::atan2(sinr_cosp, cosr_cosp);
+        return Quaternion(rhsQuat.x, rhsQuat.y, rhsQuat.z, -rhsQuat.w);
+    }
 
-        // Pitch (y-axis rotation)
-        float sinp = 2 * ( w * y - z * x );
-        float pitch;
+    static Quaternion ToRHS(const Quaternion& lhsQuat)
+    {
+        return Quaternion(lhsQuat.x, lhsQuat.y, lhsQuat.z, -lhsQuat.w);
+    }
 
+    static Quaternion FromEuler(const Vector3& euler)
+    {
+        // Convert degrees to radians
+        float halfToRad = Calc::PI / 360.0f;
+        float cy = Calc::Cos(euler.y * halfToRad);
+        float sy = Calc::Sin(euler.y * halfToRad);
+        float cp = Calc::Cos(euler.x * halfToRad);
+        float sp = Calc::Sin(euler.x * halfToRad);
+        float cr = Calc::Cos(euler.z * halfToRad);
+        float sr = Calc::Sin(euler.z * halfToRad);
+
+        Quaternion q;
+        q.w = cr * cp * cy + sr * sp * sy;
+        q.x = sr * cp * cy - cr * sp * sy;
+        q.y = cr * sp * cy + sr * cp * sy;
+        q.z = cr * cp * sy - sr * sp * cy;
+
+        return q;
+    }
+
+    static Vector3 ToEuler(const Quaternion& q)
+    {
+        Vector3 angles;
+
+        // pitch (x-axis rotation)
+        float sinr_cosp = 2 * ( q.w * q.x + q.y * q.z );
+        float cosr_cosp = 1 - 2 * ( q.x * q.x + q.y * q.y );
+        angles.x = Calc::ArcTan2(sinr_cosp, cosr_cosp);
+
+        // yaw (y-axis rotation)
+        float sinp = 2 * ( q.w * q.y - q.z * q.x );
         if (std::abs(sinp) >= 1)
-        {
-            pitch = std::copysign(Calc::PI / 2, sinp); // use 90 degrees if out of range
-        }
+            angles.y = Calc::CopySign(Calc::PI / 2, sinp); // use 90 degrees if out of range
         else
-        {
-            pitch = std::asin(sinp);
-        }
+            angles.y = Calc::ArcSin(sinp);
 
-        // Yaw (z-axis rotation)
-        float siny_cosp = 2 * ( w * z + x * y );
-        float cosy_cosp = 1 - 2 * ( y * y + z * z );
-        float yaw = Calc::ArcTan2(siny_cosp, cosy_cosp);
+        // roll (z-axis rotation)
+        float siny_cosp = 2 * ( q.w * q.z + q.x * q.y );
+        float cosy_cosp = 1 - 2 * ( q.y * q.y + q.z * q.z );
+        angles.z = Calc::ArcTan2(siny_cosp, cosy_cosp);
 
-        return Vector3(roll, pitch, yaw);
+        return angles;
     }
 
     float Magnitude() const
@@ -95,7 +121,7 @@ class Quaternion
         return *this;
     }
 
-    string ToString() const
+    std::string ToString() const
     {
         std::ostringstream oss;
         oss << "(" << x << ", " << y << ", " << z << ", " << w << ")";

@@ -37,7 +37,8 @@ workspace "root3d"
 
 project "Root3D"
     language "C++"
-    
+    cppdialect "C++17"
+	
 	files {
         SOURCE_DIR .. "app/windows/**.h",
         SOURCE_DIR .. "app/windows/**.cpp",
@@ -49,7 +50,8 @@ project "Root3D"
         SOURCE_DIR .. "engine/platform/windows/**.cpp",
         SOURCE_DIR .. "game/**.h",
         SOURCE_DIR .. "game/**.cpp",
-        EXTERNAL_DIR .. "glew-2.1.0/src/**.c"
+        EXTERNAL_DIR .. "glew-2.1.0/src/**.c",
+        EXTERNAL_DIR .. "jolt-physics-5.0.0/Jolt/**.cpp"
     }
     
 	includedirs {
@@ -58,7 +60,8 @@ project "Root3D"
         SOURCE_DIR .. "engine/platform/windows/",
         SOURCE_DIR .. "game/",
         EXTERNAL_DIR .. "stb/include/",
-        EXTERNAL_DIR .. "glew-2.1.0/include/"
+        EXTERNAL_DIR .. "glew-2.1.0/include/",
+        EXTERNAL_DIR .. "jolt-physics-5.0.0/"
     }
 	
     links { "opengl32" }

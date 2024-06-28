@@ -6,6 +6,11 @@ Root3D is a 3D engine project focused on platform independence. Many parts of th
 
 Currently, the engine can be built for Android and Windows. Future plans include support for more platforms.
 
+## Features
+- **Platforms:** Android, Windows
+- **Rendering:** OpenGL 3.0, OpenGLES 1.0, DirectX 11
+- **Physics:** Jolt
+
 ## Getting Started
 1. Ensure Python 3 is installed on your system.
 2. Install Android Studio for Android development.

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Vector3.h"
+#include "Physics.h"
 #include "Graphics.h"
 #include "PlatformDetector.h"
 
@@ -12,10 +14,11 @@ struct RuntimeSettings
 
     // Graphics
     int MaxLights = 10;
-    APIType RenderingAPI = APIType::Null;
+    GraphicsType RenderingAPI = GraphicsType::Null;
 
     // Physics
-    float Gravity = -9.81f;
+    Vector3 Gravity = Vector3(0, -9.81f, 0);
+    PhysicsType PhysicsTypeAPI = PhysicsType::Null;
 };
 
 class Config
@@ -35,14 +38,16 @@ class Config
                 returnValue.ScreenWidth = 960;
                 returnValue.ScreenHeight = 540;
                 returnValue.MaxLights = 20;
-                returnValue.RenderingAPI = APIType::DirectX11;
+                returnValue.RenderingAPI = GraphicsType::DirectX11;
+                returnValue.PhysicsTypeAPI = PhysicsType::Jolt;
             break;
 
             case Platform::Android:
                 returnValue.ScreenWidth = 960;
                 returnValue.ScreenHeight = 540;
                 returnValue.MaxLights = 10;
-                returnValue.RenderingAPI = APIType::OpenGLES1;
+                returnValue.RenderingAPI = GraphicsType::OpenGLES1;
+                returnValue.PhysicsTypeAPI = PhysicsType::Jolt;
             break;
         }
 

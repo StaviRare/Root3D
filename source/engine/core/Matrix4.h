@@ -33,26 +33,43 @@ public:
         return result;
     }
 
-    Matrix4 Rotate(const Vector3& angles) const {
-        // Convert angles to radians
-        float radX = angles.x * Calc::PI / 180.0f;
-        float radY = angles.y * Calc::PI / 180.0f;
-        float radZ = angles.z * Calc::PI / 180.0f;
+    Matrix4 Rotate(const Quaternion& quat) const {
+        Matrix4 rot;
 
-        // Rotation matrices for each axis
-        Matrix4 rotX, rotY, rotZ;
+        float xx = quat.x * quat.x;
+        float xy = quat.x * quat.y;
+        float xz = quat.x * quat.z;
+        float xw = quat.x * quat.w;
 
-        rotX.m[1][1] = cos(radX); rotX.m[1][2] = -sin(radX);
-        rotX.m[2][1] = sin(radX); rotX.m[2][2] = cos(radX);
+        float yy = quat.y * quat.y;
+        float yz = quat.y * quat.z;
+        float yw = quat.y * quat.w;
 
-        rotY.m[0][0] = cos(radY); rotY.m[0][2] = sin(radY);
-        rotY.m[2][0] = -sin(radY); rotY.m[2][2] = cos(radY);
+        float zz = quat.z * quat.z;
+        float zw = quat.z * quat.w;
 
-        rotZ.m[0][0] = cos(radZ); rotZ.m[0][1] = -sin(radZ);
-        rotZ.m[1][0] = sin(radZ); rotZ.m[1][1] = cos(radZ);
+        rot.m[0][0] = 1.0f - 2.0f * (yy + zz);
+        rot.m[0][1] = 2.0f * (xy - zw);
+        rot.m[0][2] = 2.0f * (xz + yw);
+        rot.m[0][3] = 0.0f;
 
-        // Combine rotations and apply to this matrix
-        return (*this) * rotZ * rotY * rotX;
+        rot.m[1][0] = 2.0f * (xy + zw);
+        rot.m[1][1] = 1.0f - 2.0f * (xx + zz);
+        rot.m[1][2] = 2.0f * (yz - xw);
+        rot.m[1][3] = 0.0f;
+
+        rot.m[2][0] = 2.0f * (xz - yw);
+        rot.m[2][1] = 2.0f * (yz + xw);
+        rot.m[2][2] = 1.0f - 2.0f * (xx + yy);
+        rot.m[2][3] = 0.0f;
+
+        rot.m[3][0] = 0.0f;
+        rot.m[3][1] = 0.0f;
+        rot.m[3][2] = 0.0f;
+        rot.m[3][3] = 1.0f;
+
+        // Apply rotation to this matrix
+        return (*this) * rot;
     }
 
     Matrix4 operator*(const Matrix4& rhs) const {

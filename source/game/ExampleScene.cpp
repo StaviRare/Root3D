@@ -13,6 +13,12 @@
 #include "Resource.h"
 #include "Light.h"
 #include "Graphics.h"
+#include "RigidBody.h"
+#include "Physics.h"
+#include "Collider.h"
+#include "SphereCollider.h"
+#include "BoxCollider.h"
+#include "MeshCollider.h"
 
 static Entity entity;
 static Entity entity2;
@@ -47,7 +53,11 @@ void initCamera()
 {
     camera.fov = 60.0f;
     camera.backgroundColor = Color(0.1f, 0, 0.1f, 0);
-    camera.transform.position = Vector3(0, 0, 3);
+    camera.transform.position = Vector3(0, 0, 4);
+
+    RigidBody* rigidBody1 = camera.AddComponent<RigidBody>();
+    Collider* collider1 = camera.AddComponent<Collider>();
+    rigidBody1->IsStatic = true;
 }
 
 void initPrimitives()
@@ -59,7 +69,7 @@ void initPrimitives()
     if (graphicsAPI == "OpenGL")
     {
         shader1 = Resource::LoadShader("shaders/glsl/Lit.glsl");
-        shader2 = Resource::LoadShader("shaders/glsl/UnlitWobble.glsl");
+        shader2 = Resource::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
     }
     else if (graphicsAPI == "DirectX11")
     {
@@ -76,27 +86,43 @@ void initPrimitives()
     }
 
 
-    // Entity 1:
+    // static entity 1:
     Material material(shader1);
     material.texture = Resource::LoadTexture("textures/dev.png");
-    entity.transform.position = Vector3(-1.0, 0, 0);
+    entity.transform.position = Vector3(0, -1, 0);
+
+    entity.transform.rotation = Quaternion::FromEuler(Vector3(15, 15, 0));
+
+    entity.transform.scale = Vector3(2, 1, 2);
     Mesh mesh = MeshGenerator::GetCube();
     MeshData* meshData = entity.AddComponent<MeshData>();
-    meshData->mesh = mesh;
     Renderer* renderer = entity.AddComponent<Renderer>();
+    RigidBody* rigidBody1 = entity.AddComponent<RigidBody>();
+    MeshCollider* collider1 = entity.AddComponent<MeshCollider>();
+
+    meshData->mesh = mesh;
     renderer->material = material;
-    //entity.transform.scale *= 1.5;
+    rigidBody1->IsStatic = true;
 
-
-    // Entity 2:
+    // dynamic entity 2:
     Material material2(shader2);
     material2.texture = Resource::LoadTexture("textures/dev.png");
-    entity2.transform.position = Vector3(1.0f, 0, 0);
+    entity2.transform.position = Vector3(0.0, 1.0f, 0.0f);
     Mesh mesh2 = MeshGenerator::GetCube();
     MeshData* meshData2 = entity2.AddComponent<MeshData>();
-    meshData2->mesh = mesh2;
     Renderer* renderer2 = entity2.AddComponent<Renderer>();
+    RigidBody* rigidBody2 = entity2.AddComponent<RigidBody>();
+    MeshCollider* collider2 = entity2.AddComponent<MeshCollider>();
+
+    meshData2->mesh = mesh2;
     renderer2->material = material2;
+
+
+
+    //Physics::SetGravity(-0.5);
+
+
+
 
     //// Point light
     lightEntity.transform.eulerAngles = Vector3(0, 0, 0);
@@ -155,26 +181,32 @@ void handleCameraMovement()
     {
         camera.transform.eulerAngles -= Vector3(cameraLookSpeed * deltaTime, 0, 0);
     }
-}
 
-static bool toTarget1 = false;
-static float target1 = 0.0f;
-static float target2 = -7.0f;
+
+    if (Input::GetKey("x"))
+    {
+        Physics::SetGravity(Vector3(0,-4,0));
+    }
+
+    if (Input::GetKey("c"))
+    {
+        Physics::SetGravity(Vector3(0,4,0));
+    }
+} 
 
 void handleCubeTransform()
 {
     float deltaTime = Timer::DeltaTime();
+    float timeSinceInit = Timer::TimeSinceInit();
 
-    // Rotate
-    entity.transform.eulerAngles += Vector3(80, 80, 0) * deltaTime;
 
-    // Move
-    float currentTarget = toTarget1 ? target1 : target2;
-    float direction = (currentTarget - entity.transform.position.z > 0) ? 1.0f : -1.0f;
-    entity.transform.position.z += direction * deltaTime * 2.0f;
+    //// Rotate
+    //entity.transform.eulerAngles += Vector3(-15, -25, 15) * deltaTime;
+    //entity.transform.rotation = Quaternion::FromEuler(entity.transform.eulerAngles);
 
-    if (fabs(currentTarget - entity.transform.position.z) < 0.1f)
-    {
-        toTarget1 = !toTarget1;
-    }
+
+    //// Move
+    //float amplitude = -1.0f;
+    //entity.transform.position.z += amplitude * Calc::Sin(timeSinceInit) * deltaTime;
+
 }

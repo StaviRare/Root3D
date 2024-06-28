@@ -3,14 +3,14 @@
 #include "Debug.h"
 #include "Config.h"
 
-APIType Graphics:: _currentType;
+GraphicsType Graphics:: _currentType;
 GraphicsAPI* Graphics::_currentAPI = nullptr;
 
 string Graphics::TypeName()
 {
     switch (_currentType)
     {
-        case ( APIType::OpenGLES1 ):
+        case ( GraphicsType::OpenGLES1 ):
             return "OpenGLES1";
 
         default:
@@ -21,11 +21,11 @@ string Graphics::TypeName()
 void Graphics::Initialize()
 {
     RuntimeSettings config = Config::Runtime();
-    APIType type = config.RenderingAPI;
+    GraphicsType type = config.RenderingAPI;
 
     switch (type)
     {
-        case ( APIType::OpenGLES1 ):
+        case ( GraphicsType::OpenGLES1 ):
             _currentAPI = new OpenGLES1();
             break;
     }

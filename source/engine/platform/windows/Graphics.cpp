@@ -4,17 +4,17 @@
 #include "Debug.h"
 #include "Config.h"
 
-APIType Graphics:: _currentType;
+GraphicsType Graphics:: _currentType;
 GraphicsAPI* Graphics::_currentAPI = nullptr;
 
 string Graphics::TypeName()
 {
     switch (_currentType)
     {
-        case ( APIType::OpenGL ):
+        case ( GraphicsType::OpenGL ):
         return "OpenGL";
 
-        case ( APIType::DirectX11 ):
+        case ( GraphicsType::DirectX11 ):
         return "DirectX11";
 
         default:
@@ -25,15 +25,15 @@ string Graphics::TypeName()
 void Graphics::Initialize()
 {
     RuntimeSettings config = Config::Runtime();
-    APIType type = config.RenderingAPI;
+    GraphicsType type = config.RenderingAPI;
 
     switch (type)
     {
-        case ( APIType::OpenGL ):
+        case ( GraphicsType::OpenGL ):
         _currentAPI = new OpenGL();
         break;
 
-        case ( APIType::DirectX11 ):
+        case ( GraphicsType::DirectX11 ):
         _currentAPI = new DirectX11();
         break;
     }
@@ -81,6 +81,6 @@ void Graphics::UnInitialize()
 
         delete _currentAPI;
         _currentAPI = nullptr;
-        _currentType = APIType::Null;
+        _currentType = GraphicsType::Null;
     }
 }

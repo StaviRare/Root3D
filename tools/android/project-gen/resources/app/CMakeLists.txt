@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.22.1)
 
 project("root3d")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(rootPath "../../../../../../")
 
 file(GLOB_RECURSE SOURCES
@@ -10,6 +12,7 @@ file(GLOB_RECURSE SOURCES
     "${rootPath}source/engine/platform/shared/*.cpp"
     "${rootPath}source/engine/platform/android/*.cpp"
     "${rootPath}source/game/*.cpp"
+	"${rootPath}external/jolt-physics-5.0.0/Jolt/*.cpp"
 )
 
 set(INCLUDE_DIRS
@@ -19,6 +22,7 @@ set(INCLUDE_DIRS
     "${rootPath}source/engine/platform/android/"
     "${rootPath}source/game/"
     "${rootPath}external/stb/include/"
+	"${rootPath}external/jolt-physics-5.0.0/"
 )
 
 include_directories(${INCLUDE_DIRS})
