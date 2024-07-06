@@ -34,6 +34,9 @@ There are two ways to build the generated projects:
    - Specify parameters such as configuration and platform when using the build scripts.
    - Instructions will be provided upon usage.
 
+## Architecture
+<img src="https://raw.githubusercontent.com/StaviRare/root3d-media/main/engine_layers.jpg" alt="Engine Layers" width="600"/>
+
 ## License
 This project is licensed under the MIT License.  
 See the [LICENSE](LICENSE.txt) file for details.
