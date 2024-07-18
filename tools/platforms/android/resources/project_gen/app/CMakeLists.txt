@@ -45,6 +45,7 @@ set(INCLUDE_DIRS
 	"${rootPath}source/engine/layer_1/config/"
 	"${rootPath}source/engine/layer_1/core/"
 	"${rootPath}source/engine/layer_1/math/"
+	"${rootPath}source/engine/layer_1/random/"
 	"${rootPath}source/engine/layer_2/ecs/"
 	"${rootPath}source/engine/layer_2/physics/"
 	"${rootPath}source/engine/layer_2/renderer/"
