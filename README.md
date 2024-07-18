@@ -15,10 +15,11 @@ Currently, the engine can be built for Android and Windows. Future plans include
 1. Ensure Python 3 is installed on your system.
 2. Install Android Studio for Android development.
 3. Install Visual Studio 2019 for Windows development.
-4. Run the `setup_ide` script in the `tools/<platform>/project-gen` directory.
 
 ## Building
-**Important:** Before building, run the `pack_assets` script in the `tools` directory to package resources.
+1. Run the `env_setup` script in `tools/common/`.
+2. Run the `assets_pack` script in `tools/common/` to package resources.
+3. Run the `setup_project` script in `tools/platforms/<platform>/`.
 
 There are two ways to build the generated projects:
 
@@ -28,14 +29,14 @@ There are two ways to build the generated projects:
    - After the tools are downloaded, you can build the project directly within the IDE.
 
 2. **Using Pre-determined Build Tools:**
-   - Navigate to `tools/<platform>/build-tools` to find various build scripts.
-   - Run the `get_tools` script to download the required build tools.
+   - Navigate to `tools/platforms/<platform>/` to find various build scripts.
+   - Run the `setup_toolchain` script to download the required build tools.
    - Use the `build` and `build_and_run` scripts to build the project.
    - Specify parameters such as configuration and platform when using the build scripts.
    - Instructions will be provided upon usage.
 
 ## Architecture
-<img src="https://raw.githubusercontent.com/StaviRare/root3d-media/main/engine_layers.jpg" alt="Engine Layers" width="600"/>
+<img src="https://raw.githubusercontent.com/StaviRare/root3d-media/main/engine_layers.jpg" alt="Engine Layers" width="800"/>
 
 ## License
 This project is licensed under the MIT License.  

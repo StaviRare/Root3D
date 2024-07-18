@@ -1,4 +1,4 @@
-ROOT_PATH = "../../../../"
+ROOT_PATH = "../../../../../"
 SOURCE_DIR = ROOT_PATH .. "source/"
 EXTERNAL_DIR = ROOT_PATH .. "external/"
 PROJECT_DIR = ROOT_PATH .. "workspaces/windows/"

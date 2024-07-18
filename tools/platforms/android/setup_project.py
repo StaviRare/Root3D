@@ -1,8 +1,14 @@
 import os
+import sys
 import shutil
 
+# Project-specific imports
+sys.path.append('../../utilities/')
+from logger import print_regular, print_success
+
+# Global path definitions
 ROOT_PATH = "../../../"
-RESOURCES = os.path.join("resources")
+RESOURCES = os.path.join("resources/project_gen")
 OUTPUT_PATH = os.path.join(ROOT_PATH, "workspaces", "android")
 
 GRADLEW = os.path.join(RESOURCES, "gradle", "gradlew")
@@ -20,7 +26,7 @@ RES_DIR = os.path.join(RESOURCES, "apk", "res")
 
 
 # Main Program
-print("** Starting Android Studio project generation...")
+print_regular("** Starting Android Studio project generation...")
 
 os.makedirs(os.path.join(OUTPUT_PATH, "gradle", "wrapper"), exist_ok=True)
 os.makedirs(os.path.join(OUTPUT_PATH, "app", "src", "main"), exist_ok=True)
@@ -39,4 +45,4 @@ shutil.copy(CMAKE_LISTS, os.path.join(OUTPUT_PATH, "app", "src", "main", "cpp"))
 shutil.copy(MANIFEST, os.path.join(OUTPUT_PATH, "app", "src", "main"))
 shutil.copytree(RES_DIR, os.path.join(OUTPUT_PATH, "app", "src", "main", "res"), dirs_exist_ok=True)
 
-print("** Android Studio project has been created successfully.")
+print_success("** Android Studio project has been created successfully.")

@@ -2,8 +2,8 @@
 build/
 workspaces/
 assets/packed/resources.bin
-tools/windows/build-tools/resources/
-tools/android/build-tools/resources/
+tools/platforms/windows/resources/build_tools/
+tools/platforms/android/resources/build_tools/
 
 # Operating System
 .DS_Store
