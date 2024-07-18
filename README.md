@@ -36,7 +36,7 @@ There are two ways to build the generated projects:
    - Instructions will be provided upon usage.
 
 ## Architecture
-<img src="https://raw.githubusercontent.com/StaviRare/root3d-media/main/engine_layers.jpg" alt="Engine Layers" width="800"/>
+<img src="https://raw.githubusercontent.com/StaviRare/root3d-media/main/engine_layers.jpg" alt="Engine Layers" width="600"/>
 
 ## License
 This project is licensed under the MIT License.  
