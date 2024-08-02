@@ -1,6 +1,7 @@
 #include <windows.h>
+
+#include "Log.h"
 #include "Directory.h"
-#include "Debug.h"
 #include "File.h"
 
 void Directory::Create(const string& path)
@@ -10,7 +11,7 @@ void Directory::Create(const string& path)
 
     if (!CreateDirectory(sw, NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
     {
-        Debug::LogError("Failed to create directory: " + path);
+        ENGINE_ERROR("Failed to create directory: " + path);
     }
 }
 

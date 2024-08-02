@@ -1,6 +1,7 @@
 #include <unordered_map>
 #include <set>
 
+#include "Log.h"
 #include "Jolt.h"
 #include "Physics.h"
 #include "EntityPool.h"
@@ -9,7 +10,6 @@
 #include "Timer.h"
 #include "JoltHelpers.h"
 #include "MeshData.h"
-#include "Debug.h"
 #include "Collider.h"
 #include "SphereCollider.h"
 #include "BoxCollider.h"
@@ -72,7 +72,7 @@ RefConst<Shape> CreateShape(Entity* entity)
 
                 if (result.HasError())
                 {
-                    Debug::LogError("Error creating convex hull shape: " + string(result.GetError().c_str()));
+                    ENGINE_ERROR("Error creating convex hull shape: " + string(result.GetError().c_str()));
                 }
                 else
                 {

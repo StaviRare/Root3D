@@ -1,7 +1,8 @@
 #include <d3dcompiler.h>
+
+#include "Log.h"
 #include "DirectX11.h"
 #include "Screen.h"
-#include "Debug.h"
 #include "Timer.h"
 #include "RenderQueue.h"
 #include "Calc.h"
@@ -39,7 +40,7 @@ void DirectX11::Initialize()
 
     if (FAILED(device->CreateTexture2D(&descDepth, nullptr, &depthStencilTexture)))
     {
-        Debug::LogError("Failed to create Depth Stencil Texture");
+        ENGINE_ERROR("Failed to create Depth Stencil Texture");
         return;
     }
 
@@ -51,7 +52,7 @@ void DirectX11::Initialize()
 
     if (FAILED(device->CreateDepthStencilView(depthStencilTexture, &descDSV, &depthStencilView)))
     {
-        Debug::LogError("Failed to create Depth Stencil View");
+        ENGINE_ERROR("Failed to create Depth Stencil View");
         depthStencilTexture->Release();
         return;
     }
@@ -65,7 +66,7 @@ void DirectX11::Initialize()
     hr = device->CreateDepthStencilState(&dsDesc, &depthStencilState);
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to configure Depth Stencil State");
+        ENGINE_ERROR("Failed to configure Depth Stencil State");
         return;
     }
 
@@ -76,7 +77,7 @@ void DirectX11::Initialize()
     hr = device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to configure Rasterizer State");
+        ENGINE_ERROR("Failed to configure Rasterizer State");
         return;
     }
 
@@ -275,7 +276,7 @@ void DirectX11::BindTexture(Texture& texture)
     
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create texture.");
+        ENGINE_ERROR("Failed to create texture.");
         return;
     }
 
@@ -285,7 +286,7 @@ void DirectX11::BindTexture(Texture& texture)
     
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create shader resource view.");
+        ENGINE_ERROR("Failed to create shader resource view.");
         d3dTexture->Release();
         return;
     }
@@ -313,7 +314,7 @@ void DirectX11::CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID
 
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create buffer. Error code: " + std::to_string(hr));
+        ENGINE_ERROR("Failed to create buffer. Error code: " + std::to_string(hr));
     }
 }
 
@@ -342,7 +343,7 @@ void DirectX11::CreateDeviceAndSwapChain(HWND hwnd)
 
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create device and swap chain. Error code: " + std::to_string(hr));
+        ENGINE_ERROR("Failed to create device and swap chain. Error code: " + std::to_string(hr));
     }
 }
 
@@ -353,7 +354,7 @@ void DirectX11::CreateRenderTargetView()
 
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create render target view. Error code: " + std::to_string(hr));
+        ENGINE_ERROR("Failed to create render target view. Error code: " + std::to_string(hr));
         return;
     }
 
@@ -363,7 +364,7 @@ void DirectX11::CreateRenderTargetView()
 
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create render target view. Error code: " + std::to_string(hr));
+        ENGINE_ERROR("Failed to create render target view. Error code: " + std::to_string(hr));
         return;
     }
 
@@ -406,7 +407,7 @@ void DirectX11::CompileShader(const string& source, const char* entryPoint, cons
         // Ensure the blobOut is null to indicate failure
         *blobOut = nullptr;
 
-        Debug::LogError(errorMessage);
+        ENGINE_ERROR(errorMessage);
     }
 
     if (errorBlob != nullptr)
@@ -424,7 +425,7 @@ unsigned int DirectX11::CreateShaderProgram(const string& vertexSource, const st
 
     if (!vsBlob)
     {
-        Debug::LogError("Failed to compile vertex shader.");
+        ENGINE_ERROR("Failed to compile vertex shader.");
         return 0;
     }
 
@@ -433,7 +434,7 @@ unsigned int DirectX11::CreateShaderProgram(const string& vertexSource, const st
 
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create vertex shader.");
+        ENGINE_ERROR("Failed to create vertex shader.");
         vsBlob->Release();
         return 0;
     }
@@ -452,7 +453,7 @@ unsigned int DirectX11::CreateShaderProgram(const string& vertexSource, const st
 
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create input layout.");
+        ENGINE_ERROR("Failed to create input layout.");
         return 0;
     }
 
@@ -462,7 +463,7 @@ unsigned int DirectX11::CreateShaderProgram(const string& vertexSource, const st
 
     if (!psBlob)
     {
-        Debug::LogError("Failed to compile pixel shader.");
+        ENGINE_ERROR("Failed to compile pixel shader.");
         return 0;
     }
 
@@ -472,7 +473,7 @@ unsigned int DirectX11::CreateShaderProgram(const string& vertexSource, const st
 
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create pixel shader.");
+        ENGINE_ERROR("Failed to create pixel shader.");
         return 0;
     }
 

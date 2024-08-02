@@ -2,7 +2,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "Debug.h"
+#include "Log.h"
 #include "Directory.h"
 #include "Resource.h"
 
@@ -121,16 +121,16 @@ std::vector<char> Resource::LoadResource(const string& resourcePath)
     {
         if (isResourceFound == false)
         {
-            Debug::LogError("Resource not found: " + resourcePath);
+            ENGINE_ERROR("Resource not found: " + resourcePath);
         }
         else
         {
-            Debug::Log("Resource loaded: " + resourcePath);
+            ENGINE_INFO("Resource loaded: " + resourcePath);
         }
     }
     else
     {
-        Debug::LogError("Resource file not found!");
+        ENGINE_ERROR("Resource file not found!");
     }
 
     return data;

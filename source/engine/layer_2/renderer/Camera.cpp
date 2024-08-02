@@ -1,5 +1,5 @@
+#include "Log.h"
 #include "Camera.h"
-#include "Debug.h"
 #include "Screen.h"
 
 Camera* Camera::Instance = nullptr;
@@ -12,7 +12,7 @@ Camera::Camera()
     }
     else
     {
-        Debug::LogError("Multiple instances of Camera are not supported!");
+        ENGINE_ERROR("Multiple instances of Camera are not supported!");
     }
 }
 
@@ -33,7 +33,7 @@ Camera& Camera::GetInstance()
 {
     if (Instance == nullptr)
     {
-        Debug::LogError("Camera instance does not exists!");
+        ENGINE_ERROR("Camera instance does not exists!");
     }
 
     return *Instance;

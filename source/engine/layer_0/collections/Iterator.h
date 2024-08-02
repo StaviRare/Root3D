@@ -1,26 +1,27 @@
 #pragma once
 
 template <typename T>
-class Iterator 
+class Iterator
 {
-public:
-    Iterator(T* ptr) : ptr(ptr) {}
+    public:
+    Iterator(T* ptr) : ptr(ptr)
+    {}
 
-    Iterator& operator++() 
+    Iterator& operator++()
     {
         ++ptr; return *this;
     }
 
-    bool operator!=(const Iterator& other) const 
+    bool operator!=(const Iterator& other) const
     {
         return ptr != other.ptr;
     }
 
-    T& operator*() 
+    T& operator*()
     {
         return *ptr;
     }
 
-private:
+    private:
     T* ptr;
 };

@@ -1,4 +1,4 @@
-#include "Debug.h"
+#include "Log.h"
 #include "Physics.h"
 #include "Config.h"
 #include "Jolt.h"
@@ -49,7 +49,7 @@ void Physics::Initialize()
     }
     else
     {
-        Debug::LogError("Unsupported Physics API selected!");
+        ENGINE_ERROR("Unsupported Physics API selected!");
     }
 }
 

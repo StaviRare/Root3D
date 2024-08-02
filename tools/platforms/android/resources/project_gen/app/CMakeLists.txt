@@ -6,10 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(rootPath "../../../../../../")
 
+add_definitions(-DENGINE_LOG_LEVEL=${ENGINE_LOG_LEVEL})
+
 file(GLOB_RECURSE SOURCES
     "${rootPath}source/game/*.cpp"
     "${rootPath}source/app/android/cpp/*.cpp"
-	"${rootPath}source/engine/layer_0/debug/p_android/*.cpp"	
+	"${rootPath}source/engine/layer_0/log/p_android/*.cpp"	
 	"${rootPath}source/engine/layer_0/files/p_android/*.cpp"
 	"${rootPath}source/engine/layer_0/graphics/common/*.cpp"
 	"${rootPath}source/engine/layer_0/graphics/p_android/*.cpp"
@@ -27,8 +29,8 @@ set(INCLUDE_DIRS
     "${rootPath}source/game/"
     "${rootPath}source/app/android/cpp/"
 	"${rootPath}source/engine/layer_0/collections/"
-	"${rootPath}source/engine/layer_0/debug/common/"
-	"${rootPath}source/engine/layer_0/debug/p_android/"
+	"${rootPath}source/engine/layer_0/log/common/"
+	"${rootPath}source/engine/layer_0/log/p_android/"
 	"${rootPath}source/engine/layer_0/files/common/"
 	"${rootPath}source/engine/layer_0/files/p_android/"
 	"${rootPath}source/engine/layer_0/graphics/common/"
@@ -45,6 +47,7 @@ set(INCLUDE_DIRS
 	"${rootPath}source/engine/layer_1/config/"
 	"${rootPath}source/engine/layer_1/core/"
 	"${rootPath}source/engine/layer_1/math/"
+	"${rootPath}source/engine/layer_1/debug/"
 	"${rootPath}source/engine/layer_1/random/"
 	"${rootPath}source/engine/layer_2/ecs/"
 	"${rootPath}source/engine/layer_2/physics/"

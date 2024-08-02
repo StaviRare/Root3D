@@ -3,9 +3,9 @@
 #include <GL/glew.h>
 #include <Windows.h>
 
+#include "Log.h"
 #include "OpenGL.h"
 #include "RenderQueue.h"
-#include "Debug.h"
 #include "Timer.h"
 #include "Screen.h"
 #include "Calc.h"
@@ -246,7 +246,7 @@ void OpenGL::BindTexture(Texture& texture)
         }
         else
         {
-            Debug::LogError("Failed to load texture");
+            ENGINE_ERROR("Failed to load texture");
         }
     }
     else

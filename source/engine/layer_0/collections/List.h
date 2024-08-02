@@ -4,21 +4,23 @@
 // at compile time, avoiding the need for explicit template instantiation.
 
 #include "Iterator.h"
-#include "Debug.h"
+#include "Log.h"
 
 template <typename T>
-class List {
-public:
-    List() : data(nullptr), size(0), capacity(0) {}
+class List
+{
+    public:
+    List() : data(nullptr), size(0), capacity(0)
+    {}
 
     // Copy constructor for deep copy
-    List(const List& other) : data(nullptr), size(0), capacity(0) 
+    List(const List& other) : data(nullptr), size(0), capacity(0)
     {
-        if (other.size > 0) 
+        if (other.size > 0)
         {
             data = new T[other.capacity];
 
-            for (size_t i = 0; i < other.size; ++i) 
+            for (size_t i = 0; i < other.size; ++i)
             {
                 data[i] = other.data[i];
             }
@@ -29,13 +31,13 @@ public:
     }
 
     // Copy assignment operator
-    List& operator=(const List& other) 
+    List& operator=(const List& other)
     {
-        if (this != &other) 
+        if (this != &other)
         {
             T* newData = new T[other.capacity];
 
-            for (size_t i = 0; i < other.size; ++i) 
+            for (size_t i = 0; i < other.size; ++i)
             {
                 newData[i] = other.data[i];
             }
@@ -49,14 +51,14 @@ public:
         return *this;
     }
 
-    ~List() 
+    ~List()
     {
         delete[] data;
     }
 
-    void Add(const T& item) 
+    void Add(const T& item)
     {
-        if (size >= capacity) 
+        if (size >= capacity)
         {
             Reserve(capacity == 0 ? 1 : capacity * 2);
         }
@@ -66,23 +68,23 @@ public:
 
     // Add elements from an array
     template <size_t N>
-    void AddRange(const T(&arr)[N]) 
+    void AddRange(const T(&arr)[N])
     {
-        for (size_t i = 0; i < N; ++i) 
+        for (size_t i = 0; i < N; ++i)
         {
             Add(arr[i]);
         }
     }
 
-    T& operator[](size_t index) 
+    T& operator[](size_t index)
     {
         T& returnValue = dummy;
 
-        if (index < size) 
+        if (index < size)
         {
             returnValue = data[index];
         }
-        else 
+        else
         {
             LogOutOfBoundsError(index);
         }
@@ -90,14 +92,15 @@ public:
         return returnValue;
     }
 
-    const T& operator[](size_t index) const {
+    const T& operator[](size_t index) const
+    {
         const T& returnValue = dummy;
 
-        if (index < size) 
+        if (index < size)
         {
             returnValue = data[index];
         }
-        else 
+        else
         {
             LogOutOfBoundsError(index);
         }
@@ -105,12 +108,12 @@ public:
         return returnValue;
     }
 
-    size_t Count() const 
+    size_t Count() const
     {
         return size;
     }
 
-    void Clear() 
+    void Clear()
     {
         delete[] data;
         data = nullptr;
@@ -118,27 +121,27 @@ public:
         capacity = 0;
     }
 
-    Iterator<T> begin() const 
+    Iterator<T> begin() const
     {
         return Iterator<T>(data);
     }
 
-    Iterator<T> end() const 
+    Iterator<T> end() const
     {
         return Iterator<T>(data + size);
     }
 
-private:
+    private:
     T dummy;
     T* data;
     size_t size;
     size_t capacity;
 
-    void Reserve(size_t newCapacity) 
+    void Reserve(size_t newCapacity)
     {
         T* newData = new T[newCapacity];
 
-        for (size_t i = 0; i < size; ++i) 
+        for (size_t i = 0; i < size; ++i)
         {
             newData[i] = data[i];
         }
@@ -152,6 +155,6 @@ private:
     {
         std::string errorMessage = "Index " + std::to_string(index) + " out of bounds";
         errorMessage += " of an object with max length " + std::to_string(size) + ".";
-        Debug::error(errorMessage);
+        ENGINE_ERROR(errorMessage);
     }
 };

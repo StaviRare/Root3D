@@ -1,6 +1,7 @@
 #include <fstream>
+
+#include "Log.h"
 #include "File.h"
-#include "Debug.h"
 
 bool File::Exists(const string& filePath)
 {
@@ -17,7 +18,7 @@ bool File::Delete(const std::string& filePath)
 
     if (remove(filePath.c_str()) != 0)
     {
-        Debug::LogError("Failed to delete file: " + filePath);
+        ENGINE_ERROR("Failed to delete file: " + filePath);
 
         returnValue = false;
     }
@@ -38,7 +39,7 @@ string File::ReadAllText(const string& filePath)
     }
     else
     {
-        Debug::LogError("Failed to open file for reading: " + filePath);
+        ENGINE_ERROR("Failed to open file for reading: " + filePath);
     }
 
     return returnValue;
@@ -54,6 +55,6 @@ void File::WriteAllText(const string& filePath, const string& data)
     }
     else
     {
-        Debug::LogError("Failed to open file for writing: " + filePath);
+        ENGINE_ERROR("Failed to open file for writing: " + filePath);
     }
 }

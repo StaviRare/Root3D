@@ -25,6 +25,19 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            externalNativeBuild {
+                cmake {
+                    arguments += "-DENGINE_LOG_LEVEL=3"
+                }
+            }
+        }
+
+        debug {
+            externalNativeBuild {
+                cmake {
+                    arguments += "-DENGINE_LOG_LEVEL=0"
+                }
+            }
         }
     }
 
@@ -68,7 +81,7 @@ android {
 
         buildOutputs.all {
             val variantOutputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            variantOutputImpl.outputFileName =  "root3d.apk" // For build scripts. We're leaving it like this for now.
+            variantOutputImpl.outputFileName = "root3d.apk" // For build scripts. We're leaving it like this for now.
         }
     }
 

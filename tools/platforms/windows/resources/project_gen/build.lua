@@ -10,11 +10,11 @@ workspace "root3d"
     platforms { "x86", "x64" }
 
     filter "configurations:Debug"
-        defines { "DEBUG" }
+        defines { "DEBUG", "ENGINE_LOG_LEVEL=0" }
         symbols "On"
 
     filter "configurations:Release"
-        defines { "NDEBUG" }
+        defines { "NDEBUG", "ENGINE_LOG_LEVEL=3" }
         optimize "On"
 
     filter { "platforms:x86", "configurations:Debug" }
@@ -44,8 +44,8 @@ project "Root3D"
         SOURCE_DIR .. "game/**.cpp",
         SOURCE_DIR .. "app/windows/**.cpp",
         SOURCE_DIR .. "engine/layer_0/collections/**.h",
-		SOURCE_DIR .. "engine/layer_0/debug/common/**.h",
-        SOURCE_DIR .. "engine/layer_0/debug/p_windows/**.cpp",	
+		SOURCE_DIR .. "engine/layer_0/log/common/**.h",
+        SOURCE_DIR .. "engine/layer_0/log/p_windows/**.cpp",	
         SOURCE_DIR .. "engine/layer_0/files/common/**.h",
         SOURCE_DIR .. "engine/layer_0/files/p_windows/**.cpp",
         SOURCE_DIR .. "engine/layer_0/graphics/common/**.h",
@@ -74,7 +74,7 @@ project "Root3D"
 	includedirs {
 		SOURCE_DIR .. "game/",
         SOURCE_DIR .. "engine/layer_0/collections/",
-		SOURCE_DIR .. "engine/layer_0/debug/common/",
+		SOURCE_DIR .. "engine/layer_0/log/common/",
         SOURCE_DIR .. "engine/layer_0/files/common/",
         SOURCE_DIR .. "engine/layer_0/graphics/common/",
         SOURCE_DIR .. "engine/layer_0/input/common/",	
@@ -85,7 +85,8 @@ project "Root3D"
 		SOURCE_DIR .. "engine/layer_0/types/",
 		SOURCE_DIR .. "engine/layer_1/config/",
 		SOURCE_DIR .. "engine/layer_1/core/",
-		SOURCE_DIR .. "engine/layer_1/math/",		
+		SOURCE_DIR .. "engine/layer_1/math/",	
+		SOURCE_DIR .. "engine/layer_1/debug/",		
 		SOURCE_DIR .. "engine/layer_1/random/",
 		SOURCE_DIR .. "engine/layer_2/ecs/",
 		SOURCE_DIR .. "engine/layer_2/physics/",	

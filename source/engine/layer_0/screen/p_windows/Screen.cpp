@@ -1,7 +1,8 @@
 #include <windows.h>
 #include <vector>
+
+#include "Log.h"
 #include "Screen.h"
-#include "Debug.h"
 #include "Config.h"
 
 static int width;
@@ -108,7 +109,7 @@ void Screen::Initialize()
 
     if (windowHandle == NULL)
     {
-        Debug::LogError("hWnd is NULL. Unable to proceed");
+        ENGINE_ERROR("hWnd is NULL. Unable to proceed");
         return;
     }
 

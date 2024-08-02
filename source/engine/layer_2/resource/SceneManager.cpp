@@ -1,4 +1,4 @@
-#include "Debug.h"
+#include "Log.h"
 #include "SceneManager.h"
 
 Scene* SceneManager::currentScene = nullptr;
@@ -15,7 +15,7 @@ void SceneManager::RegisterScene(int index, std::function<Scene* ()> constructor
 
     if (registry.find(index) != registry.end())
     {
-        Debug::LogError("Scene " + std::to_string(index) + " index already taken.");
+        ENGINE_ERROR("Scene " + std::to_string(index) + " index already taken.");
     }
 
     registry[index] = constructor;
@@ -46,6 +46,6 @@ void SceneManager::RunScene()
     }
     else
     {
-        Debug::LogError("Current scene is null!");
+        ENGINE_ERROR("Current scene is null!");
     }
 }
