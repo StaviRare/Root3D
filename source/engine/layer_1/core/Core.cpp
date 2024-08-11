@@ -8,6 +8,7 @@
 #include "Screen.h"
 #include "Input.h"
 #include "Physics.h"
+#include "PhysicsHandler.h"
 
 void Core::Initialize()
 {
@@ -28,15 +29,17 @@ void Core::Tick()
     // Handle fixed update
     while (Timer::accumulatedTime >= Timer::fixedTimeStep)
     {
+        PhysicsHandler::SetData(); // Should not be here.
         Physics::Simulate();
+        PhysicsHandler::GetData(); // Should not be here.
         Timer::UpdateFixedTime();
     }
 
     // Handle variable update
     Input::Tick();
     Screen::PollEvents();
-    SceneManager::RunScene();
-    RenderCommandHandler::Tick();
+    SceneManager::RunScene(); // Should not be here.
+    RenderCommandHandler::Tick(); // Should not be here.
     Graphics::ClearScreen();
     Graphics::ExecuteRenderCommands();
     Graphics::SwapFrameBuffers();

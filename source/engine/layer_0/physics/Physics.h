@@ -10,34 +10,6 @@ enum class PhysicsType
     Jolt
 };
 
-//struct PhysicsBodyData
-//{
-//    // body
-//    int entityId;
-//    bool updateBody;
-//
-//    // transform
-//    float scale[3];
-//    float position[3];
-//    float rotation[4];
-//
-//    // rigidBody
-//    float mass;
-//    float drag;
-//    bool isDynamic;
-//
-//    // collider
-//    int colliderType;
-//    float boxSize[3];
-//    float sphereRadius;
-//};
-//
-//struct PhysicsBodyUpdatedData
-//{
-//    float position[3];
-//    float rotation[4];
-//};
-
 class Physics
 {
     friend class Core;
@@ -45,7 +17,9 @@ class Physics
     public:
     static string TypeName();
     static Vector3 GetGravity();
-    static void SetGravity(Vector3 gravity);
+    static void SetGravity(Vector3 gravity); // float3
+    static void CreateBody(PhysCommand command);
+    static PhysResponse GetBodyData(uniqueID id);
 
     private:
     static Vector3 _gravity;

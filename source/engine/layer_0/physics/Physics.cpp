@@ -72,3 +72,24 @@ void Physics::UnInitialize()
         _currentType = PhysicsType::Null;
     }
 }
+
+void Physics::CreateBody(PhysCommand command)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->CreateBody(command);
+    }
+}
+
+PhysResponse Physics::GetBodyData(uniqueID id)
+{
+    PhysResponse returnValue;
+
+    if (_currentAPI != nullptr)
+    {
+        returnValue = _currentAPI->GetBodyData(id);
+    }
+
+    return returnValue;
+}
+
