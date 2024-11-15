@@ -120,12 +120,23 @@ void Screen::UnInitialize()
     }
 }
 
+void Screen::Resume()
+{
+
+};
+
+void Screen::Pause()
+{
+    
+};
+
 void Screen::PollEvents()
 {
     // Implement
 }
 
-void* Screen::GetNativeHandle() {
+void* Screen::GetNativeHandle()
+{
     eglHandles.display = display;
     eglHandles.surface = surface;
     return &eglHandles;

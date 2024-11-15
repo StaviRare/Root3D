@@ -55,10 +55,13 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
         {
             handler.post(renderTask);
         }
+
+        nativeResume();
     }
 
     public void pause()
     {
+        nativePause();
         handler.removeCallbacks(renderTask);
     }
 
@@ -163,14 +166,11 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
 
     // Native methods
     private native void nativeSetSurface(Surface surface);
-
     private native void nativeSetAssetManager(AssetManager assetManager);
-
     private native void nativeInitialize();
-
-    private native void nativeTick();
-
     private native void nativeUnInitialize();
-
+    private native void nativeResume();
+    private native void nativePause();
+    private native void nativeTick();
     private native void nativeResize(int width, int height);
 }

@@ -54,11 +54,6 @@ void JniBridge::Initialize()
     }
 }
 
-void JniBridge::Tick()
-{
-    Core::Tick();
-}
-
 void JniBridge::UnInitialize()
 {
     Core::UnInitialize();
@@ -68,6 +63,21 @@ void JniBridge::UnInitialize()
         ANativeWindow_release(window);
         window = nullptr;
     }
+}
+
+void JniBridge::Resume()
+{
+    Core::Resume();
+}
+
+void JniBridge::Pause()
+{
+    Core::Pause();
+}
+
+void JniBridge::Tick()
+{
+    Core::Tick();
 }
 
 void JniBridge::Resize(int width, int height)
@@ -85,35 +95,47 @@ AAssetManager* JniBridge::GetAssetManager()
     return assetManager;
 }
 
+
+
 extern "C"
 {
-JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeSetSurface(JNIEnv *env, jobject obj, jobject surface)
-{
-    JniBridge::SetSurface(env, surface);
-}
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeSetSurface(JNIEnv *env, jobject obj, jobject surface)
+    {
+        JniBridge::SetSurface(env, surface);
+    }
 
-JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeSetAssetManager(JNIEnv *env, jobject obj, jobject assetManager)
-{
-    JniBridge::SetAssetManager(env, assetManager);
-}
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeSetAssetManager(JNIEnv *env, jobject obj, jobject assetManager)
+    {
+        JniBridge::SetAssetManager(env, assetManager);
+    }
 
-JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeInitialize(JNIEnv *env, jobject obj)
-{
-    JniBridge::Initialize();
-}
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeInitialize(JNIEnv *env, jobject obj)
+    {
+        JniBridge::Initialize();
+    }
 
-JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeTick(JNIEnv* env, jobject obj)
-{
-    JniBridge::Tick();
-}
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeResume(JNIEnv* env, jobject obj)
+    {
+        JniBridge::Resume();
+    }
 
-JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeUnInitialize(JNIEnv* env, jobject obj)
-{
-    JniBridge::UnInitialize();
-}
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeTick(JNIEnv* env, jobject obj)
+    {
+        JniBridge::Tick();
+    }
 
-JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeResize(JNIEnv* env, jobject obj, int width, int height)
-{
-    JniBridge::Resize(width, height);
-}
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativePause(JNIEnv* env, jobject obj)
+    {
+        JniBridge::Pause();
+    }
+
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeUnInitialize(JNIEnv* env, jobject obj)
+    {
+        JniBridge::UnInitialize();
+    }
+
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeResize(JNIEnv* env, jobject obj, int width, int height)
+    {
+        JniBridge::Resize(width, height);
+    }
 }
