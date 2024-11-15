@@ -201,8 +201,8 @@ void handleCubeTransform()
 
 
     //// Rotate
-    //entity.transform.eulerAngles += Vector3(-15, -25, 15) * deltaTime;
-    //entity.transform.rotation = Quaternion::FromEuler(entity.transform.eulerAngles);
+    entity.transform.eulerAngles += Vector3(-5, -5, 5) * deltaTime;
+    entity.transform.rotation = Quaternion::FromEuler(entity.transform.eulerAngles);
 
 
     //// Move

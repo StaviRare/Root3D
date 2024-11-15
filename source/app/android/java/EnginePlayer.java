@@ -56,7 +56,7 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
             handler.post(renderTask);
         }
 
-        nativeResume();
+        //nativeResume();
     }
 
     public void pause()
@@ -149,6 +149,7 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
             nativeResize(holder.getSurfaceFrame().width(), holder.getSurfaceFrame().height());
         }
 
+        nativeResume();
         handler.post(renderTask);
     }
 
