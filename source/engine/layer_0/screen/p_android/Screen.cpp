@@ -2,7 +2,7 @@
 #include <android/native_window.h>
 #include <vector>
 
-#include "Debug.h"
+#include "Log.h"
 #include "Screen.h"
 #include "JniBridge.h"
 #include "Config.h"
@@ -42,7 +42,7 @@ void Screen::SetResolution(int newWidth, int newHeight)
     // Recreate the EGL surface with the new resolution
     if (!CreateEGLSurface())
     {
-        Debug::LogError("Failed to recreate EGL surface.");
+        ENGINE_ERROR("Failed to recreate EGL surface.");
     }
 
     for (const auto &callback : callbacks)
@@ -73,13 +73,13 @@ void Screen::Initialize()
 
     if (display == EGL_NO_DISPLAY)
     {
-        Debug::LogError("Failed to get default display.");
+        ENGINE_ERROR("Failed to get default display.");
         return;
     }
 
     if (!eglInitialize(display, nullptr, nullptr))
     {
-        Debug::LogError("Failed to initialize EGL.");
+        ENGINE_ERROR("Failed to initialize EGL.");
         return;
     }
 
@@ -87,13 +87,13 @@ void Screen::Initialize()
 
     if (context == EGL_NO_CONTEXT)
     {
-        Debug::LogError("Failed to create EGL context.");
+        ENGINE_ERROR("Failed to create EGL context.");
         return;
     }
 
     if (!CreateEGLSurface())
     {
-        Debug::LogError("Failed to create initial EGL surface.");
+        ENGINE_ERROR("Failed to create initial EGL surface.");
     }
 }
 
@@ -141,7 +141,7 @@ bool CreateEGLSurface()
     ANativeWindow* window = JniBridge::GetNativeWindow();
     if (window == nullptr)
     {
-        Debug::LogError("Failed to get native window.");
+        ENGINE_ERROR("Failed to get native window.");
         return false;
     }
 
@@ -160,13 +160,13 @@ bool CreateEGLSurface()
 
     if (!eglChooseConfig(display, attribs, &config, 1, &numConfigs))
     {
-        Debug::LogError("Failed to choose config.");
+        ENGINE_ERROR("Failed to choose config.");
         return false;
     }
 
     if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
     {
-        Debug::LogError("Failed to get config attrib.");
+        ENGINE_ERROR("Failed to get config attrib.");
         return false;
     }
 
@@ -176,13 +176,13 @@ bool CreateEGLSurface()
 
     if (surface == EGL_NO_SURFACE)
     {
-        Debug::LogError("Failed to create window surface.");
+        ENGINE_ERROR("Failed to create window surface.");
         return false;
     }
 
     if (!eglMakeCurrent(display, surface, surface, context))
     {
-        Debug::LogError("Failed to make context current.");
+        ENGINE_ERROR("Failed to make context current.");
         return false;
     }
 

@@ -1,4 +1,4 @@
-#include "Debug.h"
+#include "Log.h"
 #include "OpenGLES1.h"
 #include "JniBridge.h"
 #include "Screen.h"
@@ -17,7 +17,7 @@ void OpenGLES1::Initialize()
 
     if (display == EGL_NO_DISPLAY || surface == EGL_NO_SURFACE)
     {
-        Debug::LogError("Invalid EGL handles");
+        ENGINE_ERROR("Invalid EGL handles");
         return;
     }
 
@@ -150,7 +150,7 @@ void OpenGLES1::SwapFrameBuffers()
 
     if (!eglSwapBuffers(handles->display, handles->surface))
     {
-        Debug::LogError("Failed to swap buffers.");
+        ENGINE_ERROR("Failed to swap buffers.");
     }
 }
 
@@ -189,7 +189,7 @@ void OpenGLES1::BindTexture(Texture& texture)
         }
         else
         {
-            Debug::LogError("Failed to load texture");
+            ENGINE_ERROR("Failed to load texture");
         }
     }
     else

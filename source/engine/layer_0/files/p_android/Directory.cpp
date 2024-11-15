@@ -6,7 +6,7 @@
 
 #include "JniBridge.h"
 #include "Directory.h"
-#include "Debug.h"
+#include "Log.h"
 #include "File.h"
 
 void Directory::Create(const string& path)
@@ -28,14 +28,14 @@ string Directory::GetResourcePath()
 
     if (!mgr)
     {
-        Debug::LogError("Asset manager not initialized");
+        ENGINE_ERROR("Asset manager not initialized");
         return "Asset manager not initialized.";
     }
 
     AAsset* asset = AAssetManager_open(mgr, filename, AASSET_MODE_BUFFER);
     if (asset == nullptr)
     {
-        Debug::LogError("Failed to open asset: " + string(filename));
+        ENGINE_ERROR("Failed to open asset: " + string(filename));
         return "Failed to open asset.";
     }
 
@@ -43,7 +43,7 @@ string Directory::GetResourcePath()
     off_t assetLength = AAsset_getLength(asset);
     if (assetLength == 0)
     {
-        Debug::LogError("Asset '" + string(filename) + "' is empty or not readable");
+        ENGINE_ERROR("Asset '" + string(filename) + "' is empty or not readable");
         AAsset_close(asset);
         return "Asset is empty or not readable.";
     }
@@ -60,11 +60,11 @@ string Directory::GetResourcePath()
     if (!Directory::Exists(writableDir))
     {
         Directory::Create(writableDir);
-        Debug::Log("Asset directory created: " + writableDir);
+        ENGINE_ERROR("Asset directory created: " + writableDir);
     }
     else
     {
-        Debug::LogWarning("Asset directory already exists: " + writableDir);
+        ENGINE_WARN("Asset directory already exists: " + writableDir);
     }
 
     // Create a file path for saving the asset
@@ -74,14 +74,14 @@ string Directory::GetResourcePath()
     std::ofstream outFile(filePath, std::ios::binary);
     if (!outFile)
     {
-        Debug::LogError("Failed to create file for saving asset: " + filePath);
-        Debug::LogError("Error details: " + string(std::strerror(errno)));
+        ENGINE_ERROR("Failed to create file for saving asset: " + filePath);
+        ENGINE_ERROR("Details: " + string(std::strerror(errno)));
         return "Failed to create file for saving asset.";
     }
     outFile.write(buffer.data(), assetLength);
     outFile.close();
 
-    Debug::Log("Successfully saved asset to file: " + filePath);
+    ENGINE_INFO("Successfully saved asset to file: " + filePath);
 
     return filePath;
 }

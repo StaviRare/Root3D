@@ -1,6 +1,6 @@
 #include "Graphics.h"
 #include "OpenGLES1.h"
-#include "Debug.h"
+#include "Log.h"
 #include "Config.h"
 
 GraphicsType Graphics:: _currentType;
@@ -37,7 +37,7 @@ void Graphics::Initialize()
     }
     else
     {
-        Debug::LogError("Unsupported Graphics API selected!");
+        ENGINE_ERROR("Unsupported Graphics API selected!");
     }
 }
 
