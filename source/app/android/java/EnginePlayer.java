@@ -54,7 +54,7 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
             handler.post(renderTask);
         }
 
-        //nativeResume();
+        nativeResume();
     }
 
     public void pause()

@@ -5,13 +5,29 @@ float Timer::fixedTimeStep = 0.02f;
 float Timer::accumulatedTime = 0.0f;
 float Timer::maximumAllowedTimeStep = 0.1f;
 
-std::chrono::time_point<std::chrono::high_resolution_clock> Timer::loopStartTime;
-std::chrono::time_point<std::chrono::high_resolution_clock> Timer::loopEndTime;
-std::chrono::time_point<std::chrono::high_resolution_clock> Timer::initTime;
+timePoint Timer::loopStartTime;
+timePoint Timer::loopEndTime;
+timePoint Timer::initTime;
+timePoint Timer::pauseTime;
 
 void Timer::Initialize()
 {
-    initTime = loopStartTime = std::chrono::high_resolution_clock::now();
+    initTime = loopStartTime = resClock::now();
+}
+
+void Timer::Pause()
+{
+    pauseTime = resClock::now();
+}
+
+void Timer::Resume()
+{
+    timePoint resumeTime = resClock::now();
+    timeDuration pausedDuration = resumeTime - pauseTime;
+
+    // ToDo - Ugly fix. Make it +=
+    loopStartTime = resumeTime;
+    loopEndTime = resumeTime;
 }
 
 float Timer::DeltaTime()
@@ -26,15 +42,15 @@ float Timer::FixedDeltaTime()
 
 float Timer::TimeSinceInit()
 {
-    auto now = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> elapsed = now - initTime;
+    auto now = resClock::now();
+    timeDuration elapsed = now - initTime;
     return elapsed.count();
 }
 
 void Timer::CalculateLoopTime()
 {
-    loopEndTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> delta = loopEndTime - loopStartTime;
+    loopEndTime = resClock::now();
+    timeDuration delta = loopEndTime - loopStartTime;
     deltaTime = delta.count();
     loopStartTime = loopEndTime;
 

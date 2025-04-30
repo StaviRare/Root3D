@@ -33,10 +33,12 @@ void Core::UnInitialize()
 void Core::Resume()
 {
     Screen::Resume();
+    Timer::Resume();
 }
 
 void Core::Pause()
 {
+    Timer::Pause();
     Screen::Pause();
 }
 
