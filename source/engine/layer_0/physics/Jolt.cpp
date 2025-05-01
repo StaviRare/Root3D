@@ -83,7 +83,8 @@ void Jolt::UnInitialize()
 
 void Jolt::CreateBody(PhysCommand command)
 {
-    bool bodyNotExists = _entityBodyMap.find(command.entityID) == _entityBodyMap.end();
+    auto it = _entityBodyMap.find(command.entityID);
+    bool bodyNotExists = it == _entityBodyMap.end();
 
     if (bodyNotExists)
     {
@@ -125,6 +126,19 @@ void Jolt::CreateBody(PhysCommand command)
                 bodyInterface.AddBody(body->GetID(), command.rigidbody.isStatic ? EActivation::DontActivate : EActivation::Activate);
                 _entityBodyMap[command.entityID] = body->GetID();
             }
+        }
+    }
+    else
+    {
+        if (command.rigidbody.isStatic)
+        {
+            BodyInterface& bodyInterface = _physicsSystem->GetBodyInterface();
+            BodyID bodyID = it->second;
+
+            Vec3 position(command.transform.position[0], command.transform.position[1], command.transform.position[2]);
+            Quat rotation(command.transform.rotation[0], command.transform.rotation[1], command.transform.rotation[2], command.transform.rotation[3]);
+
+            bodyInterface.SetPositionAndRotation(bodyID, position, rotation, EActivation::DontActivate);
         }
     }
 }
