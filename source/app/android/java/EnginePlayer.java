@@ -28,6 +28,7 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     private final Activity activity;
     private SurfaceHolder surfaceHolder;
     private boolean isInitialized = false;
+    private boolean pendingResume = false; // Delay resume until surface is ready.
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable renderTask = new Runnable()
     {
@@ -51,10 +52,13 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     {
         if (surfaceHolder != null && surfaceHolder.getSurface().isValid())
         {
+            nativeResume();
             handler.post(renderTask);
         }
-
-        nativeResume();
+        else
+        {
+            pendingResume = true;
+        }
     }
 
     public void pause()
@@ -65,12 +69,11 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
 
     public void destroy()
     {
-        if (surfaceHolder != null && surfaceHolder.getSurface().isValid())
-        {
+
             handler.removeCallbacks(renderTask);
             nativeUnInitialize();
             isInitialized = false;
-        }
+
     }
 
     public void configurationChanged(Configuration newConfig)
@@ -135,8 +138,12 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
             nativeResize(holder.getSurfaceFrame().width(), holder.getSurfaceFrame().height());
         }
 
-        nativeResume();
-        handler.post(renderTask);
+        if (pendingResume)
+        {
+            nativeResume();
+            handler.post(renderTask);
+            pendingResume = false;
+        }
     }
 
     @Override

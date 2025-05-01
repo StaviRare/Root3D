@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStart()
     {
         super.onStart();
-        //enginePlayer.resume();
+        enginePlayer.resume();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStop()
     {
         super.onStop();
-        //enginePlayer.pause();
+        enginePlayer.pause();
     }
 
     @Override
