@@ -18,5 +18,7 @@ class Screen
     private:
     static void Initialize();
     static void UnInitialize();
+    static void Resume();
+    static void Pause();
     static void PollEvents();
 };

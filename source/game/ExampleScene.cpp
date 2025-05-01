@@ -117,14 +117,9 @@ void initPrimitives()
     meshData2->mesh = mesh2;
     renderer2->material = material2;
 
-
-
     //Physics::SetGravity(-0.5);
 
-
-
-
-    //// Point light
+    // Point light
     lightEntity.transform.eulerAngles = Vector3(0, 0, 0);
     lightEntity.transform.position = Vector3(0, 0, 0);
     Light* light = lightEntity.AddComponent<Light>();
@@ -199,13 +194,12 @@ void handleCubeTransform()
     float deltaTime = Timer::DeltaTime();
     float timeSinceInit = Timer::TimeSinceInit();
 
+    // Rotate
+    entity.transform.eulerAngles += Vector3(-5, -5, 5) * deltaTime;
+    entity.transform.rotation = Quaternion::FromEuler(entity.transform.eulerAngles);
 
-    //// Rotate
-    //entity.transform.eulerAngles += Vector3(-15, -25, 15) * deltaTime;
-    //entity.transform.rotation = Quaternion::FromEuler(entity.transform.eulerAngles);
 
-
-    //// Move
+    // Move
     //float amplitude = -1.0f;
     //entity.transform.position.z += amplitude * Calc::Sin(timeSinceInit) * deltaTime;
 

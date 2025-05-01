@@ -18,7 +18,28 @@ void Core::Initialize()
     Screen::Initialize();
     Graphics::Initialize();
     Physics::Initialize();
-    SceneManager::LoadScene(0);
+    SceneManager::LoadScene(0); // should not be here.
+}
+
+void Core::UnInitialize()
+{
+    // Shut everything down, in reverse order
+    Physics::UnInitialize();
+    Graphics::UnInitialize();
+    Screen::UnInitialize();
+    Input::UnInitialize();
+}
+
+void Core::Resume()
+{
+    Screen::Resume();
+    Timer::Resume();
+}
+
+void Core::Pause()
+{
+    Timer::Pause();
+    Screen::Pause();
 }
 
 void Core::Tick()
@@ -43,13 +64,4 @@ void Core::Tick()
     Graphics::ClearScreen();
     Graphics::ExecuteRenderCommands();
     Graphics::SwapFrameBuffers();
-}
-
-void Core::UnInitialize()
-{
-    // Shut everything down, in reverse order
-    Physics::UnInitialize();
-    Graphics::UnInitialize();
-    Screen::UnInitialize();
-    Input::UnInitialize();
 }

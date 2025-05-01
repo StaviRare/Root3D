@@ -10,8 +10,10 @@ class JniBridge
     static void SetSurface(JNIEnv* env, jobject surface);
     static void SetAssetManager(JNIEnv* env, jobject assetManagerObj);
     static void Initialize();
-    static void Tick();
     static void UnInitialize();
+    static void Resume();
+    static void Pause();
+    static void Tick();
     static void Resize(int width, int height);
     static ANativeWindow* GetNativeWindow();
     static AAssetManager* GetAssetManager();

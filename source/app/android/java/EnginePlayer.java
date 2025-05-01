@@ -6,12 +6,10 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 
 public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -30,6 +28,7 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     private final Activity activity;
     private SurfaceHolder surfaceHolder;
     private boolean isInitialized = false;
+    private boolean pendingResume = false; // Delay resume until surface is ready.
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable renderTask = new Runnable()
     {
@@ -53,23 +52,28 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     {
         if (surfaceHolder != null && surfaceHolder.getSurface().isValid())
         {
+            nativeResume();
             handler.post(renderTask);
+        }
+        else
+        {
+            pendingResume = true;
         }
     }
 
     public void pause()
     {
+        nativePause();
         handler.removeCallbacks(renderTask);
     }
 
     public void destroy()
     {
-        if (surfaceHolder != null && surfaceHolder.getSurface().isValid())
-        {
+
             handler.removeCallbacks(renderTask);
             nativeUnInitialize();
             isInitialized = false;
-        }
+
     }
 
     public void configurationChanged(Configuration newConfig)
@@ -87,22 +91,9 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
 
     private void initialize()
     {
-        setFullScreenMode();
         hideActionBar();
         setImmersiveMode();
         setupSurfaceView();
-    }
-
-    private void setFullScreenMode()
-    {
-        WindowCompat.setDecorFitsSystemWindows(activity.getWindow(), false);
-        WindowInsetsControllerCompat insetsController = WindowCompat.getInsetsController(activity.getWindow(), activity.getWindow().getDecorView());
-
-        if (insetsController != null)
-        {
-            insetsController.hide(WindowInsetsCompat.Type.systemBars());
-            insetsController.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-        }
     }
 
     private void hideActionBar()
@@ -115,13 +106,14 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
 
     private void setImmersiveMode()
     {
-        WindowInsetsControllerCompat insetsController = WindowCompat.getInsetsController(activity.getWindow(), activity.getWindow().getDecorView());
-
-        if (insetsController != null)
-        {
-            insetsController.hide(WindowInsetsCompat.Type.systemBars());
-            insetsController.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-        }
+        activity.getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
     }
 
     private void setupSurfaceView()
@@ -146,7 +138,12 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
             nativeResize(holder.getSurfaceFrame().width(), holder.getSurfaceFrame().height());
         }
 
-        handler.post(renderTask);
+        if (pendingResume)
+        {
+            nativeResume();
+            handler.post(renderTask);
+            pendingResume = false;
+        }
     }
 
     @Override
@@ -163,14 +160,11 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
 
     // Native methods
     private native void nativeSetSurface(Surface surface);
-
     private native void nativeSetAssetManager(AssetManager assetManager);
-
     private native void nativeInitialize();
-
-    private native void nativeTick();
-
     private native void nativeUnInitialize();
-
+    private native void nativeResume();
+    private native void nativePause();
+    private native void nativeTick();
     private native void nativeResize(int width, int height);
 }

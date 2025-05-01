@@ -138,6 +138,16 @@ void Screen::Initialize()
     wglMakeCurrent(deviceContext, hRC);
 }
 
+void Screen::Pause()
+{
+    // No need
+}
+
+void Screen::Resume()
+{
+    // No need
+}
+
 void Screen::UnInitialize()
 {
     // ToDo - OPEN GL code here. Handle better.
