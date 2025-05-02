@@ -5,17 +5,26 @@ uniqueID EntityPool::nextID = 1;
 std::set<Entity*> EntityPool::entities;
 std::unordered_map<uniqueID, Entity*> EntityPool::entityMap;
 
-void EntityPool::AddEntity(Entity* entity)
+void EntityPool::Tick()
 {
-    entity->ID = GenerateID();
+    for (Entity* entity : entities)
+    {
+        entity->Tick();
+    }
+}
+
+uniqueID EntityPool::AddEntity(Entity* entity)
+{
+    auto ID = GenerateID();
     entities.insert(entity);
-    entityMap[entity->ID] = entity;
+    entityMap[ID] = entity;
+
+    return ID;
 }
 
 void EntityPool::RemoveEntity(Entity* entity)
 {
     entities.erase(entity);
-    entityMap.erase(entity->ID);
 }
 
 Entity* EntityPool::GetEntityByID(uniqueID id)

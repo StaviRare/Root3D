@@ -1,5 +1,4 @@
 #include "ExampleScene.h"
-#include "Camera.h"
 #include "Timer.h"
 #include "Input.h"
 #include "Mesh.h"
@@ -19,62 +18,65 @@
 #include "SphereCollider.h"
 #include "BoxCollider.h"
 #include "MeshCollider.h"
+#include "Camera.h"
+#include "CameraController.h"
+#include "MiscRotate.h"
 
-static Entity entity;
-static Entity entity2;
-static Entity lightEntity;
-static Entity lightEntity2;
+static Entity* entity;
+static Entity* entity2;
+static Entity* lightEntity;
+static Entity* lightEntity2;
+static Entity* camController;
 
-static Camera camera;
-static float cameraMoveSpeed = 3.00f;
-static float cameraLookSpeed = 2.00f;
+static Shader shaderLit;
+static Shader shaderUnlit;
 
-
+void unInit();
 void initCamera();
-void initPrimitives();
-void handleCameraMovement();
-void handleCubeTransform();
+void initShaders();
+void initLighting();
+void initStaticCube();
+void initDynamicCube();
 
-
-void ExampleScene::init()
+void ExampleScene::onLoad()
 {
     initCamera();
-    initPrimitives();
+    initShaders();
+    initLighting();
+    initStaticCube();
+    initDynamicCube();
 }
 
-void ExampleScene::tick()
+void ExampleScene::onUnload()
 {
-    handleCameraMovement();
-    handleCubeTransform();
+    unInit();
 }
-
 
 void initCamera()
 {
-    camera.fov = 60.0f;
-    camera.backgroundColor = Color(0.1f, 0, 0.1f, 0);
-    camera.transform.position = Vector3(0, 0, 4);
+    camController = new Entity();
+    camController->AddComponent<Camera>();
+    camController->AddComponent<CameraController>();
 
-    RigidBody* rigidBody1 = camera.AddComponent<RigidBody>();
-    Collider* collider1 = camera.AddComponent<Collider>();
+    // Collide with dynamic box
+    camController->AddComponent<BoxCollider>();
+    RigidBody* rigidBody1 = camController->AddComponent<RigidBody>();
     rigidBody1->IsStatic = true;
 }
 
-void initPrimitives()
+void initShaders()
 {
-    Shader shader1;
-    Shader shader2;
     string graphicsAPI = Graphics::TypeName();
 
     if (graphicsAPI == "OpenGL")
     {
-        shader1 = Resource::LoadShader("shaders/glsl/Lit.glsl");
-        shader2 = Resource::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
+        shaderLit = Resource::LoadShader("shaders/glsl/Lit.glsl");
+        shaderUnlit = Resource::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
     }
     else if (graphicsAPI == "DirectX11")
     {
-        shader1 = Resource::LoadShader("shaders/hlsl/Lit.hlsl");
-        shader2 = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
+        shaderLit = Resource::LoadShader("shaders/hlsl/Lit.hlsl");
+        shaderUnlit = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
     }
     else if(graphicsAPI == "OpenGLES1")
     {
@@ -84,123 +86,82 @@ void initPrimitives()
     {
         Debug::LogError("Unsupported graphics API. Shaders not set.");
     }
+}
 
-
-    // static entity 1:
-    Material material(shader1);
-    material.texture = Resource::LoadTexture("textures/dev.png");
-    entity.transform.position = Vector3(0, -1, 0);
-
-    entity.transform.rotation = Quaternion::FromEuler(Vector3(15, 15, 0));
-
-    entity.transform.scale = Vector3(2, 1, 2);
-    Mesh mesh = MeshGenerator::GetCube();
-    MeshData* meshData = entity.AddComponent<MeshData>();
-    Renderer* renderer = entity.AddComponent<Renderer>();
-    RigidBody* rigidBody1 = entity.AddComponent<RigidBody>();
-    MeshCollider* collider1 = entity.AddComponent<MeshCollider>();
-
-    meshData->mesh = mesh;
-    renderer->material = material;
-    rigidBody1->IsStatic = true;
-
-    // dynamic entity 2:
-    Material material2(shader2);
-    material2.texture = Resource::LoadTexture("textures/dev.png");
-    entity2.transform.position = Vector3(0.0, 1.0f, 0.0f);
-    Mesh mesh2 = MeshGenerator::GetCube();
-    MeshData* meshData2 = entity2.AddComponent<MeshData>();
-    Renderer* renderer2 = entity2.AddComponent<Renderer>();
-    RigidBody* rigidBody2 = entity2.AddComponent<RigidBody>();
-    MeshCollider* collider2 = entity2.AddComponent<MeshCollider>();
-
-    meshData2->mesh = mesh2;
-    renderer2->material = material2;
-
-    //Physics::SetGravity(-0.5);
-
+void initLighting()
+{
     // Point light
-    lightEntity.transform.eulerAngles = Vector3(0, 0, 0);
-    lightEntity.transform.position = Vector3(0, 0, 0);
-    Light* light = lightEntity.AddComponent<Light>();
+    lightEntity = new Entity();
+    lightEntity->transform.eulerAngles = Vector3(0, 0, 0);
+    lightEntity->transform.position = Vector3(0, 0, 0);
+    Light* light = lightEntity->AddComponent<Light>();
     light->type = LightType::Point;
     light->color = Color(0, 1, 0);
     light->range = 1.8f;
     light->intensity = 1;
 
     // Directional light
-    lightEntity2.transform.eulerAngles = Vector3(-1, 0, 0);
-    lightEntity2.transform.position = Vector3(0, 0, 0);
-    Light* light2 = lightEntity2.AddComponent<Light>();
+    lightEntity2 = new Entity();
+    lightEntity2->transform.eulerAngles = Vector3(-1, 0, 0);
+    lightEntity2->transform.position = Vector3(0, 0, 0);
+    Light* light2 = lightEntity2->AddComponent<Light>();
     light2->type = LightType::Directional;
     light2->color = Color(1, 0, 0);
     light2->intensity = 1;
 }
 
-void handleCameraMovement()
+void initStaticCube()
 {
-    float deltaTime = Timer::DeltaTime();
+    Material material(shaderLit);
+    material.texture = Resource::LoadTexture("textures/dev.png");
 
-    // Move forward
-    if (Input::GetKey("w"))
-    {
-        camera.transform.position += camera.transform.getForward() * cameraMoveSpeed * deltaTime;
-    }
+    entity = new Entity();
+    entity->transform.position = Vector3(0, -1, 0);
 
-    // Move back
-    if (Input::GetKey("s"))
-    {
-        camera.transform.position -= camera.transform.getForward() * cameraMoveSpeed * deltaTime;
-    }
+    entity->transform.rotation = Quaternion::FromEuler(Vector3(15, 15, 0));
 
-    // Look left
-    if (Input::GetKey("d"))
-    {
-        camera.transform.eulerAngles += Vector3(0, cameraLookSpeed * deltaTime, 0);
-    }
+    entity->transform.scale = Vector3(2, 1, 2);
+    Mesh mesh = MeshGenerator::GetCube();
+    MeshData* meshData = entity->AddComponent<MeshData>();
+    Renderer* renderer = entity->AddComponent<Renderer>();
+    RigidBody* rigidBody1 = entity->AddComponent<RigidBody>();
 
-    // Look right
-    if (Input::GetKey("a"))
-    {
-        camera.transform.eulerAngles -= Vector3(0, cameraLookSpeed * deltaTime, 0);
-    }
+    entity->AddComponent<MeshCollider>();
+    entity->AddComponent<MiscRotate>();
 
-    // Look up
-    if (Input::GetKey("e"))
-    {
-        camera.transform.eulerAngles += Vector3(cameraLookSpeed * deltaTime, 0, 0);
-    }
+    meshData->mesh = mesh;
+    renderer->material = material;
+    rigidBody1->IsStatic = true;
+}
 
-    // Look down
-    if (Input::GetKey("q"))
-    {
-        camera.transform.eulerAngles -= Vector3(cameraLookSpeed * deltaTime, 0, 0);
-    }
-
-
-    if (Input::GetKey("x"))
-    {
-        Physics::SetGravity(Vector3(0,-4,0));
-    }
-
-    if (Input::GetKey("c"))
-    {
-        Physics::SetGravity(Vector3(0,4,0));
-    }
-} 
-
-void handleCubeTransform()
+void initDynamicCube()
 {
-    float deltaTime = Timer::DeltaTime();
-    float timeSinceInit = Timer::TimeSinceInit();
+    Material material2(shaderUnlit);
+    material2.texture = Resource::LoadTexture("textures/dev.png");
 
-    // Rotate
-    entity.transform.eulerAngles += Vector3(-5, -5, 5) * deltaTime;
-    entity.transform.rotation = Quaternion::FromEuler(entity.transform.eulerAngles);
+    entity2 = new Entity();
+    entity2->transform.position = Vector3(0.0, 1.0f, 0.0f);
+    Mesh mesh2 = MeshGenerator::GetCube();
+    MeshData* meshData2 = entity2->AddComponent<MeshData>();
+    Renderer* renderer2 = entity2->AddComponent<Renderer>();
+    entity2->AddComponent<RigidBody>();
+    entity2->AddComponent<MeshCollider>();
 
+    meshData2->mesh = mesh2;
+    renderer2->material = material2;
+}
 
-    // Move
-    //float amplitude = -1.0f;
-    //entity.transform.position.z += amplitude * Calc::Sin(timeSinceInit) * deltaTime;
+void unInit()
+{
+    delete entity;
+    delete entity2;
+    delete lightEntity;
+    delete lightEntity2;
+    delete camController;
 
+    entity = nullptr;
+    entity2 = nullptr;
+    lightEntity = nullptr;
+    lightEntity2 = nullptr;
+    camController = nullptr;
 }

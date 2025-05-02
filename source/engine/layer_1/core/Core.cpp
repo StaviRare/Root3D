@@ -9,6 +9,7 @@
 #include "Input.h"
 #include "Physics.h"
 #include "PhysicsHandler.h"
+#include "EntityPool.h"
 
 void Core::Initialize()
 {
@@ -18,12 +19,13 @@ void Core::Initialize()
     Screen::Initialize();
     Graphics::Initialize();
     Physics::Initialize();
-    SceneManager::LoadScene(0); // should not be here.
+    SceneManager::LoadScene(0);     // Should not be here. Will register to Tick loop.
 }
 
 void Core::UnInitialize()
 {
     // Shut everything down, in reverse order
+    SceneManager::UnloadScene();
     Physics::UnInitialize();
     Graphics::UnInitialize();
     Screen::UnInitialize();
@@ -50,17 +52,17 @@ void Core::Tick()
     // Handle fixed update
     while (Timer::accumulatedTime >= Timer::fixedTimeStep)
     {
-        PhysicsHandler::SetData(); // Should not be here.
+        PhysicsHandler::SetData();  // Should not be here. Will register to Tick loop.
         Physics::Simulate();
-        PhysicsHandler::GetData(); // Should not be here.
+        PhysicsHandler::GetData();  // Should not be here. Will register to Tick loop.
         Timer::UpdateFixedTime();
     }
 
     // Handle variable update
     Input::Tick();
     Screen::PollEvents();
-    SceneManager::RunScene(); // Should not be here.
-    RenderCommandHandler::Tick(); // Should not be here.
+    EntityPool::Tick();             // Should not be here. Will register to Tick loop.
+    RenderCommandHandler::Tick();   // Should not be here. Will register to Tick loop.
     Graphics::ClearScreen();
     Graphics::ExecuteRenderCommands();
     Graphics::SwapFrameBuffers();

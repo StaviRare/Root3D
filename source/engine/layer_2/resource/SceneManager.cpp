@@ -34,18 +34,16 @@ void SceneManager::LoadScene(int index)
         }
 
         currentScene = it->second();
-        currentScene->init();
+        currentScene->onLoad();
     }
 }
 
-void SceneManager::RunScene()
+void SceneManager::UnloadScene()
 {
     if (currentScene != nullptr)
     {
-        currentScene->tick();
-    }
-    else
-    {
-        ENGINE_ERROR("Current scene is null!");
+        currentScene->onUnload();
+        delete currentScene;
+        currentScene = nullptr;
     }
 }

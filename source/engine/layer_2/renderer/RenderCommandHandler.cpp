@@ -20,8 +20,8 @@ void RenderCommandHandler::Tick()
         Camera& camera = Camera::GetInstance();
 
         Vector3 cameraUp(0.0f, 1.0f, 0.0f);
-        Vector3 cameraTarget = camera.transform.position + camera.transform.getForward();
-        Matrix4 view = Matrix4::LookAt(camera.transform.position, cameraTarget, cameraUp);
+        Vector3 cameraTarget = camera.GetTransform().position + camera.GetTransform().getForward();
+        Matrix4 view = Matrix4::LookAt(camera.GetTransform().position, cameraTarget, cameraUp);
         Matrix4 projection = Matrix4::Perspective(camera.fov, camera.GetAspect(), camera.nearClipPlane, camera.farClipPlane);
 
         GlobalRenderCommand renderOnce;

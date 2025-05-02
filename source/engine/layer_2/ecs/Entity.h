@@ -13,79 +13,82 @@ class Entity
 {
     friend EntityPool;
 
-    private:
-    uniqueID ID = -1;
-
     public:
     Transform transform;
-    std::vector<Component*> components;
-    uniqueID GetID() const
-    {
-        return ID;
-    }
 
+    public:
+    Entity();
+    ~Entity();
+    uniqueID GetID() const;
+
+    private:
+    uniqueID ID = -1;
+    std::vector<Component*> components;
+
+    private:
+    void Tick();
+
+    public:
     template <typename T>
     T* AddComponent()
     {
-        static_assert( std::is_base_of<Component, T>::value, "T must be a subclass of Component" );
+        static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
 
-        for (Component* existingComponent : components)
+        T* returnValue = nullptr;
+
+        for (Component* c : components)
         {
-            if (dynamic_cast<T*>( existingComponent ) != nullptr)
+            if (typeid(*c) == typeid(T))
             {
-                return dynamic_cast<T*>( existingComponent );
+                returnValue = static_cast<T*>(c);
+                break;
             }
         }
 
-        T* component = new T();
-        components.push_back(component);
-        return component;
+        if (returnValue == nullptr)
+        {
+            returnValue = new T();
+            returnValue->SetOwner(*this);
+            components.push_back(returnValue);
+            returnValue->OnCreate();
+        }
+
+        return returnValue;
     }
 
     template <typename T>
     T* GetComponent() const
     {
-        static_assert( std::is_base_of<Component, T>::value, "T must be a subclass of Component" );
+        static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
 
-        for (Component* existingComponent : components)
+        T* returnValue = nullptr;
+
+        for (Component* c : components)
         {
-            if (dynamic_cast<T*>( existingComponent ) != nullptr)
+            if (typeid(*c) == typeid(T))
             {
-                return dynamic_cast<T*>( existingComponent );
+                returnValue = static_cast<T*>(c);
+                break;
             }
         }
-        return nullptr;
+
+        return returnValue;
     }
 
     template <typename T>
-    bool RemoveComponent()
+    void RemoveComponent()
     {
-        static_assert( std::is_base_of<Component, T>::value, "T must be a subclass of Component" );
+        static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
 
         for (size_t i = 0; i < components.size(); ++i)
         {
-            if (typeid( *components[i] ) == typeid( T ))
+            if (typeid(*components[i]) == typeid(T))
             {
+                components[i]->OnDestroy();
                 delete components[i];
                 components.erase(components.begin() + i);
-                return true;
+                break;
             }
-        }
-        return false;
-    }
-
-    Entity()
-    {
-        EntityPool::AddEntity(this);
-    }
-
-    ~Entity()
-    {
-        EntityPool::RemoveEntity(this);
-
-        for (Component* component : components)
-        {
-            delete component;
         }
     }
 };

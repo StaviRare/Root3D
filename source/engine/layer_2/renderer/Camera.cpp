@@ -2,13 +2,13 @@
 #include "Camera.h"
 #include "Screen.h"
 
-Camera* Camera::Instance = nullptr;
+Camera* Camera::instance = nullptr;
 
-Camera::Camera()
+void Camera::OnCreate()
 {
-    if (Instance == nullptr)
+    if (instance == nullptr)
     {
-        Instance = this;
+        instance = this;
     }
     else
     {
@@ -16,27 +16,27 @@ Camera::Camera()
     }
 }
 
-Camera::~Camera()
+void Camera::OnDestroy()
 {
-    if (Instance == this)
+    if (instance == this)
     {
-        Instance = nullptr;
+        instance = nullptr;
     }
 }
 
 bool Camera::Exists()
 {
-    return Instance != nullptr;
+    return instance != nullptr;
 }
 
 Camera& Camera::GetInstance()
 {
-    if (Instance == nullptr)
+    if (instance == nullptr)
     {
         ENGINE_ERROR("Camera instance does not exists!");
     }
 
-    return *Instance;
+    return *instance;
 }
 
 float Camera::GetAspect()
