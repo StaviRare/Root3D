@@ -21,6 +21,12 @@
 #include "Camera.h"
 #include "CameraController.h"
 #include "MiscRotate.h"
+#include <iostream>
+
+#include "YamlWrapper.h"
+
+static std::vector<Entity> entities;
+
 
 static Entity* entity;
 static Entity* entity2;
@@ -40,7 +46,69 @@ void initDynamicCube();
 
 void ExampleScene::onLoad()
 {
-    initCamera();
+    //initCamera();
+
+
+
+
+    const std::string sceneYaml = R"(
+        scene: CameraOnly
+        entities:
+          - name: Camera
+            position: [0, 0, 4]
+            eulerAngles: [0, 0, 0]
+            components:
+              - type: Camera
+                fov: 60.0
+                backgroundColor: [0.1, 0.0, 0.1, 0.0]
+              - type: CameraController
+        )";
+
+    YAML::Node root = YamlWrapper::Load(sceneYaml);
+
+    const auto& entities = root["entities"];
+    for (std::size_t i = 0; i < entities.size(); ++i)
+    {
+        const YAML::Node& entityNode = entities[i];
+        std::string name = entityNode["name"].as<std::string>();
+        auto pos = entityNode["position"];
+        auto rot = entityNode["eulerAngles"];
+
+        Entity* newEntity = new Entity();
+        newEntity->transform.position = Vector3(pos[0].as<float>(), pos[1].as<float>(), pos[2].as<float>());
+        newEntity->transform.eulerAngles = Vector3(rot[0].as<float>(), rot[1].as<float>(), rot[2].as<float>());
+
+
+        const auto& components = entityNode["components"];
+        for (std::size_t j = 0; j < components.size(); ++j)
+        {
+            const YAML::Node& comp = components[j];
+            std::string type = comp["type"].as<std::string>();
+
+            if (type == "Camera")
+            {
+                Camera* cam = newEntity->AddComponent<Camera>();
+
+                float fov = comp["fov"] ? comp["fov"].as<float>() : 0.0f;
+                auto bg = comp["backgroundColor"];
+
+                cam->fov = fov;
+                cam->backgroundColor = Color(bg[0].as<float>(), bg[1].as<float>(), bg[2].as<float>(), bg[3].as<float>());
+            }
+
+            if (type == "CameraController")
+            {
+                CameraController* cam = newEntity->AddComponent<CameraController>();
+            }
+        }
+    }
+
+
+
+
+
+
+
     initShaders();
     initLighting();
     initStaticCube();
