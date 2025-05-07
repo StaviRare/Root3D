@@ -10,16 +10,18 @@ add_definitions(-DENGINE_LOG_LEVEL=${ENGINE_LOG_LEVEL})
 
 file(GLOB_RECURSE SOURCES
     "${rootPath}source/game/*.cpp"
-    "${rootPath}source/app/android/cpp/*.cpp"
-	"${rootPath}source/engine/layer_0/log/p_android/*.cpp"	
+	"${rootPath}source/app/common/*.h"
+	"${rootPath}source/app/common/*.cpp"
+    "${rootPath}source/app/p_android/cpp/*.cpp"
+	"${rootPath}source/engine/layer_0/log/p_android/*.cpp"
 	"${rootPath}source/engine/layer_0/files/p_android/*.cpp"
 	"${rootPath}source/engine/layer_0/graphics/common/*.cpp"
 	"${rootPath}source/engine/layer_0/graphics/p_android/*.cpp"
-	"${rootPath}source/engine/layer_0/input/p_android/*.cpp"	
-	"${rootPath}source/engine/layer_0/physics/*.cpp"		
-	"${rootPath}source/engine/layer_0/platform/p_android/*.cpp",		
+	"${rootPath}source/engine/layer_0/input/p_android/*.cpp"
+	"${rootPath}source/engine/layer_0/physics/*.cpp"
+	"${rootPath}source/engine/layer_0/platform/p_android/*.cpp"
 	"${rootPath}source/engine/layer_0/screen/p_android/*.cpp"
-	"${rootPath}source/engine/layer_0/timer/*.cpp"		
+	"${rootPath}source/engine/layer_0/timer/*.cpp"
 	"${rootPath}source/engine/layer_1/*.cpp"
 	"${rootPath}source/engine/layer_2/*.cpp"
 	"${rootPath}external/jolt-physics-5.0.0/Jolt/*.cpp"
@@ -27,7 +29,8 @@ file(GLOB_RECURSE SOURCES
 
 set(INCLUDE_DIRS
     "${rootPath}source/game/"
-    "${rootPath}source/app/android/cpp/"
+	"${rootPath}source/app/common/"
+    "${rootPath}source/app/p_android/cpp/"
 	"${rootPath}source/engine/layer_0/collections/"
 	"${rootPath}source/engine/layer_0/log/common/"
 	"${rootPath}source/engine/layer_0/log/p_android/"

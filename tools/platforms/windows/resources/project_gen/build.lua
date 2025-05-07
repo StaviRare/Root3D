@@ -42,7 +42,9 @@ project "Root3D"
 	files {
 		SOURCE_DIR .. "game/**.h",
         SOURCE_DIR .. "game/**.cpp",
-        SOURCE_DIR .. "app/windows/**.cpp",
+		SOURCE_DIR .. "app/common/**.h",
+		SOURCE_DIR .. "app/common/**.cpp",
+        SOURCE_DIR .. "app/p_windows/**.cpp",
         SOURCE_DIR .. "engine/layer_0/collections/**.h",
 		SOURCE_DIR .. "engine/layer_0/log/common/**.h",
         SOURCE_DIR .. "engine/layer_0/log/p_windows/**.cpp",	
@@ -73,6 +75,8 @@ project "Root3D"
     
 	includedirs {
 		SOURCE_DIR .. "game/",
+		SOURCE_DIR .. "app/common/",
+		SOURCE_DIR .. "app/p_windows/",
         SOURCE_DIR .. "engine/layer_0/collections/",
 		SOURCE_DIR .. "engine/layer_0/log/common/",
         SOURCE_DIR .. "engine/layer_0/files/common/",

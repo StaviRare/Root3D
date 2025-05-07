@@ -88,7 +88,7 @@ android {
     // Java sources
     sourceSets {
         getByName("main") {
-            java.srcDir("../../../source/app/android/java/")
+            java.srcDir("../../../source/app/p_android/java/")
         }
     }
 
