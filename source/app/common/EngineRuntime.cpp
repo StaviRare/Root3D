@@ -19,7 +19,7 @@ void EngineRuntime::Initialize()
     Screen::Initialize();
     Graphics::Initialize();
     Physics::Initialize();
-    SceneManager::LoadScene(0);     // Should not be here. Will register to Tick loop.
+    SceneManager::LoadScene(0);
 }
 
 void EngineRuntime::UnInitialize()
@@ -49,21 +49,36 @@ void EngineRuntime::Tick()
     // Calculate loop time
     Timer::CalculateLoopTime();
 
-    // Handle fixed update
+    // FixedUpdate:
     while (Timer::accumulatedTime >= Timer::fixedTimeStep)
     {
-        PhysicsHandler::SetData();  // Should not be here. Will register to Tick loop.
+        PhysicsHandler::SetData(); // sync-in
         Physics::Simulate();
-        PhysicsHandler::GetData();  // Should not be here. Will register to Tick loop.
+        PhysicsHandler::GetData(); // sync-out
         Timer::UpdateFixedTime();
     }
 
-    // Handle variable update
+    // InputEvents:
     Input::Tick();
     Screen::PollEvents();
-    EntityPool::Tick();             // Should not be here. Will register to Tick loop.
-    RenderCommandHandler::Tick();   // Should not be here. Will register to Tick loop.
+
+    // Update:
+    EntityPool::Tick();
+
+    // LateUpdate:
+    // ToDo!
+
+    // ScenePreRender:
     Graphics::ClearScreen();
+    RenderCommandHandler::Tick();
+
+    // SceneRender:
     Graphics::ExecuteRenderCommands();
     Graphics::SwapFrameBuffers();
+
+    // ScenePostRender:
+    // ToDo!
+
+    // GuiRender:
+    // ToDo!
 }
