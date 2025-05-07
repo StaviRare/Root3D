@@ -10,11 +10,11 @@ workspace "root3d"
     platforms { "x86", "x64" }
 
     filter "configurations:Debug"
-        defines { "DEBUG", "ENGINE_LOG_LEVEL=0" }
+        defines { "DEBUG", "ENGINE_LOG_LEVEL=0", "YAML_CPP_STATIC_DEFINE" }
         symbols "On"
 
     filter "configurations:Release"
-        defines { "NDEBUG", "ENGINE_LOG_LEVEL=3" }
+        defines { "NDEBUG", "ENGINE_LOG_LEVEL=3", "YAML_CPP_STATIC_DEFINE" }
         optimize "On"
 
     filter { "platforms:x86", "configurations:Debug" }
@@ -70,7 +70,8 @@ project "Root3D"
 		SOURCE_DIR .. "engine/layer_2/**.h",
         SOURCE_DIR .. "engine/layer_2/**.cpp",	
         EXTERNAL_DIR .. "glew-2.1.0/src/**.c",
-        EXTERNAL_DIR .. "jolt-physics-5.0.0/Jolt/**.cpp"
+        EXTERNAL_DIR .. "jolt-physics-5.0.0/Jolt/**.cpp",
+		EXTERNAL_DIR .. "yaml-cpp-0.6.3/src/**.cpp"
     }
     
 	includedirs {
@@ -92,13 +93,15 @@ project "Root3D"
 		SOURCE_DIR .. "engine/layer_1/math/",	
 		SOURCE_DIR .. "engine/layer_1/debug/",		
 		SOURCE_DIR .. "engine/layer_1/random/",
+		SOURCE_DIR .. "engine/layer_1/yaml/",
 		SOURCE_DIR .. "engine/layer_2/ecs/",
 		SOURCE_DIR .. "engine/layer_2/physics/",	
 		SOURCE_DIR .. "engine/layer_2/renderer/",
 		SOURCE_DIR .. "engine/layer_2/resource",
         EXTERNAL_DIR .. "stb/include/",
         EXTERNAL_DIR .. "glew-2.1.0/include/",
-        EXTERNAL_DIR .. "jolt-physics-5.0.0/"
+        EXTERNAL_DIR .. "jolt-physics-5.0.0/",
+		EXTERNAL_DIR .. "yaml-cpp-0.6.3/include/"
     }
 	
     links { "opengl32" }
