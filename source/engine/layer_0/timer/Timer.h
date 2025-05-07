@@ -7,7 +7,7 @@ using timeDuration = std::chrono::duration<float>;
 
 class Timer
 {
-    friend class Core;
+    friend class EngineRuntime;
 
     public:
     static void Initialize();

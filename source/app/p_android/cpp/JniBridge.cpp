@@ -1,6 +1,6 @@
 #include "JniBridge.h"
 #include "Debug.h"
-#include "Core.h"
+#include "EngineRuntime.h"
 #include "Screen.h"
 
 ANativeWindow* JniBridge::window = nullptr;
@@ -46,7 +46,7 @@ void JniBridge::Initialize()
     if (window && assetManager)
     {
         Debug::Log("Initializing");
-        Core::Initialize();
+        EngineRuntime::Initialize();
     }
     else
     {
@@ -56,7 +56,7 @@ void JniBridge::Initialize()
 
 void JniBridge::UnInitialize()
 {
-    Core::UnInitialize();
+    EngineRuntime::UnInitialize();
 
     if (window)
     {
@@ -67,17 +67,17 @@ void JniBridge::UnInitialize()
 
 void JniBridge::Resume()
 {
-    Core::Resume();
+    EngineRuntime::Resume();
 }
 
 void JniBridge::Pause()
 {
-    Core::Pause();
+    EngineRuntime::Pause();
 }
 
 void JniBridge::Tick()
 {
-    Core::Tick();
+    EngineRuntime::Tick();
 }
 
 void JniBridge::Resize(int width, int height)

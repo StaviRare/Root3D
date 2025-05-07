@@ -4,7 +4,7 @@
 
 class Input
 {
-    friend class Core;
+    friend class EngineRuntime;
 
     public:
     static bool GetKey(const string& key);

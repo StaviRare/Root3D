@@ -3,13 +3,13 @@
 #include <set>
 #include <unordered_map>
 #include "Types.h"
-#include "Core.h"
+#include "EngineRuntime.h"
 
 class Entity;
 
 class EntityPool
 {
-    friend Core;
+    friend EngineRuntime;
     friend Entity;
 
     public:

@@ -1,4 +1,4 @@
-#include "Core.h"
+#include "EngineRuntime.h"
 #include "Debug.h"
 #include "Timer.h"
 #include "SceneManager.h"
@@ -11,7 +11,7 @@
 #include "PhysicsHandler.h"
 #include "EntityPool.h"
 
-void Core::Initialize()
+void EngineRuntime::Initialize()
 {
     PlatformDetector::Initialize();
     Timer::Initialize();
@@ -22,7 +22,7 @@ void Core::Initialize()
     SceneManager::LoadScene(0);     // Should not be here. Will register to Tick loop.
 }
 
-void Core::UnInitialize()
+void EngineRuntime::UnInitialize()
 {
     // Shut everything down, in reverse order
     SceneManager::UnloadScene();
@@ -32,19 +32,19 @@ void Core::UnInitialize()
     Input::UnInitialize();
 }
 
-void Core::Resume()
+void EngineRuntime::Resume()
 {
     Screen::Resume();
     Timer::Resume();
 }
 
-void Core::Pause()
+void EngineRuntime::Pause()
 {
     Timer::Pause();
     Screen::Pause();
 }
 
-void Core::Tick()
+void EngineRuntime::Tick()
 {
     // Calculate loop time
     Timer::CalculateLoopTime();

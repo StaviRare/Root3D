@@ -1,17 +1,17 @@
-#include "Core.h"
 #include <windows.h>
+#include "EngineRuntime.h"
 
 void Run()
 {
-    Core::Initialize();
+    EngineRuntime::Initialize();
 
     // Main loop
     while (true)
     {
-        Core::Tick();
+        EngineRuntime::Tick();
     }
 
-    Core::UnInitialize();
+    EngineRuntime::UnInitialize();
 }
 
 #ifdef DEBUG

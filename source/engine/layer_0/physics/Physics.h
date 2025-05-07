@@ -12,7 +12,7 @@ enum class PhysicsType
 
 class Physics
 {
-    friend class Core;
+    friend class EngineRuntime;
 
     public:
     static string TypeName();

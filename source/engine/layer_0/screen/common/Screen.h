@@ -4,7 +4,7 @@
 
 class Screen
 {
-    friend class Core;
+    friend class EngineRuntime;
 
     public:
     static const int GetWidth();

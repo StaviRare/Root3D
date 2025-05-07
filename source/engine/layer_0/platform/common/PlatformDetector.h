@@ -5,7 +5,7 @@
 
 class PlatformDetector
 {
-    friend class Core;
+    friend class EngineRuntime;
 
     public:
     static Platform GetPlatform();
