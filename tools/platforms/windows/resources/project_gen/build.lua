@@ -88,7 +88,7 @@ project "Root3D"
         SOURCE_DIR .. "engine/layer_0/timer/",	
 		SOURCE_DIR .. "engine/layer_0/types/",
 		SOURCE_DIR .. "engine/layer_1/config/",
-		SOURCE_DIR .. "engine/layer_1/core/",
+		SOURCE_DIR .. "engine/layer_1/rtti/",
 		SOURCE_DIR .. "engine/layer_1/math/",	
 		SOURCE_DIR .. "engine/layer_1/debug/",		
 		SOURCE_DIR .. "engine/layer_1/random/",
