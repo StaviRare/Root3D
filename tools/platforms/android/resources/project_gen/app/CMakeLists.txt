@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(rootPath "../../../../../../")
 
+# Define globally for all configurations
+add_definitions(-DYAML_CPP_STATIC_DEFINE)
+
+# Set per-variant log level (passed via Gradle)
 add_definitions(-DENGINE_LOG_LEVEL=${ENGINE_LOG_LEVEL})
 
 file(GLOB_RECURSE SOURCES
@@ -25,6 +29,7 @@ file(GLOB_RECURSE SOURCES
 	"${rootPath}source/engine/layer_1/*.cpp"
 	"${rootPath}source/engine/layer_2/*.cpp"
 	"${rootPath}external/jolt-physics-5.0.0/Jolt/*.cpp"
+	"${rootPath}external/yaml-cpp-0.6.3/src/*.cpp"
 )
 
 set(INCLUDE_DIRS
@@ -58,6 +63,7 @@ set(INCLUDE_DIRS
 	"${rootPath}source/engine/layer_2/resource"
     "${rootPath}external/stb/include/"
 	"${rootPath}external/jolt-physics-5.0.0/"
+	"${rootPath}external/yaml-cpp-0.6.3/include/"
 )
 
 include_directories(${INCLUDE_DIRS})
