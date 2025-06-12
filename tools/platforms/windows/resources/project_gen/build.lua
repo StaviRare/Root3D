@@ -71,7 +71,8 @@ project "Root3D"
         SOURCE_DIR .. "engine/layer_2/**.cpp",	
         EXTERNAL_DIR .. "glew-2.1.0/src/**.c",
         EXTERNAL_DIR .. "jolt-physics-5.0.0/Jolt/**.cpp",
-		EXTERNAL_DIR .. "yaml-cpp-0.6.3/src/**.cpp"
+		EXTERNAL_DIR .. "yaml-cpp-0.6.3/src/**.cpp",
+		EXTERNAL_DIR .. "ttf2mesh/src/**.c"
     }
     
 	includedirs {
@@ -101,7 +102,8 @@ project "Root3D"
         EXTERNAL_DIR .. "stb/include/",
         EXTERNAL_DIR .. "glew-2.1.0/include/",
         EXTERNAL_DIR .. "jolt-physics-5.0.0/",
-		EXTERNAL_DIR .. "yaml-cpp-0.6.3/include/"
+		EXTERNAL_DIR .. "yaml-cpp-0.6.3/include/",
+		EXTERNAL_DIR .. "ttf2mesh/include/"
     }
 	
     links { "opengl32" }

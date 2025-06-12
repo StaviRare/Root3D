@@ -21,15 +21,18 @@
 #include "Camera.h"
 #include "CameraController.h"
 #include "MiscRotate.h"
+#include "TextMesh.h"
 
 static Entity* entity;
 static Entity* entity2;
 static Entity* lightEntity;
 static Entity* lightEntity2;
 static Entity* camController;
+static Entity* textEntity;
 
 static Shader shaderLit;
 static Shader shaderUnlit;
+
 
 void unInit();
 void initCamera();
@@ -37,6 +40,7 @@ void initShaders();
 void initLighting();
 void initStaticCube();
 void initDynamicCube();
+void initText();
 
 void ExampleScene::onLoad()
 {
@@ -45,6 +49,7 @@ void ExampleScene::onLoad()
     initLighting();
     initStaticCube();
     initDynamicCube();
+    initText();
 }
 
 void ExampleScene::onUnload()
@@ -151,6 +156,24 @@ void initDynamicCube()
     renderer2->material = material2;
 }
 
+void initText()
+{
+    Font font = Resource::LoadFont("fonts/arial.ttf");
+    Mesh textMesh = TextMesh::Generate(font, U"Hello World");
+
+    Material material(shaderUnlit);
+    material.texture = Resource::LoadTexture("textures/dev_og.png");
+
+    textEntity = new Entity();
+    textEntity->transform.position = Vector3(0, 1, -1);
+
+    MeshData* meshData = textEntity->AddComponent<MeshData>();
+    Renderer* renderer = textEntity->AddComponent<Renderer>();
+
+    meshData->mesh = textMesh;
+    renderer->material = material;
+}
+
 void unInit()
 {
     delete entity;
@@ -158,10 +181,12 @@ void unInit()
     delete lightEntity;
     delete lightEntity2;
     delete camController;
+    delete textEntity;
 
     entity = nullptr;
     entity2 = nullptr;
     lightEntity = nullptr;
     lightEntity2 = nullptr;
     camController = nullptr;
+    textEntity = nullptr;
 }

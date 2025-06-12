@@ -30,6 +30,7 @@ file(GLOB_RECURSE SOURCES
 	"${rootPath}source/engine/layer_2/*.cpp"
 	"${rootPath}external/jolt-physics-5.0.0/Jolt/*.cpp"
 	"${rootPath}external/yaml-cpp-0.6.3/src/*.cpp"
+	"${rootPath}external/ttf2mesh/src/*.c"
 )
 
 set(INCLUDE_DIRS
@@ -64,6 +65,7 @@ set(INCLUDE_DIRS
     "${rootPath}external/stb/include/"
 	"${rootPath}external/jolt-physics-5.0.0/"
 	"${rootPath}external/yaml-cpp-0.6.3/include/"
+	"${rootPath}external/ttf2mesh/include/"
 )
 
 include_directories(${INCLUDE_DIRS})

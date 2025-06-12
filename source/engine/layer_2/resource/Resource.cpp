@@ -1,6 +1,7 @@
-#include <fstream>
+﻿#include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <ttf2mesh.h>
 
 #include "Log.h"
 #include "Directory.h"
@@ -11,28 +12,35 @@
 
 Texture Resource::LoadTexture(const string& path)
 {
-    Texture texture;
+    Texture returnValue;
     auto data = LoadResource(path);
 
     if (data.empty() == false)
     {
         int width, height, nrChannels;
-        texture.rawData = stbi_load_from_memory(reinterpret_cast<const stbi_uc*>(data.data()), data.size(), &width, &height, &nrChannels, 0);
+        returnValue.rawData = stbi_load_from_memory(
+            reinterpret_cast<const stbi_uc*>(data.data()), 
+            data.size(), 
+            &width, 
+            &height, 
+            &nrChannels, 
+            0
+        );
 
-        if (texture.rawData)
+        if (returnValue.rawData)
         {
-            texture.width = static_cast<unsigned int>(width);
-            texture.height = static_cast<unsigned int>(height);
-            texture.nrChannels = static_cast<unsigned int>(nrChannels);
+            returnValue.width = static_cast<unsigned int>(width);
+            returnValue.height = static_cast<unsigned int>(height);
+            returnValue.nrChannels = static_cast<unsigned int>(nrChannels);
         }
     }
 
-    return texture;
+    return returnValue;
 }
 
-Shader Resource::LoadShader(const string& path) {
-    Shader shader;
-
+Shader Resource::LoadShader(const string& path)
+{
+    Shader returnValue;
     auto data = LoadResource(path);
 
     if (data.empty() == false)
@@ -71,14 +79,73 @@ Shader Resource::LoadShader(const string& path) {
             }
         }
 
-        shader.vertexCode = ss[0].str();
-        shader.fragmentCode = ss[1].str();
+        returnValue.vertexCode = ss[0].str();
+        returnValue.fragmentCode = ss[1].str();
     }
 
-    return shader;
+    return returnValue;
 }
 
-// ToDo! - Rewrite this. Use File::Exists, and more.
+Font Resource::LoadFont(const string& path)
+{
+    Font returnValue;
+    auto data = LoadResource(path);
+
+    if (data.empty() == false)
+    {
+        ttf_t* font = nullptr;
+        int size = static_cast<int>(data.size());
+        const uint8_t* rawData = reinterpret_cast<const uint8_t*>(data.data());
+        bool fontLoadError = ttf_load_from_mem(rawData, size, &font, false) != TTF_DONE;
+
+        if (fontLoadError)
+        {
+            ENGINE_ERROR("Failed to parse font: \"" + path + "\"");
+        }
+        else
+        {
+            // English only. Make sure the font includes English characters.
+            for (char32_t ch = 32; ch <= 'z'; ++ch)
+            {
+                int index = ttf_find_glyph(font, static_cast<uint32_t>(ch));
+                bool indexValid = index >= 0;
+
+                if (indexValid)
+                {
+                    ttf_mesh_t* mesh = nullptr;
+                    ttf_glyph_t* glyph = &font->glyphs[index];
+                    bool meshValid = ttf_glyph2mesh(glyph, &mesh, TTF_QUALITY_HIGH, TTF_FEATURES_DFLT) == TTF_DONE;
+
+                    if (meshValid)
+                    {
+                        GlyphEntry entry;
+                        entry.codepoint = ch;
+                        entry.metrics.advance = glyph->advance;
+
+                        for (int j = 0; j < mesh->nvert; ++j)
+                        {
+                            entry.data.positions.emplace_back(Vector2{mesh->vert[j].x, mesh->vert[j].y});
+                        }
+
+                        for (int j = 0; j < mesh->nfaces; ++j)
+                        {
+                            entry.data.indices.push_back(mesh->faces[j].v1);
+                            entry.data.indices.push_back(mesh->faces[j].v2);
+                            entry.data.indices.push_back(mesh->faces[j].v3);
+                        }
+
+                        returnValue.glyphs.emplace_back(std::move(entry));
+                        ttf_free_mesh(mesh);
+                    }
+                }
+            }
+
+            ttf_free(font);
+        }
+    }
+
+    return returnValue;
+}
 
 std::vector<char> Resource::LoadResource(const string& resourcePath)
 {
