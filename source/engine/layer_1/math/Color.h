@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <sstream>
 
 class Color
@@ -21,10 +20,10 @@ public:
 
     void clamp()
     {
-        r = std::max(0.0f, std::min(1.0f, r));
-        g = std::max(0.0f, std::min(1.0f, g));
-        b = std::max(0.0f, std::min(1.0f, b));
-        a = std::max(0.0f, std::min(1.0f, a));
+        r = Calc::Clamp(r, 0.0f, 1.0f);
+        g = Calc::Clamp(g, 0.0f, 1.0f);
+        b = Calc::Clamp(b, 0.0f, 1.0f);
+        a = Calc::Clamp(a, 0.0f, 1.0f);
     }
 
     static Color Red()
