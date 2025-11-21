@@ -10,24 +10,26 @@ class Timer
     friend class EngineRuntime;
 
     public:
-    static void Initialize();
-    static void Pause();
-    static void Resume();
-    static void CalculateLoopTime();
     static float DeltaTime();
     static float FixedDeltaTime();
     static float TimeSinceInit();
-    static void UpdateFixedTime();
 
     private:
     static float deltaTime;
     static float fixedTimeStep;
     static float accumulatedTime;
     static float maximumAllowedTimeStep;
-
     static timePoint pauseTime;
     static timePoint loopStartTime;
     static timePoint loopEndTime;
     static timePoint initTime;
     static timePoint fixedUpdateStartTime;
+
+    private:
+    static void Initialize();
+    static void Pause();
+    static void Resume();
+    static void CalculateLoopTime();
+    static void UpdateFixedTime();
+    static float TimeSinceEpoch();
 };

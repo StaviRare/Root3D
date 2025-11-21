@@ -42,9 +42,12 @@ float Timer::FixedDeltaTime()
 
 float Timer::TimeSinceInit()
 {
-    auto now = resClock::now();
-    timeDuration elapsed = now - initTime;
-    return elapsed.count();
+    return std::chrono::duration<float>(resClock::now() - initTime).count();
+}
+
+float Timer::TimeSinceEpoch()
+{
+    return std::chrono::duration<float>(resClock::now().time_since_epoch()).count();
 }
 
 void Timer::CalculateLoopTime()

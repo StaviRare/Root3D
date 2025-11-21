@@ -10,11 +10,17 @@
 #include "Physics.h"
 #include "PhysicsHandler.h"
 #include "EntityPool.h"
+#include "Random.h"
 
 void EngineRuntime::Initialize()
 {
     PlatformDetector::Initialize();
     Timer::Initialize();
+
+    float timeSinceEpoch = Timer::TimeSinceEpoch();
+    unsigned int seed = static_cast<unsigned int>(timeSinceEpoch);
+    Random::InitState(seed);
+
     Input::Initialize();
     Screen::Initialize();
     Graphics::Initialize();
