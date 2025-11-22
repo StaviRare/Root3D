@@ -3,11 +3,11 @@
 #include <map>
 #include <functional>
 #include "Scene.h"
-#include "EngineRuntime.h"
+#include "Engine.h"
 
 class SceneManager
 {
-    friend class EngineRuntime;
+    friend class Engine;
 
     public:
     static void LoadScene(int index);

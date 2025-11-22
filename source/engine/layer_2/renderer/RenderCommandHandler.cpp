@@ -14,7 +14,18 @@
 void RenderCommandHandler::Tick()
 {
     Scene* currentScene = SceneManager::GetCurrentScene();
+
+    if (currentScene == nullptr)
+    {
+        return;
+    }
+
     const std::set<Entity*>& entities = currentScene->GetEntities();
+
+    if (entities.empty())
+    {
+        return;
+    }
 
     if (Camera::Exists())
     {

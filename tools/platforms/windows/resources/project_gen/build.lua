@@ -1,6 +1,7 @@
 ROOT_PATH = "../../../../../"
 SOURCE_DIR = ROOT_PATH .. "source/"
 EXTERNAL_DIR = ROOT_PATH .. "external/"
+EXAMPLE_DIR = ROOT_PATH .. "example/"
 PROJECT_DIR = ROOT_PATH .. "workspaces/windows/"
 BUILD_OUTPUT_DIR = ROOT_PATH .. "build/windows/"
 
@@ -40,11 +41,12 @@ project "Root3D"
     cppdialect "C++17"
 	
 	files {
-		SOURCE_DIR .. "game/**.h",
-        SOURCE_DIR .. "game/**.cpp",
-		SOURCE_DIR .. "app/common/**.h",
-		SOURCE_DIR .. "app/common/**.cpp",
-        SOURCE_DIR .. "app/p_windows/**.cpp",
+		SOURCE_DIR .. "app/**.h",
+		SOURCE_DIR .. "main/common/**.h",
+		SOURCE_DIR .. "main/common/**.cpp",
+        SOURCE_DIR .. "main/p_windows/**.cpp",
+		SOURCE_DIR .. "engine/core/**.h",
+		SOURCE_DIR .. "engine/core/**.cpp",
         SOURCE_DIR .. "engine/layer_0/collections/**.h",
 		SOURCE_DIR .. "engine/layer_0/log/common/**.h",
         SOURCE_DIR .. "engine/layer_0/log/p_windows/**.cpp",	
@@ -72,13 +74,16 @@ project "Root3D"
         EXTERNAL_DIR .. "glew-2.1.0/src/**.c",
         EXTERNAL_DIR .. "jolt-physics-5.0.0/Jolt/**.cpp",
 		EXTERNAL_DIR .. "yaml-cpp-0.6.3/src/**.cpp",
-		EXTERNAL_DIR .. "ttf2mesh/src/**.c"
+		EXTERNAL_DIR .. "ttf2mesh/src/**.c",
+		EXAMPLE_DIR .. "**.h",
+		EXAMPLE_DIR .. "**.cpp"
     }
     
 	includedirs {
-		SOURCE_DIR .. "game/",
-		SOURCE_DIR .. "app/common/",
-		SOURCE_DIR .. "app/p_windows/",
+		SOURCE_DIR .. "app/",
+		SOURCE_DIR .. "main/common/",
+		SOURCE_DIR .. "main/p_windows/",
+		SOURCE_DIR .. "engine/core",
         SOURCE_DIR .. "engine/layer_0/collections/",
 		SOURCE_DIR .. "engine/layer_0/log/common/",
         SOURCE_DIR .. "engine/layer_0/files/common/",
@@ -103,7 +108,8 @@ project "Root3D"
         EXTERNAL_DIR .. "glew-2.1.0/include/",
         EXTERNAL_DIR .. "jolt-physics-5.0.0/",
 		EXTERNAL_DIR .. "yaml-cpp-0.6.3/include/",
-		EXTERNAL_DIR .. "ttf2mesh/include/"
+		EXTERNAL_DIR .. "ttf2mesh/include/",
+		EXAMPLE_DIR .. ""
     }
 	
     links { "opengl32" }

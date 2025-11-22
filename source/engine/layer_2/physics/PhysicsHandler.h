@@ -2,7 +2,7 @@
 
 class PhysicsHandler
 {
-    friend class EngineRuntime;
+    friend class Engine;
 
     private:
     static void SetData();

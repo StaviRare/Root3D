@@ -1,8 +1,9 @@
 #include "JniBridge.h"
 #include "Debug.h"
-#include "EngineRuntime.h"
+#include "Runtime.h"
 #include "Screen.h"
 
+Runtime* JniBridge::runtime = nullptr;
 ANativeWindow* JniBridge::window = nullptr;
 AAssetManager* JniBridge::assetManager = nullptr;
 
@@ -14,6 +15,7 @@ void JniBridge::SetSurface(JNIEnv* env, jobject surface)
         {
             ANativeWindow_release(window);
         }
+
         window = ANativeWindow_fromSurface(env, surface);
 
         if (window)
@@ -45,8 +47,8 @@ void JniBridge::Initialize()
 {
     if (window && assetManager)
     {
-        Debug::Log("Initializing");
-        EngineRuntime::Initialize();
+        runtime = new Runtime();
+        runtime->Initialize();
     }
     else
     {
@@ -56,7 +58,12 @@ void JniBridge::Initialize()
 
 void JniBridge::UnInitialize()
 {
-    EngineRuntime::UnInitialize();
+    if(runtime)
+    {
+        runtime->UnInitialize();
+        delete runtime;
+        runtime = nullptr;
+    }
 
     if (window)
     {
@@ -67,17 +74,26 @@ void JniBridge::UnInitialize()
 
 void JniBridge::Resume()
 {
-    EngineRuntime::Resume();
+    if(runtime)
+    {
+        runtime->Resume();
+    }
 }
 
 void JniBridge::Pause()
 {
-    EngineRuntime::Pause();
+    if(runtime)
+    {
+        runtime->Pause();
+    }
 }
 
 void JniBridge::Tick()
 {
-    EngineRuntime::Tick();
+    if(runtime)
+    {
+        runtime->Tick();
+    }
 }
 
 void JniBridge::Resize(int width, int height)

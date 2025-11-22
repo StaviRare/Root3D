@@ -15,8 +15,20 @@
 void PhysicsHandler::SetData()
 {
     Scene* currentScene = SceneManager::GetCurrentScene();
+
+    if (currentScene == nullptr)
+    {
+        return;
+    }
+
     const std::set<Entity*>& entities = currentScene->GetEntities();
     // ToDo - Check if scale has changed -> update the scale.
+
+
+    if (entities.empty())
+    {
+        return;
+    }
 
 	for (Entity* entity : entities)
 	{
@@ -96,7 +108,18 @@ void PhysicsHandler::SetData()
 void PhysicsHandler::GetData()
 {
     Scene* currentScene = SceneManager::GetCurrentScene();
+
+    if (currentScene == nullptr)
+    {
+        return;
+    }
+
     const std::set<Entity*>& entities = currentScene->GetEntities();
+
+    if (entities.empty())
+    {
+        return;
+    }
 
 	for (Entity* entity : entities)
 	{

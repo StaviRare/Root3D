@@ -7,7 +7,7 @@ using timeDuration = std::chrono::duration<float>;
 
 class Timer
 {
-    friend class EngineRuntime;
+    friend class Engine;
 
     public:
     static float DeltaTime();

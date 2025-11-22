@@ -1,4 +1,4 @@
-#include "EngineRuntime.h"
+#include "Engine.h"
 #include "Debug.h"
 #include "Timer.h"
 #include "SceneManager.h"
@@ -11,7 +11,7 @@
 #include "PhysicsHandler.h"
 #include "Random.h"
 
-void EngineRuntime::Initialize()
+bool Engine::Initialize()
 {
     PlatformDetector::Initialize();
     Timer::Initialize();
@@ -24,12 +24,14 @@ void EngineRuntime::Initialize()
     Screen::Initialize();
     Graphics::Initialize();
     Physics::Initialize();
+    SceneManager::Initialze();
 
-    // Should be loaded by game.
-    SceneManager::LoadScene(0);
+    // For now.
+    isRunning = true;
+    return isRunning;
 }
 
-void EngineRuntime::UnInitialize()
+void Engine::UnInitialize()
 {
     // Shut everything down, in reverse order
     SceneManager::UnInitialize();
@@ -39,19 +41,19 @@ void EngineRuntime::UnInitialize()
     Input::UnInitialize();
 }
 
-void EngineRuntime::Resume()
+void Engine::Resume()
 {
     Screen::Resume();
     Timer::Resume();
 }
 
-void EngineRuntime::Pause()
+void Engine::Pause()
 {
     Timer::Pause();
     Screen::Pause();
 }
 
-void EngineRuntime::Tick()
+void Engine::Tick()
 {
     // Calculate loop time
     Timer::CalculateLoopTime();
@@ -88,4 +90,9 @@ void EngineRuntime::Tick()
 
     // GuiRender:
     // ToDo!
+}
+
+bool Engine::IsRunning()
+{
+    return isRunning;
 }
