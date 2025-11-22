@@ -2,7 +2,7 @@
 
 class RenderCommandHandler
 {
-    friend class EngineRuntime;
+    friend class Engine;
 
     private:
     static void Tick();

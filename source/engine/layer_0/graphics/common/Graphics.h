@@ -13,7 +13,7 @@ enum class GraphicsType
 
 class Graphics
 {
-    friend class EngineRuntime;
+    friend class Engine;
 
     public:
     static string TypeName();

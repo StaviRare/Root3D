@@ -1,4 +1,4 @@
-#include "EngineRuntime.h"
+#include "Engine.h"
 #include "Debug.h"
 #include "Timer.h"
 #include "SceneManager.h"
@@ -9,10 +9,9 @@
 #include "Input.h"
 #include "Physics.h"
 #include "PhysicsHandler.h"
-#include "EntityPool.h"
 #include "Random.h"
 
-void EngineRuntime::Initialize()
+bool Engine::Initialize()
 {
     PlatformDetector::Initialize();
     Timer::Initialize();
@@ -25,32 +24,36 @@ void EngineRuntime::Initialize()
     Screen::Initialize();
     Graphics::Initialize();
     Physics::Initialize();
-    SceneManager::LoadScene(0);
+    SceneManager::Initialze();
+
+    // For now.
+    isRunning = true;
+    return isRunning;
 }
 
-void EngineRuntime::UnInitialize()
+void Engine::UnInitialize()
 {
     // Shut everything down, in reverse order
-    SceneManager::UnloadScene();
+    SceneManager::UnInitialize();
     Physics::UnInitialize();
     Graphics::UnInitialize();
     Screen::UnInitialize();
     Input::UnInitialize();
 }
 
-void EngineRuntime::Resume()
+void Engine::Resume()
 {
     Screen::Resume();
     Timer::Resume();
 }
 
-void EngineRuntime::Pause()
+void Engine::Pause()
 {
     Timer::Pause();
     Screen::Pause();
 }
 
-void EngineRuntime::Tick()
+void Engine::Tick()
 {
     // Calculate loop time
     Timer::CalculateLoopTime();
@@ -69,10 +72,10 @@ void EngineRuntime::Tick()
     Screen::PollEvents();
 
     // Update:
-    EntityPool::Tick();
+    SceneManager::Tick();
 
     // LateUpdate:
-    // ToDo!
+    SceneManager::LateTick();
 
     // ScenePreRender:
     Graphics::ClearScreen();
@@ -87,4 +90,9 @@ void EngineRuntime::Tick()
 
     // GuiRender:
     // ToDo!
+}
+
+bool Engine::IsRunning()
+{
+    return isRunning;
 }

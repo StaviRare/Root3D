@@ -1,19 +1,39 @@
 #include "Entity.h"
-#include "Entitypool.h"
+#include "SceneManager.h"
 
-Entity::Entity()
+Entity::Entity() : Object()
 {
-    ID = EntityPool::AddEntity(this);
+    Scene* currentScene = SceneManager::GetCurrentScene();
+    
+    if (currentScene)
+    {
+        currentScene->AddEntity(this);
+    }
+}
+
+Entity::Entity(const string& name) : Object(name)
+{
+    Scene* currentScene = SceneManager::GetCurrentScene();
+    
+    if (currentScene)
+    {
+        currentScene->AddEntity(this);
+    }
 }
 
 Entity::~Entity()
 {
-    EntityPool::RemoveEntity(this);
-
     for (Component* comp : components)
     {
         comp->OnDestroy();
         delete comp;
+    }
+
+    Scene* currentScene = SceneManager::GetCurrentScene();
+    
+    if (currentScene)
+    {
+        currentScene->RemoveEntity(this);
     }
 }
 
@@ -25,7 +45,10 @@ void Entity::Tick()
     }
 }
 
-uniqueID Entity::GetID() const
+void Entity::LateTick()
 {
-    return ID;
+    for (Component* c : components)
+    {
+        c->LateTick();
+    }
 }

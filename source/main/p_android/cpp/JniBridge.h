@@ -3,6 +3,7 @@
 #include <jni.h>
 #include <android/native_window_jni.h>
 #include <android/asset_manager_jni.h>
+#include "Runtime.h"
 
 class JniBridge
 {
@@ -21,4 +22,5 @@ class JniBridge
     private:
     static ANativeWindow* window;
     static AAssetManager* assetManager;
+    static Runtime* runtime;
 };

@@ -7,14 +7,28 @@
 #include "MeshCollider.h"
 #include "SphereCollider.h"
 #include "MeshData.h"
+#include "SceneManager.h"
 
 // Colliders and rigidbodies will self-register here upon creation, eliminating the need to loop through entities.
 // Colliders and rigidbodies will self-register here upon creation, eliminating the need to loop through entities.
 
 void PhysicsHandler::SetData()
 {
-	const std::set<Entity*>& entities = EntityPool::GetEntities();
+    Scene* currentScene = SceneManager::GetCurrentScene();
+
+    if (currentScene == nullptr)
+    {
+        return;
+    }
+
+    const std::set<Entity*>& entities = currentScene->GetEntities();
     // ToDo - Check if scale has changed -> update the scale.
+
+
+    if (entities.empty())
+    {
+        return;
+    }
 
 	for (Entity* entity : entities)
 	{
@@ -23,7 +37,7 @@ void PhysicsHandler::SetData()
         if (rigidBody)
         {
             PhysCommand command;
-            command.entityID = entity->GetID();
+            command.entityID = entity->GetId();
 
             PhysTransform transform;
             transform.scale[0] = entity->transform.scale.x;
@@ -93,11 +107,23 @@ void PhysicsHandler::SetData()
 
 void PhysicsHandler::GetData()
 {
-	const std::set<Entity*>& entities = EntityPool::GetEntities();
+    Scene* currentScene = SceneManager::GetCurrentScene();
+
+    if (currentScene == nullptr)
+    {
+        return;
+    }
+
+    const std::set<Entity*>& entities = currentScene->GetEntities();
+
+    if (entities.empty())
+    {
+        return;
+    }
 
 	for (Entity* entity : entities)
 	{
-		PhysResponse response = Physics::GetBodyData(entity->GetID());
+		PhysResponse response = Physics::GetBodyData(entity->GetId());
 
         if (response.hasData)
         {

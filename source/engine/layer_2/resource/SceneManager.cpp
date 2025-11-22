@@ -3,11 +3,32 @@
 
 Scene* SceneManager::currentScene = nullptr;
 
-std::map<int, std::function<Scene* ()>>& SceneManager::getSceneRegistry()
+void SceneManager::Initialze()
 {
-    static std::map<int, std::function<Scene* ()>> sceneFactory;
-    return sceneFactory;
+    // Nothing at the moment
 }
+
+void SceneManager::UnInitialize()
+{
+    UnloadScene();
+}
+
+void SceneManager::Tick()
+{
+    if (currentScene)
+    {
+        currentScene->Tick();
+    }
+}
+
+void SceneManager::LateTick()
+{
+    if (currentScene)
+    {
+        currentScene->LateTick();
+    }
+}
+
 
 void SceneManager::RegisterScene(int index, std::function<Scene* ()> constructor)
 {
@@ -46,4 +67,15 @@ void SceneManager::UnloadScene()
         delete currentScene;
         currentScene = nullptr;
     }
+}
+
+Scene* SceneManager::GetCurrentScene()
+{
+    return currentScene;
+}
+
+std::map<int, std::function<Scene* ()>>& SceneManager::getSceneRegistry()
+{
+    static std::map<int, std::function<Scene* ()>> sceneFactory;
+    return sceneFactory;
 }

@@ -1,17 +1,18 @@
 #include <windows.h>
-#include "EngineRuntime.h"
+#include "Runtime.h"
 
 void Run()
 {
-    EngineRuntime::Initialize();
+    auto runtime = new Runtime();
+    runtime->Initialize();
 
     // Main loop
-    while (true)
+    while (runtime->IsRunning())
     {
-        EngineRuntime::Tick();
+        runtime->Tick();
     }
 
-    EngineRuntime::UnInitialize();
+    runtime->UnInitialize();
 }
 
 #ifdef DEBUG

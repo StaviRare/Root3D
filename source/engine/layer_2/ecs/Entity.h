@@ -1,32 +1,25 @@
 #pragma once
-
 #include <vector>
-#include <type_traits>
-#include <typeinfo>
-
 #include "Transform.h"
 #include "Component.h"
-#include "Entitypool.h"
-#include "Types.h"
+#include "Object.h"
 
-class Entity
+class Entity : public Object
 {
-    friend EntityPool;
+    friend class Scene;
 
     public:
     Transform transform;
 
-    public:
     Entity();
+    explicit Entity(const string& name);
     ~Entity();
-    uniqueID GetID() const;
 
     private:
-    uniqueID ID = -1;
     std::vector<Component*> components;
 
-    private:
     void Tick();
+    void LateTick();
 
     public:
     template <typename T>
@@ -34,26 +27,19 @@ class Entity
     {
         static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
 
-        T* returnValue = nullptr;
-
         for (Component* c : components)
         {
             if (typeid(*c) == typeid(T))
             {
-                returnValue = static_cast<T*>(c);
-                break;
+                return static_cast<T*>(c);
             }
         }
 
-        if (returnValue == nullptr)
-        {
-            returnValue = new T();
-            returnValue->SetOwner(*this);
-            components.push_back(returnValue);
-            returnValue->OnCreate();
-        }
-
-        return returnValue;
+        T* newComp = new T();
+        newComp->SetOwner(*this);
+        newComp->OnCreate();
+        components.push_back(newComp);
+        return newComp;
     }
 
     template <typename T>
@@ -61,18 +47,15 @@ class Entity
     {
         static_assert(std::is_base_of<Component, T>::value, "T must be a subclass of Component");
 
-        T* returnValue = nullptr;
-
         for (Component* c : components)
         {
             if (typeid(*c) == typeid(T))
             {
-                returnValue = static_cast<T*>(c);
-                break;
+                return static_cast<T*>(c);
             }
         }
 
-        return returnValue;
+        return nullptr;
     }
 
     template <typename T>
