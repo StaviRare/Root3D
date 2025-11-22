@@ -94,7 +94,7 @@ project "Root3D"
 		SOURCE_DIR .. "engine/layer_1/math/",	
 		SOURCE_DIR .. "engine/layer_1/debug/",		
 		SOURCE_DIR .. "engine/layer_1/random/",
-		SOURCE_DIR .. "engine/layer_1/yaml/",
+		SOURCE_DIR .. "engine/layer_1/objects/",
 		SOURCE_DIR .. "engine/layer_2/ecs/",
 		SOURCE_DIR .. "engine/layer_2/physics/",	
 		SOURCE_DIR .. "engine/layer_2/renderer/",

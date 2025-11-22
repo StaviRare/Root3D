@@ -17,7 +17,7 @@ void CameraController::OnCreate()
 
     if (camera == nullptr)
     {
-        Debug::LogError("No Camera on entity " + std::to_string(GetEntity().GetID()));
+        Debug::LogError("No Camera on entity " + std::to_string(GetEntity().GetId()));
     }
     else
     {

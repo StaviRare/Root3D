@@ -20,5 +20,6 @@ class Component
 
     virtual void OnCreate() {}
     virtual void Tick() {}
+    virtual void LateTick() {}
     virtual void OnDestroy() {}
 };

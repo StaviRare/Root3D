@@ -9,7 +9,6 @@
 #include "Input.h"
 #include "Physics.h"
 #include "PhysicsHandler.h"
-#include "EntityPool.h"
 #include "Random.h"
 
 void EngineRuntime::Initialize()
@@ -25,13 +24,15 @@ void EngineRuntime::Initialize()
     Screen::Initialize();
     Graphics::Initialize();
     Physics::Initialize();
+
+    // Should be loaded by game.
     SceneManager::LoadScene(0);
 }
 
 void EngineRuntime::UnInitialize()
 {
     // Shut everything down, in reverse order
-    SceneManager::UnloadScene();
+    SceneManager::UnInitialize();
     Physics::UnInitialize();
     Graphics::UnInitialize();
     Screen::UnInitialize();
@@ -69,10 +70,10 @@ void EngineRuntime::Tick()
     Screen::PollEvents();
 
     // Update:
-    EntityPool::Tick();
+    SceneManager::Tick();
 
     // LateUpdate:
-    // ToDo!
+    SceneManager::LateTick();
 
     // ScenePreRender:
     Graphics::ClearScreen();

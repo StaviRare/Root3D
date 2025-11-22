@@ -1,6 +1,5 @@
 #include "RenderCommandHandler.h"
 #include "RenderQueue.h"
-#include "EntityPool.h"
 #include "MeshData.h"
 #include "Mesh.h"
 #include "Entity.h"
@@ -10,10 +9,12 @@
 #include "Matrix4.h"
 #include "Camera.h"
 #include "Light.h"
+#include "SceneManager.h"
 
 void RenderCommandHandler::Tick()
 {
-    const std::set<Entity*>& entities = EntityPool::GetEntities();
+    Scene* currentScene = SceneManager::GetCurrentScene();
+    const std::set<Entity*>& entities = currentScene->GetEntities();
 
     if (Camera::Exists())
     {
