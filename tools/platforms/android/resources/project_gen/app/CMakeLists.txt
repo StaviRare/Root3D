@@ -13,10 +13,9 @@ add_definitions(-DYAML_CPP_STATIC_DEFINE)
 add_definitions(-DENGINE_LOG_LEVEL=${ENGINE_LOG_LEVEL})
 
 file(GLOB_RECURSE SOURCES
-    "${rootPath}source/app/*.h"
-    "${rootPath}source/main/common/*.h"
-    "${rootPath}source/main/common/*.cpp"
-    "${rootPath}source/main/p_android/cpp/*.cpp"
+    "${rootPath}source/client/main/android/cpp/*.cpp"
+    "${rootPath}source/client/runtime/*.h"
+	"${rootPath}source/client/runtime/*.cpp"
     "${rootPath}source/engine/core/*.h"
     "${rootPath}source/engine/core/*.cpp"
 	"${rootPath}source/engine/layer_0/log/p_android/*.cpp"
@@ -38,9 +37,8 @@ file(GLOB_RECURSE SOURCES
 )
 
 set(INCLUDE_DIRS
-    "${rootPath}source/app/"
-    "${rootPath}source/main/common"
-    "${rootPath}source/main/p_android/cpp"
+    "${rootPath}source/client/runtime/"
+    "${rootPath}source/client/main/android/cpp/"
     "${rootPath}source/engine/core"
 	"${rootPath}source/engine/layer_0/collections/"
 	"${rootPath}source/engine/layer_0/log/common/"

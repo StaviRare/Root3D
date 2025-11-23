@@ -41,10 +41,9 @@ project "Root3D"
     cppdialect "C++17"
 	
 	files {
-		SOURCE_DIR .. "app/**.h",
-		SOURCE_DIR .. "main/common/**.h",
-		SOURCE_DIR .. "main/common/**.cpp",
-        SOURCE_DIR .. "main/p_windows/**.cpp",
+		SOURCE_DIR .. "client/main/windows/**.cpp",
+		SOURCE_DIR .. "client/runtime/**.h",
+		SOURCE_DIR .. "client/runtime/**.cpp",
 		SOURCE_DIR .. "engine/core/**.h",
 		SOURCE_DIR .. "engine/core/**.cpp",
         SOURCE_DIR .. "engine/layer_0/collections/**.h",
@@ -80,10 +79,8 @@ project "Root3D"
     }
     
 	includedirs {
-		SOURCE_DIR .. "app/",
-		SOURCE_DIR .. "main/common/",
-		SOURCE_DIR .. "main/p_windows/",
-		SOURCE_DIR .. "engine/core",
+		SOURCE_DIR .. "client/runtime/",
+		SOURCE_DIR .. "engine/core/",
         SOURCE_DIR .. "engine/layer_0/collections/",
 		SOURCE_DIR .. "engine/layer_0/log/common/",
         SOURCE_DIR .. "engine/layer_0/files/common/",
