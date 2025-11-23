@@ -3,6 +3,8 @@
 #include "Vector3.h"
 #include "Quaternion.h"
 
+// TODO: make members private, add set/get for automatic angle/rotation sync
+
 class Transform
 {
     public:
@@ -11,13 +13,6 @@ class Transform
     Vector3 scale = Vector3(1.0f, 1.0f, 1.0f);
     Quaternion rotation = Quaternion::Identity();
 
-    // ToDo - Need to fix gimbal lock
-    Vector3 getForward() const
-    {
-        return Vector3(
-            std::sin(eulerAngles.y) * std::cos(eulerAngles.x),
-            std::sin(eulerAngles.x),
-            -std::cos(eulerAngles.y) * std::cos(eulerAngles.x)
-        ).normalized();
-    }
+    public:
+    Vector3 getForward() const;
 };
