@@ -1,14 +1,16 @@
 #include "Object.h"
 #include "ObjectManager.h"
 
-Object::Object() : m_name("Object")
+Object::Object()
 {
     m_id = ObjectManager::GenerateId();
+    m_name = "Object";
 }
 
-Object::Object(const string& name) : m_name(name)
+Object::Object(const string& name)
 {
     m_id = ObjectManager::GenerateId();
+    m_name = name;
 }
 
 Object::~Object()
