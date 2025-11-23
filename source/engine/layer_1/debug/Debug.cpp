@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Debug.h"
 #include "Log.h"
 
