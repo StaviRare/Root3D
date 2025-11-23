@@ -138,7 +138,8 @@ void Jolt::CreateBody(PhysCommand command)
             Vec3 position(command.transform.position[0], command.transform.position[1], command.transform.position[2]);
             Quat rotation(command.transform.rotation[0], command.transform.rotation[1], command.transform.rotation[2], command.transform.rotation[3]);
 
-            bodyInterface.SetPositionAndRotation(bodyID, position, rotation, EActivation::DontActivate);
+            // Was DontActivate, freeze on collisions, now Activate until further investigation
+            bodyInterface.SetPositionAndRotation(bodyID, position, rotation, EActivation::Activate);
         }
     }
 }
