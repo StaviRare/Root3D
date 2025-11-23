@@ -1,24 +1,29 @@
 # Contributing to Root3D
 
-Thank you for your interest in Root3D. This is a personal project, and contributions are welcome. The focus is on simplicity and stability, so please keep that in mind when contributing.
+Thanks for taking the time to contribute. 
+Root3D is a personal engine project with a strong focus on clarity, simplicity, and long-term stability. 
+Contributions of any size are appreciated, as long as they align with those principles.
 
-## Found a Bug?
+## Reporting Issues
 
-• Open an issue with a clear title and description  
-• Include your platform and build configuration  
-• Provide steps to reproduce if possible  
-• Add logs or screenshots if helpful
+• Use a clear and descriptive title  
+• Add a concise explanation of the problem  
+• Include platform, compiler, and build configuration  
+• Provide reproduction steps whenever possible  
+• Attach logs, screenshots, or crash dumps if relevant
 
-## Want to Contribute?
+## Submitting Contributions
 
 • Pull requests are welcome  
-• Keep changes focused and consistent with the current code style  
-• Avoid mixing unrelated changes in the same pull request  
-• Test your changes before submitting  
-• Open an issue first if you’re planning a large change
+• Keep changes minimal, focused, and consistent with the existing style  
+• Do not bundle unrelated changes in the same PR  
+• Test thoroughly before submitting  
+• For large or directional changes, open an issue first to discuss the approach
 
-By contributing, you confirm the code is yours to share and can be included under the MIT License.  
-No royalties or special attribution are expected. Your name in the commit history is appreciated.  
-If your contributions are consistent and meaningful over time, you may be added to the contributors list, but there is no formal process or obligation.
+## License and Ownership
 
-Thanks for supporting Root3D.
+By contributing, you confirm the work is your own and can be released under the MIT License.  
+No royalties, attribution requirements, or contributor agreements are involved.  
+Consistent, high-quality contributions over time may result in being listed as a project contributor.
+
+Thanks for helping improve Root3D.
