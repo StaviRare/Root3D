@@ -132,7 +132,8 @@ void initStaticCube()
     RigidBody* rigidBody1 = entity->AddComponent<RigidBody>();
 
     entity->AddComponent<MeshCollider>();
-    entity->AddComponent<MiscRotate>();
+    MiscRotate* miscRotate = entity->AddComponent<MiscRotate>();
+    miscRotate->direction = Vector3(-5, -5, 5);
 
     meshData->mesh = mesh;
     renderer->material = material;
