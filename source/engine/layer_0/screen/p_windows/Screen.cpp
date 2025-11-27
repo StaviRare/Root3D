@@ -194,6 +194,19 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 
     switch (message)
     {
+        case WM_SETCURSOR:
+        {
+            bool insideWindow = (HWND) wParam == hwnd
+                && LOWORD(lParam) == HTCLIENT;
+
+            if (insideWindow)
+            {
+                SetCursor(LoadCursor(nullptr, IDC_ARROW));
+                return TRUE;
+            }
+
+            break; // ignore other types
+        }
         case WM_DESTROY:
         {
             PostQuitMessage(0);
