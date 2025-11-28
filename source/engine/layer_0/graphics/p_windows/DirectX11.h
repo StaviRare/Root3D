@@ -56,10 +56,16 @@ class DirectX11 : public GraphicsAPI
 {
     public:
     void Initialize();
-    void ClearScreen();
-    void ExecuteRenderCommands();
-    void SwapFrameBuffers();
     void UnInitialize();
+    void BeginFrame(FrameUniform cmd);
+    void DrawObject(ObjectUniform cmd);
+    void EndFrame();
+
+    GPUHandle CreateTexture(const TextureUpload& data);
+    void DestroyTexture(GPUHandle handle);
+
+    GPUHandle CreateShader(const ShaderUpload& data);
+    void DestroyShader(GPUHandle handle);
 
     private:
     void CreateDeviceAndSwapChain(HWND hwnd);

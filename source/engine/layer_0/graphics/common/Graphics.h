@@ -14,6 +14,7 @@ enum class GraphicsType
 class Graphics
 {
     friend class Engine;
+    friend class RenderCommandHandler;
 
     public:
     static string TypeName();
@@ -24,8 +25,17 @@ class Graphics
 
     private:
     static void Initialize();
-    static void ClearScreen();
-    static void ExecuteRenderCommands();
     static void UnInitialize();
-    static void SwapFrameBuffers();
+    static void BeginFrame(FrameUniform cmd);
+    static void DrawObject(ObjectUniform cmd);
+    static void EndFrame();
+
+    static GPUHandle CreateTexture(const TextureUpload& data);
+    static void DestroyTexture(GPUHandle handle);
+
+    static GPUHandle CreateShader(const ShaderUpload& data);
+    static void DestroyShader(GPUHandle handle);
+
+    protected:
+    static bool initialized;
 };

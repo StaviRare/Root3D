@@ -1,14 +1,14 @@
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "D3DCompiler.lib")
+
 #include <d3dcompiler.h>
 
-#include "Log.h"
 #include "DirectX11.h"
 #include "Screen.h"
 #include "Timer.h"
-#include "RenderQueue.h"
 #include "Calc.h"
+#include "Log.h"
 
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "D3DCompiler.lib")
 
 void DirectX11::Initialize()
 {
@@ -89,136 +89,6 @@ void DirectX11::Initialize()
     initialized = true;
 }
 
-void DirectX11::ClearScreen()
-{
-    context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-}
-
-void DirectX11::ExecuteRenderCommands()
-{
-    if (initialized)
-    {
-        const GlobalRenderCommand* onceCmd = RenderQueue::GetGlobalRenderCommand();
-
-        if (onceCmd)
-        {
-            const float* bg = onceCmd->backgroundColor;
-            const float* viewMatrix = onceCmd->viewMatrix;
-            const float* projectionMatrix = onceCmd->projectionMatrix;
-
-            context->ClearRenderTargetView(backBufferRTV, bg);
-
-            auto lightCommands = RenderQueue::GetLightRenderCommands();
-            auto objectCommands = RenderQueue::GetObjectRenderCommands();
-
-            // LightBuffer (b1)
-            lightBufferData.numLights = lightCommands.size();
-
-            for (size_t i = 0; i < Calc::Min(lightCommands.size(), static_cast<size_t>( MAX_LIGHTS )); ++i)
-            {
-                lightBufferData.lights[i].type = lightCommands[i].type;
-                lightBufferData.lights[i].color = XMFLOAT3(
-                    lightCommands[i].color[0],
-                    lightCommands[i].color[1],
-                    lightCommands[i].color[2]);
-
-                lightBufferData.lights[i].intensity = lightCommands[i].intensity;
-                lightBufferData.lights[i].direction = XMFLOAT3(
-                    lightCommands[i].direction[0],
-                    lightCommands[i].direction[1],
-                    lightCommands[i].direction[2]);
-
-                lightBufferData.lights[i].range = lightCommands[i].range;
-                lightBufferData.lights[i].position = XMFLOAT3(
-                    lightCommands[i].position[0],
-                    lightCommands[i].position[1],
-                    lightCommands[i].position[2]);
-
-                lightBufferData.lights[i].attenuation = XMFLOAT3(
-                    lightCommands[i].attenuation[0],
-                    lightCommands[i].attenuation[1],
-                    lightCommands[i].attenuation[2]);
-
-                context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
-                context->PSSetConstantBuffers(1, 1, &lightBuffer);
-            }
-
-            // Objects
-            for (const auto& command : objectCommands)
-            {
-                // ToDo - Move shader related logic to ShaderManager
-
-                if (command.shader->ID == 0)
-                {
-                    command.shader->ID = CreateShaderProgram(command.shader->vertexCode, command.shader->fragmentCode);
-                }
-
-                ShaderProgram* shaderProgram = nullptr;
-
-                for (auto& sp : shaderMap)
-                {
-                    if (sp.ID == command.shader->ID)
-                    {
-                        shaderProgram = &sp;
-                        break;
-                    }
-                }
-
-                if (shaderProgram != nullptr)
-                {
-                    context->IASetInputLayout(shaderProgram->inputLayout);
-                    context->VSSetShader(shaderProgram->vertexShader, nullptr, 0);
-                    context->PSSetShader(shaderProgram->pixelShader, nullptr, 0);
-
-                    // MVPBuffer (b0)
-                    mvpBufferData.model = DirectX::XMMatrixTranspose(XMMATRIX(command.modelMatrix));
-                    mvpBufferData.view = DirectX::XMMatrixTranspose(XMMATRIX(viewMatrix));
-                    mvpBufferData.projection = DirectX::XMMatrixTranspose(XMMATRIX(projectionMatrix));
-                    context->UpdateSubresource(mvpBuffer, 0, nullptr, &mvpBufferData, 0, 0);
-                    context->VSSetConstantBuffers(0, 1, &mvpBuffer);
-
-                    if (command.texture)
-                    {
-                        BindTexture(*( command.texture ));
-                    }
-
-                    CreateBuffer(const_cast<int*>( command.indices ), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
-                    CreateBuffer(const_cast<float*>( command.vertices ), sizeof(float) * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
-                    CreateBuffer(const_cast<float*>( command.texCoords ), sizeof(float) * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
-                    CreateBuffer(const_cast<float*>( command.normals ), sizeof(float) * command.normalsSize, D3D11_BIND_VERTEX_BUFFER, &normalBuffer);
-
-                    UINT strides[3] = {
-                        sizeof(float) * 3, // Position
-                        sizeof(float) * 3, // Normal
-                        sizeof(float) * 2  // Texture Coordinate
-                    };
-
-                    UINT offsets[3] = {0, 0, 0};
-                    ID3D11Buffer* buffers[3] = {vertexBuffer, normalBuffer, texCoordBuffer};
-                    context->IASetVertexBuffers(0, 3, buffers, strides, offsets);
-
-                    context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-                    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-                    context->DrawIndexed(command.indicesSize, 0, 0);
-
-                    // Release buffers
-                    if (indexBuffer) indexBuffer->Release();
-                    if (vertexBuffer) vertexBuffer->Release();
-                    if (normalBuffer) normalBuffer->Release();
-                    if (texCoordBuffer) texCoordBuffer->Release();
-                }
-            }
-        }
-
-        RenderQueue::Clear();
-    }
-}
-
-void DirectX11::SwapFrameBuffers()
-{
-    swapChain->Present(0, 0);
-}
-
 void DirectX11::UnInitialize()
 {
     for (auto& program : shaderMap)
@@ -245,6 +115,144 @@ void DirectX11::UnInitialize()
     if (device) device->Release();
 
     initialized = false;
+}
+
+void DirectX11::BeginFrame(FrameUniform onceCmd)
+{
+    const float* bg = onceCmd.backgroundColor;
+    const float* viewMatrix = onceCmd.viewMatrix;
+    const float* projectionMatrix = onceCmd.projectionMatrix;
+
+    context->ClearRenderTargetView(backBufferRTV, bg);
+    context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    //auto lightCommands = RenderQueue::GetLightRenderCommands();
+    //auto objectCommands = RenderQueue::GetObjectRenderCommands();
+
+    //// LightBuffer (b1)
+    //lightBufferData.numLights = lightCommands.size();
+
+    //for (size_t i = 0; i < Calc::Min(lightCommands.size(), static_cast<size_t>( MAX_LIGHTS )); ++i)
+    //{
+    //    lightBufferData.lights[i].type = lightCommands[i].type;
+    //    lightBufferData.lights[i].color = XMFLOAT3(
+    //        lightCommands[i].color[0],
+    //        lightCommands[i].color[1],
+    //        lightCommands[i].color[2]);
+
+    //    lightBufferData.lights[i].intensity = lightCommands[i].intensity;
+    //    lightBufferData.lights[i].direction = XMFLOAT3(
+    //        lightCommands[i].direction[0],
+    //        lightCommands[i].direction[1],
+    //        lightCommands[i].direction[2]);
+
+    //    lightBufferData.lights[i].range = lightCommands[i].range;
+    //    lightBufferData.lights[i].position = XMFLOAT3(
+    //        lightCommands[i].position[0],
+    //        lightCommands[i].position[1],
+    //        lightCommands[i].position[2]);
+
+    //    lightBufferData.lights[i].attenuation = XMFLOAT3(
+    //        lightCommands[i].attenuation[0],
+    //        lightCommands[i].attenuation[1],
+    //        lightCommands[i].attenuation[2]);
+
+    //    context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
+    //    context->PSSetConstantBuffers(1, 1, &lightBuffer);
+    //}
+}
+
+void DirectX11::DrawObject(ObjectUniform command)
+{
+    //if (command.shader->ID == 0)
+    //{
+    //    command.shader->ID = CreateShaderProgram(command.shader->vertexCode, command.shader->fragmentCode);
+    //}
+
+    //ShaderProgram* shaderProgram = nullptr;
+
+    //for (auto& sp : shaderMap)
+    //{
+    //    if (sp.ID == command.shader->ID)
+    //    {
+    //        shaderProgram = &sp;
+    //        break;
+    //    }
+    //}
+
+    //if (shaderProgram != nullptr)
+    //{
+    //    context->IASetInputLayout(shaderProgram->inputLayout);
+    //    context->VSSetShader(shaderProgram->vertexShader, nullptr, 0);
+    //    context->PSSetShader(shaderProgram->pixelShader, nullptr, 0);
+
+    //    // MVPBuffer (b0)
+    //    mvpBufferData.model = DirectX::XMMatrixTranspose(XMMATRIX(command.modelMatrix));
+    //    mvpBufferData.view = DirectX::XMMatrixTranspose(XMMATRIX(viewMatrix));
+    //    mvpBufferData.projection = DirectX::XMMatrixTranspose(XMMATRIX(projectionMatrix));
+    //    context->UpdateSubresource(mvpBuffer, 0, nullptr, &mvpBufferData, 0, 0);
+    //    context->VSSetConstantBuffers(0, 1, &mvpBuffer);
+
+    //    if (command.texture)
+    //    {
+    //        BindTexture(*( command.texture ));
+    //    }
+
+    //    CreateBuffer(const_cast<int*>( command.indices ), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
+    //    CreateBuffer(const_cast<float*>( command.vertices ), sizeof(float) * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
+    //    CreateBuffer(const_cast<float*>( command.texCoords ), sizeof(float) * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
+    //    CreateBuffer(const_cast<float*>( command.normals ), sizeof(float) * command.normalsSize, D3D11_BIND_VERTEX_BUFFER, &normalBuffer);
+
+    //    UINT strides[3] = {
+    //        sizeof(float) * 3, // Position
+    //        sizeof(float) * 3, // Normal
+    //        sizeof(float) * 2  // Texture Coordinate
+    //    };
+
+    //    UINT offsets[3] = {0, 0, 0};
+    //    ID3D11Buffer* buffers[3] = {vertexBuffer, normalBuffer, texCoordBuffer};
+    //    context->IASetVertexBuffers(0, 3, buffers, strides, offsets);
+
+    //    context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    //    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    //    context->DrawIndexed(command.indicesSize, 0, 0);
+
+    //    // Release buffers
+    //    if (indexBuffer) indexBuffer->Release();
+    //    if (vertexBuffer) vertexBuffer->Release();
+    //    if (normalBuffer) normalBuffer->Release();
+    //    if (texCoordBuffer) texCoordBuffer->Release();
+    //}
+}
+
+void DirectX11::EndFrame()
+{
+    swapChain->Present(0, 0);
+}
+
+GPUHandle DirectX11::CreateTexture(const TextureUpload& data)
+{
+    GPUHandle returnValue{};
+    // impl
+    return returnValue;
+}
+
+void DirectX11::DestroyTexture(GPUHandle handle)
+{
+
+}
+
+GPUHandle DirectX11::CreateShader(const ShaderUpload& data)
+{
+    Log::Error("MMM");
+    GPUHandle returnValue{};
+    // impl
+    return returnValue;
+}
+
+void DirectX11::DestroyShader(GPUHandle handle)
+{
+
 }
 
 void DirectX11::BindTexture(Texture& texture)

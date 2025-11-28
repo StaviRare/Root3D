@@ -29,14 +29,14 @@ bool Camera::Exists()
     return instance != nullptr;
 }
 
-Camera& Camera::GetInstance()
+Camera* Camera::GetInstance()
 {
     if (instance == nullptr)
     {
         ENGINE_ERROR("Camera instance does not exists!");
     }
 
-    return *instance;
+    return instance;
 }
 
 float Camera::GetAspect()

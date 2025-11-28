@@ -30,7 +30,7 @@ void Graphics::Initialize()
     switch (type)
     {
         case ( GraphicsType::OpenGL ):
-        _currentAPI = new OpenGL();
+        //_currentAPI = new OpenGL();
         break;
 
         case ( GraphicsType::DirectX11 ):
@@ -49,27 +49,27 @@ void Graphics::Initialize()
     }
 }
 
-void Graphics::ClearScreen()
+void Graphics::BeginFrame(FrameUniform cmd)
 {
     if (_currentAPI != nullptr)
     {
-        _currentAPI->ClearScreen();
+        _currentAPI->BeginFrame(cmd);
     }
 }
 
-void Graphics::ExecuteRenderCommands()
+void Graphics::DrawObject(ObjectUniform cmd)
 {
     if (_currentAPI != nullptr)
     {
-        _currentAPI->ExecuteRenderCommands();
+        _currentAPI->DrawObject(cmd);
     }
 }
 
-void Graphics::SwapFrameBuffers()
+void Graphics::EndFrame()
 {
     if (_currentAPI != nullptr)
     {
-        _currentAPI->SwapFrameBuffers();
+        _currentAPI->EndFrame();
     }
 }
 
@@ -82,5 +82,41 @@ void Graphics::UnInitialize()
         delete _currentAPI;
         _currentAPI = nullptr;
         _currentType = GraphicsType::Null;
+    }
+}
+
+GPUHandle Graphics::CreateTexture(const TextureUpload& data)
+{
+    if (_currentAPI != nullptr)
+    {
+        return _currentAPI->CreateTexture(data);
+    }
+
+    return GPUHandle::Null();
+}
+
+void Graphics::DestroyTexture(GPUHandle handle)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->DestroyTexture(handle);
+    }
+}
+
+GPUHandle Graphics::CreateShader(const ShaderUpload& data)
+{
+    if (_currentAPI != nullptr)
+    {
+        return _currentAPI->CreateShader(data);
+    }
+
+    return GPUHandle::Null();
+}
+
+void Graphics::DestroyShader(GPUHandle handle)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->DestroyShader(handle);
     }
 }

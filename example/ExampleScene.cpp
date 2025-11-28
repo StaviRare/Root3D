@@ -3,7 +3,7 @@
 #include "Input.h"
 #include "Mesh.h"
 #include "Entity.h"
-#include "MeshData.h"
+#include "MeshFilter.h"
 #include "MeshGenerator.h"
 #include "Debug.h"
 #include "Texture.h"
@@ -127,7 +127,7 @@ void initStaticCube()
 
     entity->transform.scale = Vector3(2, 1, 2);
     Mesh mesh = MeshGenerator::GetCube();
-    MeshData* meshData = entity->AddComponent<MeshData>();
+    MeshFilter* meshFilter = entity->AddComponent<MeshFilter>();
     Renderer* renderer = entity->AddComponent<Renderer>();
     RigidBody* rigidBody1 = entity->AddComponent<RigidBody>();
 
@@ -135,7 +135,7 @@ void initStaticCube()
     MiscRotate* miscRotate = entity->AddComponent<MiscRotate>();
     miscRotate->direction = Vector3(-5, -5, 5);
 
-    meshData->mesh = mesh;
+    meshFilter->mesh = mesh;
     renderer->material = material;
     rigidBody1->IsStatic = true;
 }
@@ -148,12 +148,12 @@ void initDynamicCube()
     entity2 = new Entity();
     entity2->transform.position = Vector3(0.0, 1.0f, 0.0f);
     Mesh mesh2 = MeshGenerator::GetCube();
-    MeshData* meshData2 = entity2->AddComponent<MeshData>();
+    MeshFilter* meshFilter2 = entity2->AddComponent<MeshFilter>();
     Renderer* renderer2 = entity2->AddComponent<Renderer>();
     entity2->AddComponent<RigidBody>();
     entity2->AddComponent<MeshCollider>();
 
-    meshData2->mesh = mesh2;
+    meshFilter2->mesh = mesh2;
     renderer2->material = material2;
 }
 
@@ -168,10 +168,10 @@ void initText()
     textEntity = new Entity();
     textEntity->transform.position = Vector3(0, 1, -1);
 
-    MeshData* meshData = textEntity->AddComponent<MeshData>();
+    MeshFilter* meshFilter = textEntity->AddComponent<MeshFilter>();
     Renderer* renderer = textEntity->AddComponent<Renderer>();
 
-    meshData->mesh = textMesh;
+    meshFilter->mesh = textMesh;
     renderer->material = material;
 }
 

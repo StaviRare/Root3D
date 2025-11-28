@@ -6,7 +6,7 @@
 #include "BoxCollider.h"
 #include "MeshCollider.h"
 #include "SphereCollider.h"
-#include "MeshData.h"
+#include "MeshFilter.h"
 #include "SceneManager.h"
 
 // Colliders and rigidbodies will self-register here upon creation, eliminating the need to loop through entities.
@@ -82,13 +82,13 @@ void PhysicsHandler::SetData()
             }
             else if (meshCollider)
             {
-                MeshData* meshData = entity->GetComponent<MeshData>();
+                MeshFilter* meshFilter = entity->GetComponent<MeshFilter>();
 
-                if (meshData)
+                if (meshFilter)
                 {
                     collider.type = 3;
-                    collider.vertices = reinterpret_cast<const float*>( meshData->mesh.GetVertices().data() );
-                    collider.verticesSize = meshData->mesh.GetVertices().size() * 3;
+                    collider.vertices = reinterpret_cast<const float*>( meshFilter->mesh.GetVertices().data() );
+                    collider.verticesSize = meshFilter->mesh.GetVertices().size() * 3;
                 }
             }
             else

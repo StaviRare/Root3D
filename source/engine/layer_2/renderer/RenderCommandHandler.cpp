@@ -1,117 +1,222 @@
 #include "RenderCommandHandler.h"
-#include "RenderQueue.h"
-#include "MeshData.h"
+#include "MeshFilter.h"
 #include "Mesh.h"
-#include "Entity.h"
 #include "RenderCommand.h"
 #include "Renderer.h"
 #include "Debug.h"
 #include "Matrix4.h"
-#include "Camera.h"
 #include "Light.h"
 #include "SceneManager.h"
 
-void RenderCommandHandler::Tick()
+Camera* RenderCommandHandler::_camera = nullptr;
+std::set<Entity*> RenderCommandHandler::_entities;
+FrameUniform RenderCommandHandler::_frameUniforms = {};
+
+void RenderCommandHandler::Initialize()
 {
-    Scene* currentScene = SceneManager::GetCurrentScene();
+	// Empty at the moment.
+}
 
-    if (currentScene == nullptr)
-    {
-        return;
-    }
+void RenderCommandHandler::UnInitialize()
+{
+	// Empty at the moment.
+}
 
-    const std::set<Entity*>& entities = currentScene->GetEntities();
+void RenderCommandHandler::PreRender()
+{
+	_camera = Camera::GetInstance();
 
-    if (entities.empty())
-    {
-        return;
-    }
+	if (_camera)
+	{
+		CollectEntities();
+		CullEntities();
+		UpdateFrameUniforms();
+	}
+}
 
-    if (Camera::Exists())
-    {
-        Camera& camera = Camera::GetInstance();
+void RenderCommandHandler::Render()
+{
+	if (_camera)
+	{
+		BeginRenderPass();
+		DrawEntities();
+	}
+}
 
-        Vector3 cameraUp(0.0f, 1.0f, 0.0f);
-        Vector3 cameraTarget = camera.GetTransform().position + camera.GetTransform().getForward();
-        Matrix4 view = Matrix4::LookAt(camera.GetTransform().position, cameraTarget, cameraUp);
-        Matrix4 projection = Matrix4::Perspective(camera.fov, camera.GetAspect(), camera.nearClipPlane, camera.farClipPlane);
+void RenderCommandHandler::PostRender()
+{
+	if (_camera)
+	{
+		EndRenderPass();
+		PresentFrame();
+	}
+}
 
-        GlobalRenderCommand renderOnce;
-        view.CopyToArray(renderOnce.viewMatrix);
-        projection.CopyToArray(renderOnce.projectionMatrix);
+void RenderCommandHandler::CollectEntities()
+{
+	Scene* currentScene = SceneManager::GetCurrentScene();
 
-        renderOnce.backgroundColor[0] = camera.backgroundColor.r;
-        renderOnce.backgroundColor[1] = camera.backgroundColor.g;
-        renderOnce.backgroundColor[2] = camera.backgroundColor.b;
-        renderOnce.backgroundColor[3] = camera.backgroundColor.a;
-        
-        RenderQueue::AddGlobalRenderCommand(renderOnce);
+	if (currentScene)
+	{
+		_entities = currentScene->GetEntities();
+	}
+}
 
-        for (const Entity* entity : entities)
-        {
-            Light* light = entity->GetComponent<Light>();
-            Renderer* renderer = entity->GetComponent<Renderer>();
-            MeshData* meshData = entity->GetComponent<MeshData>();
+void RenderCommandHandler::CullEntities()
+{
+	Vector3 cameraPos = _camera->GetTransform().position;
+	Vector3 cameraForward = _camera->GetTransform().getForward();
 
-            if (light)
-            {
-                LightRenderCommand lightCommand;
+	auto it = _entities.begin();
 
-                lightCommand.range = light->range;
-                lightCommand.intensity = light->intensity;
+	while (it != _entities.end())
+	{
+		Entity* entity = *it;
+		Renderer* renderer = entity->GetComponent<Renderer>();
+		MeshFilter* meshFilter = entity->GetComponent<MeshFilter>();
 
-                lightCommand.color[0] = light->color.r;
-                lightCommand.color[1] = light->color.g;
-                lightCommand.color[2] = light->color.b;
+		// Remove entities with no renderer/meshFilter
+		if (!renderer || !meshFilter)
+		{
+			it = _entities.erase(it);
+		}
+		else
+		{
+			Vector3 toEntity = entity->transform.position - cameraPos;
 
-                lightCommand.attenuation[0] = 1.0f;     // ToDo! - Put them somewhere else.
-                lightCommand.attenuation[1] = 0.09f;    // ToDo! - Put them somewhere else.
-                lightCommand.attenuation[2] = 0.032f;   // ToDo! - Put them somewhere else.
+			// Remove entities behind the camera
+			if (toEntity.dot(cameraForward) <= 0.0f)
+			{
+				it = _entities.erase(it);
+			}
+			else
+			{
+				++it;
+			}
+		}
+	}
+}
 
-                lightCommand.direction[0] = entity->transform.eulerAngles.x;
-                lightCommand.direction[1] = entity->transform.eulerAngles.y;
-                lightCommand.direction[2] = entity->transform.eulerAngles.z;
+void RenderCommandHandler::UpdateFrameUniforms()
+{
+	Vector3 cameraUp(0.0f, 1.0f, 0.0f);
+	Vector3 cameraTarget = _camera->GetTransform().position + _camera->GetTransform().getForward();
+	Matrix4 view = Matrix4::LookAt(_camera->GetTransform().position, cameraTarget, cameraUp);
+	Matrix4 projection = Matrix4::Perspective(_camera->fov, _camera->GetAspect(), _camera->nearClipPlane, _camera->farClipPlane);
+	
+	view.CopyToArray(_frameUniforms.viewMatrix);
+	projection.CopyToArray(_frameUniforms.projectionMatrix);
+	
+	_frameUniforms.backgroundColor[0] = _camera->backgroundColor.r;
+	_frameUniforms.backgroundColor[1] = _camera->backgroundColor.g;
+	_frameUniforms.backgroundColor[2] = _camera->backgroundColor.b;
+	_frameUniforms.backgroundColor[3] = _camera->backgroundColor.a;
 
-                lightCommand.position[0] = entity->transform.position.x;
-                lightCommand.position[1] = entity->transform.position.y;
-                lightCommand.position[2] = entity->transform.position.z;
+	//for (Entity* entity : _entities)
+	//{
+	//	Light* light = entity->GetComponent<Light>();
+	//	Renderer* renderer = entity->GetComponent<Renderer>();
+	//	MeshFilter* meshFilter = entity->GetComponent<MeshFilter>();
 
-                lightCommand.type = static_cast<int>(light->type);
+	//	if (light)
+	//	{
+	//		LightRenderCommand lightCommand;
 
-                RenderQueue::AddLightRenderCommand(lightCommand);
-            }
+	//		lightCommand.range = light->range;
+	//		lightCommand.intensity = light->intensity;
 
-            if (renderer && meshData)
-            {
-                ObjectRenderCommand objectCommand;
+	//		lightCommand.color[0] = light->color.r;
+	//		lightCommand.color[1] = light->color.g;
+	//		lightCommand.color[2] = light->color.b;
 
-                objectCommand.shader = &renderer->material.shader;
-                objectCommand.texture = &renderer->material.texture;
+	//		lightCommand.attenuation[0] = 1.0f;     // ToDo! - Put them somewhere else.
+	//		lightCommand.attenuation[1] = 0.09f;    // ToDo! - Put them somewhere else.
+	//		lightCommand.attenuation[2] = 0.032f;   // ToDo! - Put them somewhere else.
 
-                objectCommand.indices = meshData->mesh.GetIndices().data();
-                objectCommand.indicesSize = meshData->mesh.GetIndices().size();
+	//		lightCommand.direction[0] = entity->transform.eulerAngles.x;
+	//		lightCommand.direction[1] = entity->transform.eulerAngles.y;
+	//		lightCommand.direction[2] = entity->transform.eulerAngles.z;
 
-                // Convert Vector3/2 to floats: size x3 (Vector3), x2 (Vector2).
-                objectCommand.vertices = reinterpret_cast<const float*>(meshData->mesh.GetVertices().data());
-                objectCommand.verticesSize = meshData->mesh.GetVertices().size() * 3;
+	//		lightCommand.position[0] = entity->transform.position.x;
+	//		lightCommand.position[1] = entity->transform.position.y;
+	//		lightCommand.position[2] = entity->transform.position.z;
 
-                objectCommand.texCoords = reinterpret_cast<const float*>(meshData->mesh.GetTexCoords().data());
-                objectCommand.texCoordsSize = meshData->mesh.GetTexCoords().size() * 2;
+	//		lightCommand.type = static_cast<int>( light->type );
 
-                objectCommand.normals = reinterpret_cast<const float*>(meshData->mesh.GetNormals().data());
-                objectCommand.normalsSize = meshData->mesh.GetNormals().size() * 3;
+	//		RenderQueue::AddLightRenderCommand(lightCommand);
+	//	}
+	//}
+}
 
-                Quaternion q = Quaternion::ToLHS(entity->transform.rotation);
+void RenderCommandHandler::BeginRenderPass()
+{
+	Graphics::BeginFrame(_frameUniforms);
+}
 
-                Matrix4 model = Matrix4::Identity();
-                model = model.Scale(entity->transform.scale);
-                model = model.Rotate(q);
-                model = model.Translate(entity->transform.position);
-                
-                model.CopyToArray(objectCommand.modelMatrix);
+void RenderCommandHandler::DrawEntities()
+{
+	for (Entity* entity : _entities)
+	{
+		Renderer* renderer = entity->GetComponent<Renderer>();
+		MeshFilter* meshFilter = entity->GetComponent<MeshFilter>();
 
-                RenderQueue::AddObjectRenderCommand(objectCommand);
-            }
-        }
-    }
+		if (renderer && meshFilter)
+		{
+			//// Mesh
+			//// Convert Vector3/2 to floats: size x3 (Vector3), x2 (Vector2).
+			//MeshData meshData;
+			//meshData.indices = meshFilter->mesh.GetIndices().data();
+			//meshData.indicesSize = meshFilter->mesh.GetIndices().size();
+			//meshData.vertices = reinterpret_cast<const float*>(meshFilter->mesh.GetVertices().data());
+			//meshData.verticesSize = meshFilter->mesh.GetVertices().size() * 3;
+			//meshData.texCoords = reinterpret_cast<const float*>(meshFilter->mesh.GetTexCoords().data());
+			//meshData.texCoordsSize = meshFilter->mesh.GetTexCoords().size() * 2;
+			//meshData.normals = reinterpret_cast<const float*>(meshFilter->mesh.GetNormals().data());
+			//meshData.normalsSize = meshFilter->mesh.GetNormals().size() * 3;
+
+			//// Shader
+			//ShaderData shaderData;
+			//shaderData.ID = renderer->material.shader.ID;
+			//shaderData.vertexCode = renderer->material.shader.vertexCode;
+			//shaderData.fragmentCode = renderer->material.shader.fragmentCode;
+
+			ShaderUpload shaderUpload;
+			Graphics::CreateShader(shaderUpload);
+
+
+
+
+			//// Texture
+			//TextureData textureData;
+			//textureData.ID = renderer->material.texture.textureID;
+			//textureData.rawData = renderer->material.texture.rawData;
+			//textureData.width = renderer->material.texture.width;
+			//textureData.height = renderer->material.texture.height;
+			//textureData.nrChannels = renderer->material.texture.nrChannels;
+
+			//// Model Matrix
+			//Quaternion q = Quaternion::ToLHS(entity->transform.rotation);
+			//Matrix4 model = Matrix4::Identity();
+			//model = model.Scale(entity->transform.scale);
+			//model = model.Rotate(q);
+			//model = model.Translate(entity->transform.position);
+
+			//// Command
+			//ObjectData objectCommand;
+			//objectCommand.mesh = meshData;
+			//objectCommand.texture = textureData;
+			//model.CopyToArray(objectCommand.modelMatrix);
+			//Graphics::DrawObject(objectCommand);
+		}
+	}
+}
+
+void RenderCommandHandler::EndRenderPass()
+{
+	_entities.clear();
+}
+
+void RenderCommandHandler::PresentFrame()
+{
+	Graphics::EndFrame();
 }

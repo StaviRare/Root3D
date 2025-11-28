@@ -58,7 +58,7 @@ void Engine::Tick()
     // Calculate loop time
     Timer::CalculateLoopTime();
 
-    // FixedUpdate:
+    // Fixed update:
     while (Timer::accumulatedTime >= Timer::fixedTimeStep)
     {
         PhysicsHandler::SetData(); // sync-in
@@ -67,26 +67,27 @@ void Engine::Tick()
         Timer::UpdateFixedTime();
     }
 
-    // InputEvents:
+    // Input events:
     Input::Tick();
     Screen::PollEvents();
 
     // Update:
     SceneManager::Tick();
 
-    // LateUpdate:
+    // Late update:
     SceneManager::LateTick();
 
-    // ScenePreRender:
-    Graphics::ClearScreen();
-    RenderCommandHandler::Tick();
+    // Scene pre render:
+    //Graphics::ClearScreen();
+    RenderCommandHandler::PreRender();
 
-    // SceneRender:
-    Graphics::ExecuteRenderCommands();
-    Graphics::SwapFrameBuffers();
+    // Scene render:
+    //Graphics::ExecuteRenderCommands();
+    //Graphics::SwapFrameBuffers();
+    RenderCommandHandler::Render();
 
-    // ScenePostRender:
-    // ToDo!
+    // Scene post render:
+    RenderCommandHandler::PostRender();
 
     // GuiRender:
     // ToDo!
