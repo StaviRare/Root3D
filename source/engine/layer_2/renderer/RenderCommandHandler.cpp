@@ -162,17 +162,17 @@ void RenderCommandHandler::DrawEntities()
 
 		if (renderer && meshFilter)
 		{
-			//// Mesh
-			//// Convert Vector3/2 to floats: size x3 (Vector3), x2 (Vector2).
-			//MeshData meshData;
-			//meshData.indices = meshFilter->mesh.GetIndices().data();
-			//meshData.indicesSize = meshFilter->mesh.GetIndices().size();
-			//meshData.vertices = reinterpret_cast<const float*>(meshFilter->mesh.GetVertices().data());
-			//meshData.verticesSize = meshFilter->mesh.GetVertices().size() * 3;
-			//meshData.texCoords = reinterpret_cast<const float*>(meshFilter->mesh.GetTexCoords().data());
-			//meshData.texCoordsSize = meshFilter->mesh.GetTexCoords().size() * 2;
-			//meshData.normals = reinterpret_cast<const float*>(meshFilter->mesh.GetNormals().data());
-			//meshData.normalsSize = meshFilter->mesh.GetNormals().size() * 3;
+			// Mesh
+			// Convert Vector3/2 to floats: size x3 (Vector3), x2 (Vector2).
+			MeshUpload meshData;
+			meshData.indices = meshFilter->mesh.GetIndices().data();
+			meshData.indicesSize = meshFilter->mesh.GetIndices().size();
+			meshData.vertices = reinterpret_cast<const float*>(meshFilter->mesh.GetVertices().data());
+			meshData.verticesSize = meshFilter->mesh.GetVertices().size() * 3;
+			meshData.texCoords = reinterpret_cast<const float*>(meshFilter->mesh.GetTexCoords().data());
+			meshData.texCoordsSize = meshFilter->mesh.GetTexCoords().size() * 2;
+			meshData.normals = reinterpret_cast<const float*>(meshFilter->mesh.GetNormals().data());
+			meshData.normalsSize = meshFilter->mesh.GetNormals().size() * 3;
 
 			//// Shader
 			//ShaderData shaderData;
@@ -180,33 +180,32 @@ void RenderCommandHandler::DrawEntities()
 			//shaderData.vertexCode = renderer->material.shader.vertexCode;
 			//shaderData.fragmentCode = renderer->material.shader.fragmentCode;
 
-			ShaderUpload shaderUpload;
-			Graphics::CreateShader(shaderUpload);
+			// Shader 2
 
 
-
-
-			//// Texture
-			//TextureData textureData;
+			// Texture
+			TextureUpload textureData;
 			//textureData.ID = renderer->material.texture.textureID;
-			//textureData.rawData = renderer->material.texture.rawData;
-			//textureData.width = renderer->material.texture.width;
-			//textureData.height = renderer->material.texture.height;
-			//textureData.nrChannels = renderer->material.texture.nrChannels;
+			textureData.rawData = renderer->material.texture.rawData;
+			textureData.width = renderer->material.texture.width;
+			textureData.height = renderer->material.texture.height;
+			textureData.nrChannels = renderer->material.texture.nrChannels;
 
-			//// Model Matrix
-			//Quaternion q = Quaternion::ToLHS(entity->transform.rotation);
-			//Matrix4 model = Matrix4::Identity();
-			//model = model.Scale(entity->transform.scale);
-			//model = model.Rotate(q);
-			//model = model.Translate(entity->transform.position);
+			// Model Matrix
+			Quaternion q = Quaternion::ToLHS(entity->transform.rotation);
+			Matrix4 model = Matrix4::Identity();
+			model = model.Scale(entity->transform.scale);
+			model = model.Rotate(q);
+			model = model.Translate(entity->transform.position);
 
-			//// Command
-			//ObjectData objectCommand;
-			//objectCommand.mesh = meshData;
-			//objectCommand.texture = textureData;
-			//model.CopyToArray(objectCommand.modelMatrix);
-			//Graphics::DrawObject(objectCommand);
+			// Command
+			ObjectUniform objectCommand;
+			objectCommand.mesh = meshData;
+			objectCommand.texture = textureData;
+			objectCommand.shader = renderer->material.GetShaderID();
+			model.CopyToArray(objectCommand.modelMatrix);
+
+			Graphics::DrawObject(objectCommand);
 		}
 	}
 }

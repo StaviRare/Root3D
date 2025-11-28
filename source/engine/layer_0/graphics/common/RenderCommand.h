@@ -4,8 +4,8 @@
 
 struct ShaderUpload
 {
-    const char* vertexCode = nullptr;
-    const char* fragmentCode = nullptr;
+    string vertexCode;
+    string fragmentCode;
 };
 
 struct TextureUpload
@@ -35,7 +35,10 @@ struct GPUHandle
 {
     void* ptr = nullptr;
 
-    explicit operator bool() const { return ptr != nullptr; }
+    explicit operator bool() const 
+    { 
+        return ptr != nullptr; 
+    }
 
     static GPUHandle Null()
     {
@@ -43,10 +46,9 @@ struct GPUHandle
     }
 };
 
-
 struct LightUniform
 {
-    enum Type { Directional = 0, Point = 1 } type;
+    unsigned int type; // 	0 - Directional, 1 - Point
     float color[4];
     float intensity;
 
@@ -61,9 +63,9 @@ struct LightUniform
 
 struct ObjectUniform
 {
-    GPUHandle mesh;
-    GPUHandle shader;
-    GPUHandle texture;
+    MeshUpload mesh;
+    unsigned int shader;
+    TextureUpload texture;
     float modelMatrix[16];
 };
 

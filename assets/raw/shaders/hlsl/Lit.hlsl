@@ -1,9 +1,13 @@
 // Vertex Shader
-cbuffer MVPBuffer : register(b0) 
+cbuffer VPBuffer : register(b0) 
 {
-    matrix model;
     matrix view;
     matrix projection;
+};
+
+cbuffer MBuffer : register(b1) 
+{
+    matrix model;
 };
 
 struct VS_INPUT 

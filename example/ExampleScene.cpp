@@ -9,7 +9,7 @@
 #include "Texture.h"
 #include "Renderer.h"
 #include "SceneManager.h"
-#include "Resource.h"
+#include "AssetLoader.h"
 #include "Light.h"
 #include "Graphics.h"
 #include "RigidBody.h"
@@ -30,8 +30,8 @@ static Entity* lightEntity2;
 static Entity* camController;
 static Entity* textEntity;
 
-static Shader shaderLit;
-static Shader shaderUnlit;
+static Shader* shaderLit;
+static Shader* shaderUnlit;
 
 
 void unInit();
@@ -75,13 +75,13 @@ void initShaders()
 
     if (graphicsAPI == "OpenGL")
     {
-        shaderLit = Resource::LoadShader("shaders/glsl/Lit.glsl");
-        shaderUnlit = Resource::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
+        shaderLit = AssetLoader::LoadShader("shaders/glsl/Lit.glsl");
+        shaderUnlit = AssetLoader::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
     }
     else if (graphicsAPI == "DirectX11")
     {
-        shaderLit = Resource::LoadShader("shaders/hlsl/Lit.hlsl");
-        shaderUnlit = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
+        shaderLit = AssetLoader::LoadShader("shaders/hlsl/Lit.hlsl");
+        shaderUnlit = AssetLoader::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
     }
     else if(graphicsAPI == "OpenGLES1")
     {
@@ -117,8 +117,8 @@ void initLighting()
 
 void initStaticCube()
 {
-    Material material(shaderLit);
-    material.texture = Resource::LoadTexture("textures/dev.png");
+    Material material(*shaderLit);
+    material.texture = AssetLoader::LoadTexture("textures/dev.png");
 
     entity = new Entity();
     entity->transform.position = Vector3(0, -1, 0);
@@ -142,8 +142,8 @@ void initStaticCube()
 
 void initDynamicCube()
 {
-    Material material2(shaderUnlit);
-    material2.texture = Resource::LoadTexture("textures/dev.png");
+    Material material2(*shaderUnlit);
+    material2.texture = AssetLoader::LoadTexture("textures/dev.png");
 
     entity2 = new Entity();
     entity2->transform.position = Vector3(0.0, 1.0f, 0.0f);
@@ -159,11 +159,11 @@ void initDynamicCube()
 
 void initText()
 {
-    Font font = Resource::LoadFont("fonts/arial.ttf");
+    Font font = AssetLoader::LoadFont("fonts/arial.ttf");
     Mesh textMesh = TextMesh::Generate(font, U"Hello World");
 
-    Material material(shaderUnlit);
-    material.texture = Resource::LoadTexture("textures/dev_og.png");
+    Material material(*shaderUnlit);
+    material.texture = AssetLoader::LoadTexture("textures/dev_og.png");
 
     textEntity = new Entity();
     textEntity->transform.position = Vector3(0, 1, -1);

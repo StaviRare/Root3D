@@ -15,6 +15,7 @@ class Graphics
 {
     friend class Engine;
     friend class RenderCommandHandler;
+    friend class ShaderManager;
 
     public:
     static string TypeName();
@@ -33,7 +34,7 @@ class Graphics
     static GPUHandle CreateTexture(const TextureUpload& data);
     static void DestroyTexture(GPUHandle handle);
 
-    static GPUHandle CreateShader(const ShaderUpload& data);
+    static unsigned int CreateShader(const ShaderUpload data);
     static void DestroyShader(GPUHandle handle);
 
     protected:

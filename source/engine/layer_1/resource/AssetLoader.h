@@ -6,10 +6,12 @@
 #include "Font.h"
 #include "Types.h"
 
-class Resource
+// ToDo - Simplify loadTexture so the "texture/" prefix is not needed in the path.
+
+class AssetLoader
 {
     public:
-    static Shader LoadShader(const string& path);
+    static Shader* LoadShader(const string& path);
     static Texture LoadTexture(const string& path);
     static Font LoadFont(const std::string& path);
 

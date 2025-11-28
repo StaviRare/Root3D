@@ -14,7 +14,7 @@ class GraphicsAPI
     virtual GPUHandle CreateTexture(const TextureUpload& data) = 0;
     virtual void DestroyTexture(GPUHandle handle) = 0;
 
-    virtual GPUHandle CreateShader(const ShaderUpload& data) = 0;
+    virtual unsigned int CreateShader(const ShaderUpload data) = 0;
     virtual void DestroyShader(GPUHandle handle) = 0;
 
     protected:

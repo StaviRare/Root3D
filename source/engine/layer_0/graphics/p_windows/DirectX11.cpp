@@ -24,7 +24,8 @@ void DirectX11::Initialize()
 
     // Setup Model-View-Projection (MVP) buffer
     XMMATRIX initialMVP = DirectX::XMMatrixIdentity();
-    CreateBuffer(&initialMVP, sizeof(MVPBuffer), D3D11_BIND_CONSTANT_BUFFER, &mvpBuffer);
+    CreateBuffer(&initialMVP, sizeof(VPBuffer), D3D11_BIND_CONSTANT_BUFFER, &vpBuffer);
+    CreateBuffer(&initialMVP, sizeof(MBuffer), D3D11_BIND_CONSTANT_BUFFER, &mBuffer);
 
     // Setup Depth Stencil Texture
     D3D11_TEXTURE2D_DESC descDepth = {};
@@ -102,7 +103,8 @@ void DirectX11::UnInitialize()
 
     if (rasterizerState) rasterizerState->Release();
     if (depthStencilState) depthStencilState->Release();
-    if (mvpBuffer) mvpBuffer->Release();
+    if (vpBuffer) vpBuffer->Release();
+    if (mBuffer) mBuffer->Release();
     if (lightBuffer) lightBuffer->Release();
     if (normalBuffer) normalBuffer->Release();
     if (texCoordBuffer) texCoordBuffer->Release();
@@ -125,6 +127,16 @@ void DirectX11::BeginFrame(FrameUniform onceCmd)
 
     context->ClearRenderTargetView(backBufferRTV, bg);
     context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    // VPBuffer (b0)
+    XMMATRIX vpData[2] =
+    {
+        DirectX::XMMatrixTranspose(XMMATRIX(onceCmd.viewMatrix)),
+        DirectX::XMMatrixTranspose(XMMATRIX(onceCmd.projectionMatrix)),
+    };
+    context->UpdateSubresource(vpBuffer, 0, nullptr, &vpData, 0, 0);
+    context->VSSetConstantBuffers(0, 1, &vpBuffer);
+
 
     //auto lightCommands = RenderQueue::GetLightRenderCommands();
     //auto objectCommands = RenderQueue::GetObjectRenderCommands();
@@ -169,60 +181,65 @@ void DirectX11::DrawObject(ObjectUniform command)
     //    command.shader->ID = CreateShaderProgram(command.shader->vertexCode, command.shader->fragmentCode);
     //}
 
-    //ShaderProgram* shaderProgram = nullptr;
+    ShaderProgram* shaderProgram = nullptr;
 
-    //for (auto& sp : shaderMap)
-    //{
-    //    if (sp.ID == command.shader->ID)
-    //    {
-    //        shaderProgram = &sp;
-    //        break;
-    //    }
-    //}
+    for (auto& sp : shaderMap)
+    {
+        if (sp.ID == command.shader)
+        {
+            shaderProgram = &sp;
+            break;
+        }
+    }
+    //ENGINE_ERROR("try: " + std::to_string(command.shader));
+    if (shaderProgram != nullptr)
+    {
+        //ENGINE_ERROR("found");
 
-    //if (shaderProgram != nullptr)
-    //{
-    //    context->IASetInputLayout(shaderProgram->inputLayout);
-    //    context->VSSetShader(shaderProgram->vertexShader, nullptr, 0);
-    //    context->PSSetShader(shaderProgram->pixelShader, nullptr, 0);
+        context->IASetInputLayout(shaderProgram->inputLayout);
+        context->VSSetShader(shaderProgram->vertexShader, nullptr, 0);
+        context->PSSetShader(shaderProgram->pixelShader, nullptr, 0);
 
-    //    // MVPBuffer (b0)
-    //    mvpBufferData.model = DirectX::XMMatrixTranspose(XMMATRIX(command.modelMatrix));
-    //    mvpBufferData.view = DirectX::XMMatrixTranspose(XMMATRIX(viewMatrix));
-    //    mvpBufferData.projection = DirectX::XMMatrixTranspose(XMMATRIX(projectionMatrix));
-    //    context->UpdateSubresource(mvpBuffer, 0, nullptr, &mvpBufferData, 0, 0);
-    //    context->VSSetConstantBuffers(0, 1, &mvpBuffer);
+        // MBuffer (b1)
+        XMMATRIX mData[1] =
+        {
+            DirectX::XMMatrixTranspose(XMMATRIX(command.modelMatrix))
+        };
+        context->UpdateSubresource(mBuffer, 0, nullptr, mData, 0, 0);
+        context->VSSetConstantBuffers(1, 1, &mBuffer);
 
-    //    if (command.texture)
-    //    {
-    //        BindTexture(*( command.texture ));
-    //    }
+        //if (command.texture)
+        //{
+        //    BindTexture(*( command.texture ));
+        //}
 
-    //    CreateBuffer(const_cast<int*>( command.indices ), sizeof(int) * command.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
-    //    CreateBuffer(const_cast<float*>( command.vertices ), sizeof(float) * command.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
-    //    CreateBuffer(const_cast<float*>( command.texCoords ), sizeof(float) * command.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
-    //    CreateBuffer(const_cast<float*>( command.normals ), sizeof(float) * command.normalsSize, D3D11_BIND_VERTEX_BUFFER, &normalBuffer);
+        BindTexture(( command.texture ));
 
-    //    UINT strides[3] = {
-    //        sizeof(float) * 3, // Position
-    //        sizeof(float) * 3, // Normal
-    //        sizeof(float) * 2  // Texture Coordinate
-    //    };
+        CreateBuffer(const_cast<int*>( command.mesh.indices ), sizeof(int) * command.mesh.indicesSize, D3D11_BIND_INDEX_BUFFER, &indexBuffer);
+        CreateBuffer(const_cast<float*>( command.mesh.vertices ), sizeof(float) * command.mesh.verticesSize, D3D11_BIND_VERTEX_BUFFER, &vertexBuffer);
+        CreateBuffer(const_cast<float*>( command.mesh.texCoords ), sizeof(float) * command.mesh.texCoordsSize, D3D11_BIND_VERTEX_BUFFER, &texCoordBuffer);
+        CreateBuffer(const_cast<float*>( command.mesh.normals ), sizeof(float) * command.mesh.normalsSize, D3D11_BIND_VERTEX_BUFFER, &normalBuffer);
 
-    //    UINT offsets[3] = {0, 0, 0};
-    //    ID3D11Buffer* buffers[3] = {vertexBuffer, normalBuffer, texCoordBuffer};
-    //    context->IASetVertexBuffers(0, 3, buffers, strides, offsets);
+        UINT strides[3] = {
+            sizeof(float) * 3, // Position
+            sizeof(float) * 3, // Normal
+            sizeof(float) * 2  // Texture Coordinate
+        };
 
-    //    context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-    //    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    //    context->DrawIndexed(command.indicesSize, 0, 0);
+        UINT offsets[3] = {0, 0, 0};
+        ID3D11Buffer* buffers[3] = {vertexBuffer, normalBuffer, texCoordBuffer};
+        context->IASetVertexBuffers(0, 3, buffers, strides, offsets);
 
-    //    // Release buffers
-    //    if (indexBuffer) indexBuffer->Release();
-    //    if (vertexBuffer) vertexBuffer->Release();
-    //    if (normalBuffer) normalBuffer->Release();
-    //    if (texCoordBuffer) texCoordBuffer->Release();
-    //}
+        context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+        context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        context->DrawIndexed(command.mesh.indicesSize, 0, 0);
+
+        // Release buffers
+        if (indexBuffer) indexBuffer->Release();
+        if (vertexBuffer) vertexBuffer->Release();
+        if (normalBuffer) normalBuffer->Release();
+        if (texCoordBuffer) texCoordBuffer->Release();
+    }
 }
 
 void DirectX11::EndFrame()
@@ -242,12 +259,9 @@ void DirectX11::DestroyTexture(GPUHandle handle)
 
 }
 
-GPUHandle DirectX11::CreateShader(const ShaderUpload& data)
+unsigned int DirectX11::CreateShader(const ShaderUpload data)
 {
-    Log::Error("MMM");
-    GPUHandle returnValue{};
-    // impl
-    return returnValue;
+    return CreateShaderProgram(data.vertexCode, data.fragmentCode);
 }
 
 void DirectX11::DestroyShader(GPUHandle handle)
@@ -255,7 +269,7 @@ void DirectX11::DestroyShader(GPUHandle handle)
 
 }
 
-void DirectX11::BindTexture(Texture& texture)
+void DirectX11::BindTexture(TextureUpload& texture)
 {
     // Create texture description
     D3D11_TEXTURE2D_DESC desc;

@@ -5,12 +5,12 @@
 
 #include "Log.h"
 #include "Directory.h"
-#include "Resource.h"
+#include "AssetLoader.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Texture Resource::LoadTexture(const string& path)
+Texture AssetLoader::LoadTexture(const string& path)
 {
     Texture returnValue;
     auto data = LoadResource(path);
@@ -38,9 +38,9 @@ Texture Resource::LoadTexture(const string& path)
     return returnValue;
 }
 
-Shader Resource::LoadShader(const string& path)
+Shader* AssetLoader::LoadShader(const string& path)
 {
-    Shader returnValue;
+    Shader* returnValue = nullptr;
     auto data = LoadResource(path);
 
     if (data.empty() == false)
@@ -79,14 +79,13 @@ Shader Resource::LoadShader(const string& path)
             }
         }
 
-        returnValue.vertexCode = ss[0].str();
-        returnValue.fragmentCode = ss[1].str();
+        returnValue = new Shader(ss[0].str(),ss[1].str()) ;
     }
 
     return returnValue;
 }
 
-Font Resource::LoadFont(const string& path)
+Font AssetLoader::LoadFont(const string& path)
 {
     Font returnValue;
     auto data = LoadResource(path);
@@ -147,7 +146,7 @@ Font Resource::LoadFont(const string& path)
     return returnValue;
 }
 
-std::vector<char> Resource::LoadResource(const string& resourcePath)
+std::vector<char> AssetLoader::LoadResource(const string& resourcePath)
 {
     std::vector<char> data;
     const string resourceFile = Directory::GetResourcePath();

@@ -103,14 +103,14 @@ void Graphics::DestroyTexture(GPUHandle handle)
     }
 }
 
-GPUHandle Graphics::CreateShader(const ShaderUpload& data)
+unsigned int Graphics::CreateShader(const ShaderUpload data)
 {
     if (_currentAPI != nullptr)
     {
         return _currentAPI->CreateShader(data);
     }
 
-    return GPUHandle::Null();
+    return 0;
 }
 
 void Graphics::DestroyShader(GPUHandle handle)

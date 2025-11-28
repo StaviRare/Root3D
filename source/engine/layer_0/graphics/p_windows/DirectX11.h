@@ -19,11 +19,15 @@ struct ShaderProgram
 };
 
 // Model-View-Projection
-struct MVPBuffer
+struct VPBuffer
 {
-    XMMATRIX model;
     XMMATRIX view;
     XMMATRIX projection;
+};
+
+struct MBuffer
+{
+    XMMATRIX model;
 };
 
 // Uses padding to meet DirectX 16-byte alignment requirements.
@@ -64,7 +68,7 @@ class DirectX11 : public GraphicsAPI
     GPUHandle CreateTexture(const TextureUpload& data);
     void DestroyTexture(GPUHandle handle);
 
-    GPUHandle CreateShader(const ShaderUpload& data);
+    unsigned int CreateShader(const ShaderUpload data);
     void DestroyShader(GPUHandle handle);
 
     private:
@@ -72,7 +76,7 @@ class DirectX11 : public GraphicsAPI
     void CreateRenderTargetView();
     void SetupViewport(UINT width, UINT height);
     void CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer);
-    void BindTexture(Texture& texture);
+    void BindTexture(TextureUpload& texture);
     unsigned int CreateShaderProgram(const string& vertexSource, const string& fragmentSource);
     void CompileShader(const string& source, const char* entryPoint, const char* shaderModel, ID3DBlob** blobOut);
 
@@ -88,13 +92,13 @@ class DirectX11 : public GraphicsAPI
     ID3D11Buffer* indexBuffer = nullptr;
     ID3D11Buffer* texCoordBuffer = nullptr;
     ID3D11Buffer* normalBuffer = nullptr;
-    ID3D11Buffer* mvpBuffer = nullptr;
+    ID3D11Buffer* vpBuffer = nullptr;
+    ID3D11Buffer* mBuffer = nullptr;
     ID3D11Buffer* lightBuffer = nullptr;
 
     bool initialized = false;
     unsigned int nextShaderID = 0;
     std::list<ShaderProgram> shaderMap;
-    MVPBuffer mvpBufferData;
     LightBuffer lightBufferData;
 
     const int MAX_LIGHTS = 20;
