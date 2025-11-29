@@ -65,7 +65,7 @@ struct Light
     float3 padding7;
 };
 
-cbuffer LightBuffer : register(b1)
+cbuffer LightBuffer : register(b2)
 {
     Light lights[MAX_LIGHTS];
     int numLights;

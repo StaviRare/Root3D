@@ -128,41 +128,39 @@ void DirectX11::BeginFrame(FrameUniform onceCmd)
     context->UpdateSubresource(vpBuffer, 0, nullptr, &vpData, 0, 0);
     context->VSSetConstantBuffers(0, 1, &vpBuffer);
 
+    // LightBuffer (b2)
+    lightBufferData.numLights = 20;
 
-    //auto lightCommands = RenderQueue::GetLightRenderCommands();
-    //auto objectCommands = RenderQueue::GetObjectRenderCommands();
+    for (int i = 0; i < 20; i++)
+    {
+        LightUniform lightCommands = onceCmd.lights[i];
 
-    //// LightBuffer (b1)
-    //lightBufferData.numLights = lightCommands.size();
+        lightBufferData.lights[i].type = lightCommands.type;
+        lightBufferData.lights[i].color = XMFLOAT3(
+            lightCommands.color[0],
+            lightCommands.color[1],
+            lightCommands.color[2]);
 
-    //for (size_t i = 0; i < Calc::Min(lightCommands.size(), static_cast<size_t>( MAX_LIGHTS )); ++i)
-    //{
-    //    lightBufferData.lights[i].type = lightCommands[i].type;
-    //    lightBufferData.lights[i].color = XMFLOAT3(
-    //        lightCommands[i].color[0],
-    //        lightCommands[i].color[1],
-    //        lightCommands[i].color[2]);
+        lightBufferData.lights[i].intensity = lightCommands.intensity;
+        lightBufferData.lights[i].direction = XMFLOAT3(
+            lightCommands.direction[0],
+            lightCommands.direction[1],
+            lightCommands.direction[2]);
 
-    //    lightBufferData.lights[i].intensity = lightCommands[i].intensity;
-    //    lightBufferData.lights[i].direction = XMFLOAT3(
-    //        lightCommands[i].direction[0],
-    //        lightCommands[i].direction[1],
-    //        lightCommands[i].direction[2]);
+        lightBufferData.lights[i].range = lightCommands.range;
+        lightBufferData.lights[i].position = XMFLOAT3(
+            lightCommands.position[0],
+            lightCommands.position[1],
+            lightCommands.position[2]);
 
-    //    lightBufferData.lights[i].range = lightCommands[i].range;
-    //    lightBufferData.lights[i].position = XMFLOAT3(
-    //        lightCommands[i].position[0],
-    //        lightCommands[i].position[1],
-    //        lightCommands[i].position[2]);
+        lightBufferData.lights[i].attenuation = XMFLOAT3(
+            lightCommands.attenuation[0],
+            lightCommands.attenuation[1],
+            lightCommands.attenuation[2]);
+    }
 
-    //    lightBufferData.lights[i].attenuation = XMFLOAT3(
-    //        lightCommands[i].attenuation[0],
-    //        lightCommands[i].attenuation[1],
-    //        lightCommands[i].attenuation[2]);
-
-    //    context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
-    //    context->PSSetConstantBuffers(1, 1, &lightBuffer);
-    //}
+    context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
+    context->PSSetConstantBuffers(2, 1, &lightBuffer);
 }
 
 void DirectX11::DrawObject(ObjectUniform command)

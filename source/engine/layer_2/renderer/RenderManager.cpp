@@ -112,40 +112,48 @@ void RenderManager::UpdateFrameUniforms()
 	_frameUniforms.backgroundColor[2] = _camera->backgroundColor.b;
 	_frameUniforms.backgroundColor[3] = _camera->backgroundColor.a;
 
-	//for (Entity* entity : _entities)
-	//{
-	//	Light* light = entity->GetComponent<Light>();
-	//	Renderer* renderer = entity->GetComponent<Renderer>();
-	//	MeshFilter* meshFilter = entity->GetComponent<MeshFilter>();
+	// Ligths
+	unsigned int index = 0;
+	const int maxLigths = 20;
 
-	//	if (light)
-	//	{
-	//		LightRenderCommand lightCommand;
+	Scene* currentScene = SceneManager::GetCurrentScene();
+	auto _entities2 = currentScene->GetEntities();
+	
 
-	//		lightCommand.range = light->range;
-	//		lightCommand.intensity = light->intensity;
+	for (Entity* entity : _entities2)
+	{
+		Light* light = entity->GetComponent<Light>();
 
-	//		lightCommand.color[0] = light->color.r;
-	//		lightCommand.color[1] = light->color.g;
-	//		lightCommand.color[2] = light->color.b;
+		if (light && index < maxLigths)
+		{
+			ENGINE_ERROR("MM");
+			LightUniform lightUniform;
 
-	//		lightCommand.attenuation[0] = 1.0f;     // ToDo! - Put them somewhere else.
-	//		lightCommand.attenuation[1] = 0.09f;    // ToDo! - Put them somewhere else.
-	//		lightCommand.attenuation[2] = 0.032f;   // ToDo! - Put them somewhere else.
+			lightUniform.range = light->range;
+			lightUniform.intensity = light->intensity;
 
-	//		lightCommand.direction[0] = entity->transform.eulerAngles.x;
-	//		lightCommand.direction[1] = entity->transform.eulerAngles.y;
-	//		lightCommand.direction[2] = entity->transform.eulerAngles.z;
+			lightUniform.color[0] = light->color.r;
+			lightUniform.color[1] = light->color.g;
+			lightUniform.color[2] = light->color.b;
 
-	//		lightCommand.position[0] = entity->transform.position.x;
-	//		lightCommand.position[1] = entity->transform.position.y;
-	//		lightCommand.position[2] = entity->transform.position.z;
+			lightUniform.attenuation[0] = 1.0f;     // ToDo! - Put them somewhere else.
+			lightUniform.attenuation[1] = 0.09f;    // ToDo! - Put them somewhere else.
+			lightUniform.attenuation[2] = 0.032f;   // ToDo! - Put them somewhere else.
 
-	//		lightCommand.type = static_cast<int>( light->type );
+			lightUniform.direction[0] = entity->transform.eulerAngles.x;
+			lightUniform.direction[1] = entity->transform.eulerAngles.y;
+			lightUniform.direction[2] = entity->transform.eulerAngles.z;
 
-	//		RenderQueue::AddLightRenderCommand(lightCommand);
-	//	}
-	//}
+			lightUniform.position[0] = entity->transform.position.x;
+			lightUniform.position[1] = entity->transform.position.y;
+			lightUniform.position[2] = entity->transform.position.z;
+
+			lightUniform.type = static_cast<int>( light->type );
+
+			_frameUniforms.lights[index] = lightUniform;
+			index += 1;
+		}
+	}
 }
 
 void RenderManager::BeginRenderPass()
