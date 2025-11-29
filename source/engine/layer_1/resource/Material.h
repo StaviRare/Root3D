@@ -6,20 +6,19 @@
 class Material
 {
     public:
-    Material(){} // REMOVE
+    Material() = default;
 
-    Material(const Shader& shader)
-        : shader(shader)
-    {}
+    Material(Shader& shader)
+        : m_shader(&shader) {}
 
-    uniqueID GetShaderID()
+    uniqueID GetShaderID() const
     {
-        return shader.resourceID;
+        return m_shader->getID();
     }
 
     public:
-    Texture texture;
+    Texture* texture;
 
     private:
-    Shader shader;
+    Shader* m_shader = nullptr;
 };

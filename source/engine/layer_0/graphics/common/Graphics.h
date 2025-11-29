@@ -16,6 +16,7 @@ class Graphics
     friend class Engine;
     friend class RenderCommandHandler;
     friend class ShaderManager;
+    friend class TextureManager;
 
     public:
     static string TypeName();
@@ -31,11 +32,10 @@ class Graphics
     static void DrawObject(ObjectUniform cmd);
     static void EndFrame();
 
-    static GPUHandle CreateTexture(const TextureUpload& data);
-    static void DestroyTexture(GPUHandle handle);
-
-    static unsigned int CreateShader(const ShaderUpload data);
-    static void DestroyShader(GPUHandle handle);
+    static uniqueID CreateTexture(const TextureUpload data);
+    static void DestroyTexture(uniqueID handle);
+    static uniqueID CreateShader(const ShaderUpload data);
+    static void DestroyShader(uniqueID handle);
 
     protected:
     static bool initialized;

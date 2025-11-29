@@ -1,65 +1,102 @@
 #include "Log.h"
 #include "ShaderManager.h"
 #include "Graphics.h"
-#include "ObjectManager.h"
 
-// ToDo - if shader compile fail, should provide fallback
+uniqueID ShaderManager::m_nextID;
+std::unordered_map<uniqueID, Resource> ShaderManager::m_shaders;
 
-std::unordered_map<uniqueID, ShaderResource> ShaderManager::shaders;
-
-
-uniqueID ShaderManager::CreateShader(const string vs, const string fs)
+uniqueID ShaderManager::CreateOrGet(const string vs, const string fs)
 {
-    //std::hash<std::string> hasher;
-    //hash hashVS = hasher(vs);
-    //hash hashFS = hasher(fs);
-    //hash combinedHash = hashVS ^ (hashFS << 1);
-    //ENGINE_ERROR("HASH: " + std::to_string(combinedHash));
-
-    bool newShader = true;
+    bool isNewShader = true;
     uniqueID returnValue = 0;
 
-    for(const auto& it : shaders)
+    // Get hash from shader:
+    std::hash<std::string> hasher;
+    hash hashVS = hasher(vs);
+    hash hashFS = hasher(fs);
+    hash combinedHash = hashVS ^ (hashFS << 1);
+
+    for (const auto& it : m_shaders)
     {
-        const ShaderResource& r = it.second;
-        
-        if(r.vertexCode == vs && r.fragmentCode == fs)
+        const Resource& r = it.second;
+
+        if (r.hash == combinedHash)
         {
-            shaders[r.resourceID].useCount++;
-            returnValue = r.resourceID;
-            newShader = false;
+            returnValue = it.first;
+            m_shaders[returnValue].useCount++;
+            isNewShader = false;
         }
     }
 
-    if (newShader)
+    if (isNewShader)
     {
-        ENGINE_ERROR("new");
-
-
         ShaderUpload upload;
         upload.vertexCode = vs;
         upload.fragmentCode = fs;
-        unsigned int handleID = Graphics::CreateShader(upload);
+        unsigned int shaderHandle = Graphics::CreateShader(upload);
 
-        if (handleID)
+        if (shaderHandle)
         {
-            uniqueID id = ObjectManager::GenerateId();
+            m_nextID++;
 
-            ShaderResource res{};
-            res.resourceID = handleID;
-            res.useCount = 1;
-            res.vertexCode = vs;
-            res.fragmentCode = fs;
-            res.handleID = handleID;
+            Resource resource;
+            resource.handle = shaderHandle;
+            resource.useCount = 1;
+            resource.hash = combinedHash;
+            m_shaders[m_nextID] = resource;
 
-            shaders[id] = res;
-
-            returnValue = handleID;
+            returnValue = m_nextID;
         }
         else
         {
             ENGINE_ERROR("Shader compile fail.");
         }
+    }
+
+    // Shader is valid
+    if (returnValue > 0)
+    {
+        if (isNewShader)
+        {
+            ENGINE_INFO("Resource [Shader] Created | ID: " + std::to_string(returnValue));
+        }
+    }
+
+    return returnValue;
+}
+
+uniqueID ShaderManager::TryDestroy(uniqueID id)
+{
+    uniqueID returnValue = 0;
+
+    auto it = m_shaders.find(id);
+    if(it != m_shaders.end())
+    {
+        if(it->second.useCount > 1)
+        {
+            it->second.useCount--;
+            returnValue = id;
+        }
+        else
+        {
+            Graphics::DestroyShader(it->second.handle);
+            m_shaders.erase(it);
+            ENGINE_INFO("Resource [Shader] Destroyed  | ID: " + std::to_string(id));
+        }
+    }
+
+    return returnValue;
+}
+
+unsigned int ShaderManager::GetHandle(uniqueID id)
+{
+    unsigned int returnValue = 0;
+
+    auto it = m_shaders.find(id);
+
+    if(it != m_shaders.end())
+    {
+        returnValue = it->second.handle;
     }
 
     return returnValue;

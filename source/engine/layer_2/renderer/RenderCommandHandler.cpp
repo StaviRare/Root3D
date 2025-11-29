@@ -174,23 +174,6 @@ void RenderCommandHandler::DrawEntities()
 			meshData.normals = reinterpret_cast<const float*>(meshFilter->mesh.GetNormals().data());
 			meshData.normalsSize = meshFilter->mesh.GetNormals().size() * 3;
 
-			//// Shader
-			//ShaderData shaderData;
-			//shaderData.ID = renderer->material.shader.ID;
-			//shaderData.vertexCode = renderer->material.shader.vertexCode;
-			//shaderData.fragmentCode = renderer->material.shader.fragmentCode;
-
-			// Shader 2
-
-
-			// Texture
-			TextureUpload textureData;
-			//textureData.ID = renderer->material.texture.textureID;
-			textureData.rawData = renderer->material.texture.rawData;
-			textureData.width = renderer->material.texture.width;
-			textureData.height = renderer->material.texture.height;
-			textureData.nrChannels = renderer->material.texture.nrChannels;
-
 			// Model Matrix
 			Quaternion q = Quaternion::ToLHS(entity->transform.rotation);
 			Matrix4 model = Matrix4::Identity();
@@ -201,8 +184,19 @@ void RenderCommandHandler::DrawEntities()
 			// Command
 			ObjectUniform objectCommand;
 			objectCommand.mesh = meshData;
-			objectCommand.texture = textureData;
-			objectCommand.shader = renderer->material.GetShaderID();
+
+
+			uniqueID textureId = renderer->material.texture->getID();
+			unsigned int textureHandle = TextureManager::GetHandle(textureId);
+			objectCommand.textureHandle = textureHandle;
+
+
+			uniqueID shaderId = renderer->material.GetShaderID();
+			unsigned int shaderHandle = ShaderManager::GetHandle(shaderId);
+			objectCommand.shaderHandle = shaderHandle;
+
+
+
 			model.CopyToArray(objectCommand.modelMatrix);
 
 			Graphics::DrawObject(objectCommand);

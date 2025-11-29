@@ -85,38 +85,42 @@ void Graphics::UnInitialize()
     }
 }
 
-GPUHandle Graphics::CreateTexture(const TextureUpload& data)
+uniqueID Graphics::CreateShader(const ShaderUpload data)
 {
+    uniqueID returnValue = 0;
+
     if (_currentAPI != nullptr)
     {
-        return _currentAPI->CreateTexture(data);
+        returnValue = _currentAPI->CreateShader(data);
     }
 
-    return GPUHandle::Null();
+    return returnValue;
 }
 
-void Graphics::DestroyTexture(GPUHandle handle)
-{
-    if (_currentAPI != nullptr)
-    {
-        _currentAPI->DestroyTexture(handle);
-    }
-}
-
-unsigned int Graphics::CreateShader(const ShaderUpload data)
-{
-    if (_currentAPI != nullptr)
-    {
-        return _currentAPI->CreateShader(data);
-    }
-
-    return 0;
-}
-
-void Graphics::DestroyShader(GPUHandle handle)
+void Graphics::DestroyShader(uniqueID handle)
 {
     if (_currentAPI != nullptr)
     {
         _currentAPI->DestroyShader(handle);
+    }
+}
+
+uniqueID Graphics::CreateTexture(const TextureUpload data)
+{
+    uniqueID returnValue = 0;
+
+    if (_currentAPI != nullptr)
+    {
+        returnValue = _currentAPI->CreateTexture(data);
+    }
+
+    return returnValue;
+}
+
+void Graphics::DestroyTexture(uniqueID handle)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->DestroyTexture(handle);
     }
 }

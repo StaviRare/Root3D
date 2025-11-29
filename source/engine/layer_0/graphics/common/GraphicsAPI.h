@@ -11,11 +11,10 @@ class GraphicsAPI
     virtual void DrawObject(ObjectUniform cmd) = 0;
     virtual void EndFrame() = 0;
 
-    virtual GPUHandle CreateTexture(const TextureUpload& data) = 0;
-    virtual void DestroyTexture(GPUHandle handle) = 0;
-
-    virtual unsigned int CreateShader(const ShaderUpload data) = 0;
-    virtual void DestroyShader(GPUHandle handle) = 0;
+    virtual void DestroyShader(uniqueID handle) = 0;
+    virtual uniqueID CreateShader(const ShaderUpload data) = 0;
+    virtual uniqueID CreateTexture(const TextureUpload data) = 0;
+    virtual void DestroyTexture(uniqueID handle) = 0;
 
     protected:
     bool initialized = false;

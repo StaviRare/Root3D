@@ -10,32 +10,37 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Texture AssetLoader::LoadTexture(const string& path)
+#include "AssetLoader.h"
+#include "Texture.h"
+
+Texture* AssetLoader::LoadTexture(const std::string& path)
 {
-    Texture returnValue;
     auto data = LoadResource(path);
-
-    if (data.empty() == false)
+    if (data.empty())
     {
-        int width, height, nrChannels;
-        returnValue.rawData = stbi_load_from_memory(
-            reinterpret_cast<const stbi_uc*>(data.data()), 
-            data.size(), 
-            &width, 
-            &height, 
-            &nrChannels, 
-            0
-        );
-
-        if (returnValue.rawData)
-        {
-            returnValue.width = static_cast<unsigned int>(width);
-            returnValue.height = static_cast<unsigned int>(height);
-            returnValue.nrChannels = static_cast<unsigned int>(nrChannels);
-        }
+        return nullptr;
     }
 
-    return returnValue;
+    int width = 0, height = 0, nrChannels = 0;
+    unsigned char* rawData = stbi_load_from_memory(
+        reinterpret_cast<const stbi_uc*>(data.data()),
+        static_cast<int>(data.size()),
+        &width,
+        &height,
+        &nrChannels,
+        4 // force RGBA
+    );
+
+    if (!rawData)
+    {
+        return nullptr;
+    }
+
+    Texture* texture = new Texture(rawData, width, height, 4);
+
+    stbi_image_free(rawData);
+
+    return texture;
 }
 
 Shader* AssetLoader::LoadShader(const string& path)
@@ -187,16 +192,16 @@ std::vector<char> AssetLoader::LoadResource(const string& resourcePath)
     {
         if (isResourceFound == false)
         {
-            ENGINE_ERROR("Resource not found: " + resourcePath);
+            ENGINE_ERROR("Asset not found: " + resourcePath);
         }
         else
         {
-            ENGINE_INFO("Resource loaded: " + resourcePath);
+            ENGINE_INFO("Asset loaded: " + resourcePath);
         }
     }
     else
     {
-        ENGINE_ERROR("Resource file not found!");
+        ENGINE_ERROR("Asset file not found!");
     }
 
     return data;

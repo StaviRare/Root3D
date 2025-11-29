@@ -31,21 +31,6 @@ struct MeshUpload
     unsigned int indicesSize = 0;
 };
 
-struct GPUHandle
-{
-    void* ptr = nullptr;
-
-    explicit operator bool() const 
-    { 
-        return ptr != nullptr; 
-    }
-
-    static GPUHandle Null()
-    {
-        return {};
-    }
-};
-
 struct LightUniform
 {
     unsigned int type; // 	0 - Directional, 1 - Point
@@ -64,8 +49,8 @@ struct LightUniform
 struct ObjectUniform
 {
     MeshUpload mesh;
-    unsigned int shader;
-    TextureUpload texture;
+    unsigned int shaderHandle;
+    unsigned int textureHandle;
     float modelMatrix[16];
 };
 

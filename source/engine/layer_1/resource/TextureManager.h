@@ -5,14 +5,14 @@
 #include "Types.h"
 #include "Resource.h"
 
-class ShaderManager
+class TextureManager
 {
     public:
     static uniqueID TryDestroy(uniqueID id);
     static unsigned int GetHandle(uniqueID id);
-    static uniqueID CreateOrGet(const string vs, const string fs);
+    static uniqueID CreateOrGet(unsigned char* data, unsigned int width, unsigned int height, unsigned int channels);
 
     private:
     static uniqueID m_nextID;
-    static std::unordered_map<uniqueID, Resource> m_shaders;
+    static std::unordered_map<uniqueID, Resource> m_textures;
 };

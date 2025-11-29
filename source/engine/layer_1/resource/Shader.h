@@ -16,10 +16,19 @@ class Shader : public Object
     Shader(const string& vertexSource, const string& fragmentSource)
     {
         m_name = "Shader";
-        resourceID = ShaderManager::CreateShader(vertexSource, fragmentSource);
+        m_resourceID = ShaderManager::CreateOrGet(vertexSource, fragmentSource);
     }
 
-    //private:
-    uniqueID resourceID = 0;
-};
+    ~Shader()
+    {
+        ShaderManager::TryDestroy(m_resourceID);
+    }
 
+    uniqueID getID() const
+    {
+        return m_resourceID;
+    }
+
+    private:
+    uniqueID m_resourceID = 0;
+};

@@ -4,12 +4,12 @@
 
 struct Resource
 {
-    // Unique ID for lookup/deduplication
+    // Hash of the resource content for deduplication
     hash hash;   
     
-    // Backend-specific object (graphics, physics, etc.)
-    void* handle;     
+    // Backend object identifier
+    uniqueID handle;     
 
-    // Number of references
+    // Number of active references
     unsigned int useCount = 0;  
 };

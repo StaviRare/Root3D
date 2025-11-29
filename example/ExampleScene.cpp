@@ -29,7 +29,6 @@ static Entity* lightEntity;
 static Entity* lightEntity2;
 static Entity* camController;
 static Entity* textEntity;
-
 static Shader* shaderLit;
 static Shader* shaderUnlit;
 
@@ -183,6 +182,8 @@ void unInit()
     delete lightEntity2;
     delete camController;
     delete textEntity;
+    delete shaderLit;
+    delete shaderUnlit;
 
     entity = nullptr;
     entity2 = nullptr;
@@ -190,4 +191,6 @@ void unInit()
     lightEntity2 = nullptr;
     camController = nullptr;
     textEntity = nullptr;
+    shaderLit = nullptr;
+    shaderUnlit = nullptr;
 }

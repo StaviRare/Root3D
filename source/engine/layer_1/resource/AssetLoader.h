@@ -12,7 +12,7 @@ class AssetLoader
 {
     public:
     static Shader* LoadShader(const string& path);
-    static Texture LoadTexture(const string& path);
+    static Texture* LoadTexture(const string& path);
     static Font LoadFont(const std::string& path);
 
     private:

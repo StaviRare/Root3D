@@ -10,7 +10,14 @@
 using DirectX::XMFLOAT3;
 using DirectX::XMMATRIX;
 
-struct ShaderProgram
+struct GPUTexture
+{
+    unsigned int ID = 0;
+    ID3D11Texture2D* d3dTexture = nullptr;
+    ID3D11ShaderResourceView* textureView = nullptr;
+};
+
+struct GPUShader
 {
     unsigned int ID = 0;
     ID3D11InputLayout* inputLayout = nullptr;
@@ -18,7 +25,6 @@ struct ShaderProgram
     ID3D11VertexShader* vertexShader = nullptr;
 };
 
-// Model-View-Projection
 struct VPBuffer
 {
     XMMATRIX view;
@@ -65,19 +71,18 @@ class DirectX11 : public GraphicsAPI
     void DrawObject(ObjectUniform cmd);
     void EndFrame();
 
-    GPUHandle CreateTexture(const TextureUpload& data);
-    void DestroyTexture(GPUHandle handle);
+    uniqueID CreateShader(const ShaderUpload data);
+    void DestroyShader(uniqueID handle);
 
-    unsigned int CreateShader(const ShaderUpload data);
-    void DestroyShader(GPUHandle handle);
+    uniqueID CreateTexture(const TextureUpload data);
+    void DestroyTexture(uniqueID handle);
+
 
     private:
     void CreateDeviceAndSwapChain(HWND hwnd);
     void CreateRenderTargetView();
     void SetupViewport(UINT width, UINT height);
     void CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer);
-    void BindTexture(TextureUpload& texture);
-    unsigned int CreateShaderProgram(const string& vertexSource, const string& fragmentSource);
     void CompileShader(const string& source, const char* entryPoint, const char* shaderModel, ID3DBlob** blobOut);
 
     ID3D11Device* device = nullptr;
@@ -98,7 +103,10 @@ class DirectX11 : public GraphicsAPI
 
     bool initialized = false;
     unsigned int nextShaderID = 0;
-    std::list<ShaderProgram> shaderMap;
+    unsigned int nextTextureID = 0;
+    std::list<GPUShader> shaderMap;
+    std::list<GPUTexture> textureMap;
+
     LightBuffer lightBufferData;
 
     const int MAX_LIGHTS = 20;
