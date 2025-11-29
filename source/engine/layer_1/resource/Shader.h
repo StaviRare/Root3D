@@ -24,7 +24,7 @@ class Shader : public Object
         ShaderManager::TryDestroy(m_resourceID);
     }
 
-    uniqueID getID() const
+    uniqueID getResourceID() const
     {
         return m_resourceID;
     }

@@ -30,7 +30,7 @@ void Graphics::Initialize()
     switch (type)
     {
         case ( GraphicsAPI::OpenGL ):
-        //_currentAPI = new OpenGL();
+        _currentAPI = new OpenGL();
         break;
 
         case ( GraphicsAPI::DirectX11 ):

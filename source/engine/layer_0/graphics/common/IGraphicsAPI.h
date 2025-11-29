@@ -10,7 +10,6 @@ class IGraphicsAPI
     virtual void BeginFrame(FrameUniform cmd) = 0;
     virtual void DrawObject(ObjectUniform cmd) = 0;
     virtual void EndFrame() = 0;
-
     virtual void DestroyShader(uniqueID handle) = 0;
     virtual void DestroyTexture(uniqueID handle) = 0;
     virtual uniqueID CreateShader(const ShaderUpload data) = 0;
