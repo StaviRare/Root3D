@@ -1,4 +1,4 @@
-#include "RenderCommandHandler.h"
+#include "RenderManager.h"
 #include "MeshFilter.h"
 #include "Mesh.h"
 #include "RenderCommand.h"
@@ -8,21 +8,21 @@
 #include "Light.h"
 #include "SceneManager.h"
 
-Camera* RenderCommandHandler::_camera = nullptr;
-std::set<Entity*> RenderCommandHandler::_entities;
-FrameUniform RenderCommandHandler::_frameUniforms = {};
+Camera* RenderManager::_camera = nullptr;
+std::set<Entity*> RenderManager::_entities;
+FrameUniform RenderManager::_frameUniforms = {};
 
-void RenderCommandHandler::Initialize()
+void RenderManager::Initialize()
 {
 	// Empty at the moment.
 }
 
-void RenderCommandHandler::UnInitialize()
+void RenderManager::UnInitialize()
 {
 	// Empty at the moment.
 }
 
-void RenderCommandHandler::PreRender()
+void RenderManager::PreRender()
 {
 	_camera = Camera::GetInstance();
 
@@ -34,7 +34,7 @@ void RenderCommandHandler::PreRender()
 	}
 }
 
-void RenderCommandHandler::Render()
+void RenderManager::Render()
 {
 	if (_camera)
 	{
@@ -43,7 +43,7 @@ void RenderCommandHandler::Render()
 	}
 }
 
-void RenderCommandHandler::PostRender()
+void RenderManager::PostRender()
 {
 	if (_camera)
 	{
@@ -52,7 +52,7 @@ void RenderCommandHandler::PostRender()
 	}
 }
 
-void RenderCommandHandler::CollectEntities()
+void RenderManager::CollectEntities()
 {
 	Scene* currentScene = SceneManager::GetCurrentScene();
 
@@ -62,7 +62,7 @@ void RenderCommandHandler::CollectEntities()
 	}
 }
 
-void RenderCommandHandler::CullEntities()
+void RenderManager::CullEntities()
 {
 	Vector3 cameraPos = _camera->GetTransform().position;
 	Vector3 cameraForward = _camera->GetTransform().getForward();
@@ -97,7 +97,7 @@ void RenderCommandHandler::CullEntities()
 	}
 }
 
-void RenderCommandHandler::UpdateFrameUniforms()
+void RenderManager::UpdateFrameUniforms()
 {
 	Vector3 cameraUp(0.0f, 1.0f, 0.0f);
 	Vector3 cameraTarget = _camera->GetTransform().position + _camera->GetTransform().getForward();
@@ -148,12 +148,12 @@ void RenderCommandHandler::UpdateFrameUniforms()
 	//}
 }
 
-void RenderCommandHandler::BeginRenderPass()
+void RenderManager::BeginRenderPass()
 {
 	Graphics::BeginFrame(_frameUniforms);
 }
 
-void RenderCommandHandler::DrawEntities()
+void RenderManager::DrawEntities()
 {
 	for (Entity* entity : _entities)
 	{
@@ -174,29 +174,26 @@ void RenderCommandHandler::DrawEntities()
 			meshData.normals = reinterpret_cast<const float*>(meshFilter->mesh.GetNormals().data());
 			meshData.normalsSize = meshFilter->mesh.GetNormals().size() * 3;
 
+			// Command
+			ObjectUniform objectCommand;
+			objectCommand.mesh = meshData;
+
+			// Texture
+			uniqueID textureId = renderer->material.texture->getID();
+			unsigned int textureHandle = TextureManager::GetHandle(textureId);
+			objectCommand.textureHandle = textureHandle;
+
+			// Shader
+			uniqueID shaderId = renderer->material.GetShaderID();
+			unsigned int shaderHandle = ShaderManager::GetHandle(shaderId);
+			objectCommand.shaderHandle = shaderHandle;
+
 			// Model Matrix
 			Quaternion q = Quaternion::ToLHS(entity->transform.rotation);
 			Matrix4 model = Matrix4::Identity();
 			model = model.Scale(entity->transform.scale);
 			model = model.Rotate(q);
 			model = model.Translate(entity->transform.position);
-
-			// Command
-			ObjectUniform objectCommand;
-			objectCommand.mesh = meshData;
-
-
-			uniqueID textureId = renderer->material.texture->getID();
-			unsigned int textureHandle = TextureManager::GetHandle(textureId);
-			objectCommand.textureHandle = textureHandle;
-
-
-			uniqueID shaderId = renderer->material.GetShaderID();
-			unsigned int shaderHandle = ShaderManager::GetHandle(shaderId);
-			objectCommand.shaderHandle = shaderHandle;
-
-
-
 			model.CopyToArray(objectCommand.modelMatrix);
 
 			Graphics::DrawObject(objectCommand);
@@ -204,12 +201,12 @@ void RenderCommandHandler::DrawEntities()
 	}
 }
 
-void RenderCommandHandler::EndRenderPass()
+void RenderManager::EndRenderPass()
 {
 	_entities.clear();
 }
 
-void RenderCommandHandler::PresentFrame()
+void RenderManager::PresentFrame()
 {
 	Graphics::EndFrame();
 }

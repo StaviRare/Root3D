@@ -7,7 +7,7 @@
 #include "Camera.h"
 #include "Graphics.h"
 
-class RenderCommandHandler
+class RenderManager
 {
     friend class Engine;
 

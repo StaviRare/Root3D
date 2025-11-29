@@ -4,7 +4,7 @@
 #include "SceneManager.h"
 #include "Graphics.h"
 #include "PlatformDetector.h"
-#include "RenderCommandHandler.h"
+#include "RenderManager.h"
 #include "Screen.h"
 #include "Input.h"
 #include "Physics.h"
@@ -79,15 +79,15 @@ void Engine::Tick()
 
     // Scene pre render:
     //Graphics::ClearScreen();
-    RenderCommandHandler::PreRender();
+    RenderManager::PreRender();
 
     // Scene render:
     //Graphics::ExecuteRenderCommands();
     //Graphics::SwapFrameBuffers();
-    RenderCommandHandler::Render();
+    RenderManager::Render();
 
     // Scene post render:
-    RenderCommandHandler::PostRender();
+    RenderManager::PostRender();
 
     // GuiRender:
     // ToDo!

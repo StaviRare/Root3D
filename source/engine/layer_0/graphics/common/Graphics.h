@@ -14,7 +14,7 @@ enum class GraphicsType
 class Graphics
 {
     friend class Engine;
-    friend class RenderCommandHandler;
+    friend class RenderManager;
     friend class ShaderManager;
     friend class TextureManager;
 

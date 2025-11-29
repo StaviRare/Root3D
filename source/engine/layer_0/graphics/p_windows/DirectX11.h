@@ -12,14 +12,12 @@ using DirectX::XMMATRIX;
 
 struct GPUTexture
 {
-    unsigned int ID = 0;
     ID3D11Texture2D* d3dTexture = nullptr;
     ID3D11ShaderResourceView* textureView = nullptr;
 };
 
 struct GPUShader
 {
-    unsigned int ID = 0;
     ID3D11InputLayout* inputLayout = nullptr;
     ID3D11PixelShader* pixelShader = nullptr;
     ID3D11VertexShader* vertexShader = nullptr;
@@ -104,8 +102,8 @@ class DirectX11 : public GraphicsAPI
     bool initialized = false;
     unsigned int nextShaderID = 0;
     unsigned int nextTextureID = 0;
-    std::list<GPUShader> shaderMap;
-    std::list<GPUTexture> textureMap;
+    std::unordered_map<uniqueID, GPUShader> m_shaderMap;
+    std::unordered_map<uniqueID, GPUTexture> m_textureMap;
 
     LightBuffer lightBufferData;
 
