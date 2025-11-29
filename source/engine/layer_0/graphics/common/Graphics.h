@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Types.h"
-#include "GraphicsAPI.h"
+#include "IGraphicsAPI.h"
 
-enum class GraphicsType
+enum class GraphicsAPI
 {
     Null,
     OpenGL,
@@ -22,8 +22,8 @@ class Graphics
     static string TypeName();
 
     private:
-    static GraphicsAPI* _currentAPI;
-    static GraphicsType _currentType;
+    static IGraphicsAPI* _currentAPI;
+    static GraphicsAPI _currentType;
 
     private:
     static void Initialize();
@@ -36,7 +36,4 @@ class Graphics
     static void DestroyTexture(uniqueID handle);
     static uniqueID CreateShader(const ShaderUpload data);
     static void DestroyShader(uniqueID handle);
-
-    protected:
-    static bool initialized;
 };

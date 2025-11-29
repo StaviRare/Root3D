@@ -1,7 +1,7 @@
 #include "RenderManager.h"
 #include "MeshFilter.h"
 #include "Mesh.h"
-#include "RenderCommand.h"
+#include "GraphicsTypes.h"
 #include "Renderer.h"
 #include "Debug.h"
 #include "Matrix4.h"
@@ -126,7 +126,6 @@ void RenderManager::UpdateFrameUniforms()
 
 		if (light && index < maxLigths)
 		{
-			ENGINE_ERROR("MM");
 			LightUniform lightUniform;
 
 			lightUniform.range = light->range;

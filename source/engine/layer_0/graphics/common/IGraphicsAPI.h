@@ -1,8 +1,8 @@
 #pragma once
 
-#include "RenderCommand.h"
+#include "GraphicsTypes.h"
 
-class GraphicsAPI
+class IGraphicsAPI
 {
     public:
     virtual void Initialize() = 0;
@@ -12,11 +12,8 @@ class GraphicsAPI
     virtual void EndFrame() = 0;
 
     virtual void DestroyShader(uniqueID handle) = 0;
+    virtual void DestroyTexture(uniqueID handle) = 0;
     virtual uniqueID CreateShader(const ShaderUpload data) = 0;
     virtual uniqueID CreateTexture(const TextureUpload data) = 0;
-    virtual void DestroyTexture(uniqueID handle) = 0;
-
-    protected:
-    bool initialized = false;
 };
 

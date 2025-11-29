@@ -6,7 +6,6 @@
 #include "DirectX11.h"
 #include "Screen.h"
 #include "Timer.h"
-#include "Calc.h"
 #include "Log.h"
 
 
@@ -22,10 +21,17 @@ void DirectX11::Initialize()
     CreateRenderTargetView();
     SetupViewport(Screen::GetWidth(), Screen::GetHeight());
 
-    // Setup Model-View-Projection (MVP) buffer
-    XMMATRIX initialMVP = DirectX::XMMatrixIdentity();
-    CreateBuffer(&initialMVP, sizeof(VPBuffer), D3D11_BIND_CONSTANT_BUFFER, &vpBuffer);
-    CreateBuffer(&initialMVP, sizeof(MBuffer), D3D11_BIND_CONSTANT_BUFFER, &mBuffer);
+    // Create view/projection buffer
+    VPBuffer initialVP{ XMMatrixIdentity(), XMMatrixIdentity() };
+    CreateBuffer(&initialVP, sizeof(VPBuffer), D3D11_BIND_CONSTANT_BUFFER, &vpBuffer);
+
+    // Create model buffer
+    MBuffer initialM{ XMMatrixIdentity() };
+    CreateBuffer(&initialM, sizeof(MBuffer), D3D11_BIND_CONSTANT_BUFFER, &mBuffer);
+
+    // Create light buffer
+    LightBuffer initialLight{  };
+    CreateBuffer(&initialLight, sizeof(LightBuffer), D3D11_BIND_CONSTANT_BUFFER, &lightBuffer);
 
     // Setup Depth Stencil Texture
     D3D11_TEXTURE2D_DESC descDepth = {};
@@ -84,9 +90,6 @@ void DirectX11::Initialize()
 
     context->RSSetState(rasterizerState);
 
-    // Setup Lighting Buffer
-    CreateBuffer(&lightBufferData, sizeof(LightBuffer), D3D11_BIND_CONSTANT_BUFFER, &lightBuffer);
-
     initialized = true;
 }
 
@@ -120,46 +123,45 @@ void DirectX11::BeginFrame(FrameUniform onceCmd)
     context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
     // VPBuffer (b0)
-    XMMATRIX vpData[2] =
-    {
-        DirectX::XMMatrixTranspose(XMMATRIX(onceCmd.viewMatrix)),
-        DirectX::XMMatrixTranspose(XMMATRIX(onceCmd.projectionMatrix)),
-    };
+    VPBuffer vpData;
+    vpData.view = XMMatrixTranspose(XMMATRIX(onceCmd.viewMatrix));
+    vpData.projection = XMMatrixTranspose(XMMATRIX(onceCmd.projectionMatrix));
     context->UpdateSubresource(vpBuffer, 0, nullptr, &vpData, 0, 0);
     context->VSSetConstantBuffers(0, 1, &vpBuffer);
 
     // LightBuffer (b2)
-    lightBufferData.numLights = 20;
+    LightBuffer lightData;
+    lightData.numLights = 20;
 
     for (int i = 0; i < 20; i++)
     {
         LightUniform lightCommands = onceCmd.lights[i];
 
-        lightBufferData.lights[i].type = lightCommands.type;
-        lightBufferData.lights[i].color = XMFLOAT3(
+        lightData.lights[i].type = lightCommands.type;
+        lightData.lights[i].color = XMFLOAT3(
             lightCommands.color[0],
             lightCommands.color[1],
             lightCommands.color[2]);
 
-        lightBufferData.lights[i].intensity = lightCommands.intensity;
-        lightBufferData.lights[i].direction = XMFLOAT3(
+        lightData.lights[i].intensity = lightCommands.intensity;
+        lightData.lights[i].direction = XMFLOAT3(
             lightCommands.direction[0],
             lightCommands.direction[1],
             lightCommands.direction[2]);
 
-        lightBufferData.lights[i].range = lightCommands.range;
-        lightBufferData.lights[i].position = XMFLOAT3(
+        lightData.lights[i].range = lightCommands.range;
+        lightData.lights[i].position = XMFLOAT3(
             lightCommands.position[0],
             lightCommands.position[1],
             lightCommands.position[2]);
 
-        lightBufferData.lights[i].attenuation = XMFLOAT3(
+        lightData.lights[i].attenuation = XMFLOAT3(
             lightCommands.attenuation[0],
             lightCommands.attenuation[1],
             lightCommands.attenuation[2]);
     }
 
-    context->UpdateSubresource(lightBuffer, 0, nullptr, &lightBufferData, 0, 0);
+    context->UpdateSubresource(lightBuffer, 0, nullptr, &lightData, 0, 0);
     context->PSSetConstantBuffers(2, 1, &lightBuffer);
 }
 
@@ -178,8 +180,9 @@ void DirectX11::DrawObject(ObjectUniform command)
         context->VSSetShader(shaderProgram->vertexShader, nullptr, 0);
         context->PSSetShader(shaderProgram->pixelShader, nullptr, 0);
 
-        XMMATRIX mData[1] = {DirectX::XMMatrixTranspose(XMMATRIX(command.modelMatrix))};
-        context->UpdateSubresource(mBuffer, 0, nullptr, mData, 0, 0);
+        MBuffer mData;
+        mData.model = XMMatrixTranspose(XMMATRIX(command.modelMatrix));
+        context->UpdateSubresource(mBuffer, 0, nullptr, &mData, 0, 0);
         context->VSSetConstantBuffers(1, 1, &mBuffer);
 
         GPUTexture* gpuTexture = nullptr;
@@ -215,6 +218,30 @@ void DirectX11::DrawObject(ObjectUniform command)
 void DirectX11::EndFrame()
 {
     swapChain->Present(0, 0);
+}
+
+
+void DirectX11::DestroyShader(uniqueID id)
+{
+    auto it = m_shaderMap.find(id);
+    if (it != m_shaderMap.end())
+    {
+        if (it->second.vertexShader) it->second.vertexShader->Release();
+        if (it->second.pixelShader) it->second.pixelShader->Release();
+        if (it->second.inputLayout) it->second.inputLayout->Release();
+        m_shaderMap.erase(it);
+    }
+}
+
+void DirectX11::DestroyTexture(uniqueID id)
+{
+    auto it = m_textureMap.find(id);
+    if (it != m_textureMap.end())
+    {
+        if (it->second.d3dTexture) it->second.d3dTexture->Release();
+        if (it->second.textureView) it->second.textureView->Release();
+        m_textureMap.erase(it);
+    }
 }
 
 uniqueID DirectX11::CreateShader(const ShaderUpload data)
@@ -270,18 +297,6 @@ uniqueID DirectX11::CreateShader(const ShaderUpload data)
     return nextShaderID;
 }
 
-void DirectX11::DestroyShader(uniqueID id)
-{
-    auto it = m_shaderMap.find(id);
-    if (it != m_shaderMap.end())
-    {
-        if (it->second.vertexShader) it->second.vertexShader->Release();
-        if (it->second.pixelShader) it->second.pixelShader->Release();
-        if (it->second.inputLayout) it->second.inputLayout->Release();
-        m_shaderMap.erase(it);
-    }
-}
-
 uniqueID DirectX11::CreateTexture(const TextureUpload data)
 {
     D3D11_TEXTURE2D_DESC desc{};
@@ -318,16 +333,6 @@ uniqueID DirectX11::CreateTexture(const TextureUpload data)
     return nextTextureID;
 }
 
-void DirectX11::DestroyTexture(uniqueID id)
-{
-    auto it = m_textureMap.find(id);
-    if (it != m_textureMap.end())
-    {
-        if (it->second.d3dTexture) it->second.d3dTexture->Release();
-        if (it->second.textureView) it->second.textureView->Release();
-        m_textureMap.erase(it);
-    }
-}
 
 void DirectX11::CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer)
 {

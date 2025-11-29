@@ -4,17 +4,17 @@
 #include "DirectX11.h"
 #include "Config.h"
 
-GraphicsType Graphics:: _currentType;
-GraphicsAPI* Graphics::_currentAPI = nullptr;
+GraphicsAPI Graphics:: _currentType;
+IGraphicsAPI* Graphics::_currentAPI = nullptr;
 
 string Graphics::TypeName()
 {
     switch (_currentType)
     {
-        case ( GraphicsType::OpenGL ):
+        case ( GraphicsAPI::OpenGL ):
         return "OpenGL";
 
-        case ( GraphicsType::DirectX11 ):
+        case ( GraphicsAPI::DirectX11 ):
         return "DirectX11";
 
         default:
@@ -25,15 +25,15 @@ string Graphics::TypeName()
 void Graphics::Initialize()
 {
     RuntimeSettings config = Config::Runtime();
-    GraphicsType type = config.RenderingAPI;
+    GraphicsAPI type = config.RenderingAPI;
 
     switch (type)
     {
-        case ( GraphicsType::OpenGL ):
+        case ( GraphicsAPI::OpenGL ):
         //_currentAPI = new OpenGL();
         break;
 
-        case ( GraphicsType::DirectX11 ):
+        case ( GraphicsAPI::DirectX11 ):
         _currentAPI = new DirectX11();
         break;
     }
@@ -81,7 +81,7 @@ void Graphics::UnInitialize()
 
         delete _currentAPI;
         _currentAPI = nullptr;
-        _currentType = GraphicsType::Null;
+        _currentType = GraphicsAPI::Null;
     }
 }
 
