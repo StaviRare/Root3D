@@ -39,7 +39,7 @@ uniqueID TextureManager::CreateOrGet(unsigned char* data, unsigned int width, un
         upload.width = width;
         upload.height = height;
         upload.nrChannels = channels;
-        unsigned int shaderHandle = Graphics::CreateTexture(upload);
+        uniqueID shaderHandle = Graphics::CreateTexture(upload);
 
         if (shaderHandle)
         {
@@ -94,9 +94,9 @@ uniqueID TextureManager::TryDestroy(uniqueID id)
     return returnValue;
 }
 
-unsigned int TextureManager::GetHandle(uniqueID id)
+uniqueID TextureManager::GetHandle(uniqueID id)
 {
-    unsigned int returnValue = 0;
+    uniqueID returnValue = 0;
 
     auto it = m_textures.find(id);
 

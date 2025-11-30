@@ -9,7 +9,7 @@ class ShaderManager
 {
     public:
     static uniqueID TryDestroy(uniqueID id);
-    static unsigned int GetHandle(uniqueID id);
+    static uniqueID GetHandle(uniqueID id);
     static uniqueID CreateOrGet(const string vs, const string fs);
 
     private:

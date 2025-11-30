@@ -38,7 +38,7 @@ class Config
                 returnValue.ScreenWidth = 960;
                 returnValue.ScreenHeight = 540;
                 returnValue.MaxLights = 20;
-                returnValue.RenderingAPI = GraphicsAPI::OpenGL;
+                returnValue.RenderingAPI = GraphicsAPI::DirectX11;
                 returnValue.PhysicsTypeAPI = PhysicsType::Jolt;
             break;
 

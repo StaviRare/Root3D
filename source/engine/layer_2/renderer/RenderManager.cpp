@@ -187,12 +187,12 @@ void RenderManager::DrawEntities()
 
 			// Texture
 			uniqueID textureId = renderer->material.texture->getID();
-			unsigned int textureHandle = TextureManager::GetHandle(textureId);
+			uniqueID textureHandle = TextureManager::GetHandle(textureId);
 			objectCommand.textureHandle = textureHandle;
 
 			// Shader
 			uniqueID shaderId = renderer->material.GetShaderID();
-			unsigned int shaderHandle = ShaderManager::GetHandle(shaderId);
+			uniqueID shaderHandle = ShaderManager::GetHandle(shaderId);
 			objectCommand.shaderHandle = shaderHandle;
 
 			// Model Matrix

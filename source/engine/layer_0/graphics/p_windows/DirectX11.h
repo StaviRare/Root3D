@@ -1,8 +1,9 @@
 #pragma once
 
-#include <unordered_map>
 #include <d3d11.h>
+#include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include <unordered_map>
 #include "IGraphicsAPI.h"
 #include "Texture.h"
 #include "Types.h"
@@ -69,38 +70,37 @@ class DirectX11 : public IGraphicsAPI
     void UnInitialize() override;
     void BeginFrame(FrameUniform cmd) override;
     void DrawObject(ObjectUniform cmd) override;
-    void EndFrame();
-    void DestroyShader(uniqueID handle);
-    void DestroyTexture(uniqueID handle);
-    uniqueID CreateShader(const ShaderUpload data);
-    uniqueID CreateTexture(const TextureUpload data);
+    void EndFrame() override;
+    void DestroyShader(uniqueID id) override;
+    void DestroyTexture(uniqueID id) override;
+    uniqueID CreateShader(const ShaderUpload data) override;
+    uniqueID CreateTexture(const TextureUpload data) override;
 
     private:
     void CreateDeviceAndSwapChain(HWND hwnd);
     void CreateRenderTargetView();
     void SetupViewport(UINT width, UINT height);
-    void CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer);
-    void CompileShader(const string& source, const char* entryPoint, const char* shaderModel, ID3DBlob** blobOut);
+    ID3D11Buffer* CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag);
+    ID3DBlob* CompileShader(const string& source, const char* entryPoint, const char* shaderModel);
 
     private:
-    ID3D11Buffer* vertexBuffer = nullptr;
-    ID3D11Buffer* indexBuffer = nullptr;
-    ID3D11Buffer* texCoordBuffer = nullptr;
-    ID3D11Buffer* normalBuffer = nullptr;
-    ID3D11Buffer* vpBuffer = nullptr;
-    ID3D11Buffer* mBuffer = nullptr;
-    ID3D11Buffer* lightBuffer = nullptr;
-    ID3D11Device* device = nullptr;
-    ID3D11DeviceContext* context = nullptr;
-    IDXGISwapChain* swapChain = nullptr;
-    ID3D11RenderTargetView* backBufferRTV = nullptr;
-    ID3D11DepthStencilView* depthStencilView = nullptr;
-    ID3D11DepthStencilState* depthStencilState = nullptr;
-    ID3D11RasterizerState* rasterizerState = nullptr;
-
-    bool initialized = false;
-    unsigned int nextShaderID = 0;
-    unsigned int nextTextureID = 0;
+    bool m_initialized = false;
+    ID3D11Buffer* m_vertexBuffer = nullptr;
+    ID3D11Buffer* m_indexBuffer = nullptr;
+    ID3D11Buffer* m_texCoordBuffer = nullptr;
+    ID3D11Buffer* m_normalBuffer = nullptr;
+    ID3D11Buffer* m_viewProjBuffer = nullptr;
+    ID3D11Buffer* m_modelBuffer = nullptr;
+    ID3D11Buffer* m_lightBuffer = nullptr;
+    ID3D11Device* m_device = nullptr;
+    ID3D11DeviceContext* m_context = nullptr;
+    IDXGISwapChain* m_swapChain = nullptr;
+    ID3D11RenderTargetView* m_backBufferRTV = nullptr;
+    ID3D11DepthStencilView* m_depthStencilView = nullptr;
+    ID3D11RasterizerState* m_rasterizerState = nullptr;
+    ID3D11DepthStencilState* m_depthStencilState = nullptr;
+    uniqueID m_nextShaderID = 0;
+    uniqueID m_nextTextureID = 0;
     std::unordered_map<uniqueID, GPUShader> m_shaderMap;
     std::unordered_map<uniqueID, GPUTexture> m_textureMap;
 };

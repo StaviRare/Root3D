@@ -17,14 +17,6 @@ class RenderManager
     static void Render();
     static void PostRender();
     static void UnInitialize();
-
-    private:
-    static Camera* _camera;
-    static std::set<Entity*> _entities;
-    static FrameUniform _frameUniforms;
-    static std::set<ObjectUniform> _objectUniforms;
-
-    private:
     static void CollectEntities();
     static void UpdateFrameUniforms();
     static void CullEntities();
@@ -32,4 +24,9 @@ class RenderManager
     static void DrawEntities();
     static void EndRenderPass();
     static void PresentFrame();
+
+    private:
+    static Camera* _camera;
+    static std::set<Entity*> _entities;
+    static FrameUniform _frameUniforms;
 };

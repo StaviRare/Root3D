@@ -4,44 +4,50 @@
 #include "Screen.h"
 #include "Calc.h"
 
+#define MAX_LIGTHS 20
+
 void OpenGL::Initialize()
 {
     Screen::RegisterResizeCallback(OnWindowResize);
 
     void* nativeHandle = Screen::GetNativeHandle();
     HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(nativeHandle));
-    deviceContext = GetDC(hwnd);
+    m_deviceContext = GetDC(hwnd);
 
-    initialized = glewInit() == GLEW_OK && deviceContext != nullptr;
+    m_initialized = glewInit() == GLEW_OK && m_deviceContext != nullptr;
 
-    if (initialized)
+    if (m_initialized)
     {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CW);
         glCullFace(GL_FRONT);
 
-        // Create vertex array and buffers
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(3, VBO);
-        glGenBuffers(1, &EBO);
+        // Create buffers
+        glGenBuffers(1, &m_vertexBuffer);
+        glGenBuffers(1, &m_texCoordBuffer);
+        glGenBuffers(1, &m_normalBuffer);
+        glGenBuffers(1, &m_indexBuffer);
+        glGenVertexArrays(1, &m_vertexArrayObject);
 
-        glBindVertexArray(VAO);
+        glBindVertexArray(m_vertexArrayObject);
 
         // Vertex positions
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+        glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
         glEnableVertexAttribArray(0);
 
         // Texture coordinates
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+        glBindBuffer(GL_ARRAY_BUFFER, m_texCoordBuffer);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
         glEnableVertexAttribArray(1);
 
         // Normals
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+        glBindBuffer(GL_ARRAY_BUFFER, m_normalBuffer);
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
         glEnableVertexAttribArray(2);
+
+        glBindVertexArray(0);
     }
 }
 
@@ -49,28 +55,30 @@ void OpenGL::UnInitialize()
 {
     Screen::UnRegisterResizeCallback(OnWindowResize);
 
-    glDeleteBuffers(3, VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &m_vertexBuffer);
+    glDeleteBuffers(1, &m_texCoordBuffer);
+    glDeleteBuffers(1, &m_normalBuffer);
+    glDeleteBuffers(1, &m_indexBuffer);
+    glDeleteVertexArrays(1, &m_vertexArrayObject);
 }
 
-void OpenGL::BeginFrame(FrameUniform onceCmd)
+void OpenGL::BeginFrame(FrameUniform cmd)
 {
-    const float* bg = onceCmd.backgroundColor;
+    const float* bg = cmd.backgroundColor;
     glClearColor(bg[0], bg[1], bg[2], bg[3]);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    const float* viewMatrix = onceCmd.viewMatrix;
-    const float* projectionMatrix = onceCmd.projectionMatrix;
+    const float* viewMatrix = cmd.viewMatrix;
+    const float* projectionMatrix = cmd.projectionMatrix;
 
-    _currentFrame = onceCmd;
+    m_currentFrame = cmd;
 }
 
-void OpenGL::DrawObject(ObjectUniform command)
+void OpenGL::DrawObject(ObjectUniform cmd)
 {
     // Get shader
-    auto shaderIt = m_shaderMap.find(command.shaderHandle);
+    auto shaderIt = m_shaderMap.find(cmd.shaderHandle);
     if (shaderIt == m_shaderMap.end())
     {
         ENGINE_ERROR("Shader not found for DrawObject");
@@ -81,18 +89,18 @@ void OpenGL::DrawObject(ObjectUniform command)
 
     // Set model, view, projection matrices
     GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, command.modelMatrix);
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, cmd.modelMatrix);
 
     GLint viewLoc = glGetUniformLocation(shaderProgram, "view");
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, _currentFrame.viewMatrix);
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, m_currentFrame.viewMatrix);
 
     GLint projLoc = glGetUniformLocation(shaderProgram, "projection");
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, _currentFrame.projectionMatrix);
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, m_currentFrame.projectionMatrix);
 
     // Bind texture
-    if (command.textureHandle != 0)
+    if (cmd.textureHandle != 0)
     {
-        auto texIt = m_textureMap.find(command.textureHandle);
+        auto texIt = m_textureMap.find(cmd.textureHandle);
         if (texIt != m_textureMap.end())
         {
             glActiveTexture(GL_TEXTURE0);
@@ -106,7 +114,7 @@ void OpenGL::DrawObject(ObjectUniform command)
     // Set lighting uniforms
     for (size_t i = 0; i < 20; ++i)
     {
-        const LightUniform& light = _currentFrame.lights[i];
+        const LightUniform& light = m_currentFrame.lights[i];
         std::string prefix = "lights[" + std::to_string(i) + "].";
 
         GLint typeLoc = glGetUniformLocation(shaderProgram, (prefix + "type").c_str());
@@ -140,22 +148,22 @@ void OpenGL::DrawObject(ObjectUniform command)
     glUniform1i(numLightsLoc, 20);
 
     // Upload vertex data
-    glBindVertexArray(VAO);
+    glBindVertexArray(m_vertexArrayObject);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-    glBufferData(GL_ARRAY_BUFFER, command.mesh.verticesSize * sizeof(float), command.mesh.vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, cmd.mesh.verticesSize * sizeof(float), cmd.mesh.vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-    glBufferData(GL_ARRAY_BUFFER, command.mesh.texCoordsSize * sizeof(float), command.mesh.texCoords, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, m_texCoordBuffer);
+    glBufferData(GL_ARRAY_BUFFER, cmd.mesh.texCoordsSize * sizeof(float), cmd.mesh.texCoords, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-    glBufferData(GL_ARRAY_BUFFER, command.mesh.normalsSize * sizeof(float), command.mesh.normals, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, m_normalBuffer);
+    glBufferData(GL_ARRAY_BUFFER, cmd.mesh.normalsSize * sizeof(float), cmd.mesh.normals, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, command.mesh.indicesSize * sizeof(unsigned int), command.mesh.indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, cmd.mesh.indicesSize * sizeof(unsigned int), cmd.mesh.indices, GL_STATIC_DRAW);
 
     // Draw
-    glDrawElements(GL_TRIANGLES, command.mesh.indicesSize, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, cmd.mesh.indicesSize, GL_UNSIGNED_INT, 0);
 
     // Unbind VAO for safety
     glBindVertexArray(0);
@@ -163,7 +171,7 @@ void OpenGL::DrawObject(ObjectUniform command)
 
 void OpenGL::EndFrame()
 {
-    SwapBuffers(deviceContext);
+    SwapBuffers(m_deviceContext);
 }
 
 void OpenGL::DestroyShader(uniqueID id)
@@ -188,14 +196,14 @@ void OpenGL::DestroyTexture(uniqueID id)
 
 uniqueID OpenGL::CreateShader(const ShaderUpload data)
 {
-    unsigned int vertexShader = CompileShader(data.vertexCode, GL_VERTEX_SHADER);
+    GLuint vertexShader = CompileShader(data.vertexCode, GL_VERTEX_SHADER);
     if (!vertexShader)
     {
         ENGINE_ERROR("Failed to compile vertex shader");
         return 0;
     }
 
-    unsigned int fragmentShader = CompileShader(data.fragmentCode, GL_FRAGMENT_SHADER);
+    GLuint fragmentShader = CompileShader(data.fragmentCode, GL_FRAGMENT_SHADER);
     if (!fragmentShader)
     {
         ENGINE_ERROR("Failed to compile fragment shader");
@@ -203,7 +211,7 @@ uniqueID OpenGL::CreateShader(const ShaderUpload data)
         return 0;
     }
 
-    unsigned int program = glCreateProgram();
+    GLuint program = glCreateProgram();
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
     glLinkProgram(program);
@@ -224,11 +232,11 @@ uniqueID OpenGL::CreateShader(const ShaderUpload data)
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    nextShaderID++;
+    m_nextShaderID++;
     GLShader gpuShader{ program };
-    m_shaderMap[nextShaderID] = gpuShader;
+    m_shaderMap[m_nextShaderID] = gpuShader;
 
-    return nextShaderID;
+    return m_nextShaderID;
 }
 
 uniqueID OpenGL::CreateTexture(const TextureUpload data)
@@ -237,7 +245,7 @@ uniqueID OpenGL::CreateTexture(const TextureUpload data)
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
 
-    // Set texture parameters (similar to D3D bind flags / filtering)
+    // Set texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -246,18 +254,18 @@ uniqueID OpenGL::CreateTexture(const TextureUpload data)
     // Determine format
     GLenum format = GL_RGBA;
 
-    // Upload texture data (equivalent to D3D CreateTexture2D + initial data)
+    // Upload texture data
     glTexImage2D(GL_TEXTURE_2D, 0, format, data.width, data.height, 0, format, GL_UNSIGNED_BYTE, data.rawData);
 
-    // Generate mipmaps (optional; D3D only did 1 level in your example)
+    // Generate mipmaps
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    // Store in your map like D3D
-    nextTextureID++;
+    // Store it
+    m_nextTextureID++;
     GLTexture gpuTex{ texID };
-    m_textureMap[nextTextureID] = gpuTex;
+    m_textureMap[m_nextTextureID] = gpuTex;
 
-    return nextTextureID;
+    return m_nextTextureID;
 }
 
 void OpenGL::OnWindowResize(int width, int height)
@@ -265,12 +273,11 @@ void OpenGL::OnWindowResize(int width, int height)
     glViewport(0, 0, width, height);
 }
 
-unsigned int OpenGL::CompileShader(const string& source, unsigned int type)
+GLuint OpenGL::CompileShader(const string& source, GLuint  type)
 {
-    unsigned int shader = glCreateShader(type);
+    GLuint shader = glCreateShader(type);
     const char* src = source.c_str();
     glShaderSource(shader, 1, &src, nullptr);
     glCompileShader(shader);
-
     return shader;
 }

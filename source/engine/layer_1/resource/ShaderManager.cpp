@@ -33,7 +33,7 @@ uniqueID ShaderManager::CreateOrGet(const string vs, const string fs)
         ShaderUpload upload;
         upload.vertexCode = vs;
         upload.fragmentCode = fs;
-        unsigned int shaderHandle = Graphics::CreateShader(upload);
+        uniqueID shaderHandle = Graphics::CreateShader(upload);
 
         if (shaderHandle)
         {
@@ -88,9 +88,9 @@ uniqueID ShaderManager::TryDestroy(uniqueID id)
     return returnValue;
 }
 
-unsigned int ShaderManager::GetHandle(uniqueID id)
+uniqueID ShaderManager::GetHandle(uniqueID id)
 {
-    unsigned int returnValue = 0;
+    uniqueID returnValue = 0;
 
     auto it = m_shaders.find(id);
 

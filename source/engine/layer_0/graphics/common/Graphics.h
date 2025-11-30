@@ -31,9 +31,8 @@ class Graphics
     static void BeginFrame(FrameUniform cmd);
     static void DrawObject(ObjectUniform cmd);
     static void EndFrame();
-
-    static uniqueID CreateTexture(const TextureUpload data);
-    static void DestroyTexture(uniqueID handle);
+    static void DestroyShader(uniqueID id);
+    static void DestroyTexture(uniqueID id);
     static uniqueID CreateShader(const ShaderUpload data);
-    static void DestroyShader(uniqueID handle);
+    static uniqueID CreateTexture(const TextureUpload data);
 };
