@@ -22,45 +22,13 @@ void OpenGLES1::Initialize()
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CW);
         glCullFace(GL_FRONT);
-
-//        // Create buffers
-//        glGenBuffers(1, &m_vertexBuffer);
-//        glGenBuffers(1, &m_texCoordBuffer);
-//        glGenBuffers(1, &m_normalBuffer);
-//        glGenBuffers(1, &m_indexBuffer);
-//        glGenVertexArrays(1, &m_vertexArrayObject);
-//
-//        glBindVertexArray(m_vertexArrayObject);
-//
-//        // Vertex positions
-//        glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-//        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-//        glEnableVertexAttribArray(0);
-//
-//        // Texture coordinates
-//        glBindBuffer(GL_ARRAY_BUFFER, m_texCoordBuffer);
-//        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
-//        glEnableVertexAttribArray(1);
-//
-//        // Normals
-//        glBindBuffer(GL_ARRAY_BUFFER, m_normalBuffer);
-//        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-//        glEnableVertexAttribArray(2);
-//
-//        glBindVertexArray(0);
     }
 }
 
 void OpenGLES1::UnInitialize()
 {
     Screen::UnRegisterResizeCallback(OnWindowResize);
-
-//    glDeleteBuffers(1, &m_vertexBuffer);
-//    glDeleteBuffers(1, &m_texCoordBuffer);
-//    glDeleteBuffers(1, &m_normalBuffer);
-//    glDeleteBuffers(1, &m_indexBuffer);
-//    glDeleteVertexArrays(1, &m_vertexArrayObject);
-
+    
     m_initialized = false;
 }
 
