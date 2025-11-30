@@ -3,13 +3,13 @@
 #include "Input.h"
 #include "Mesh.h"
 #include "Entity.h"
-#include "MeshData.h"
+#include "MeshFilter.h"
 #include "MeshGenerator.h"
 #include "Debug.h"
 #include "Texture.h"
 #include "Renderer.h"
 #include "SceneManager.h"
-#include "Resource.h"
+#include "AssetLoader.h"
 #include "Light.h"
 #include "Graphics.h"
 #include "RigidBody.h"
@@ -29,9 +29,8 @@ static Entity* lightEntity;
 static Entity* lightEntity2;
 static Entity* camController;
 static Entity* textEntity;
-
-static Shader shaderLit;
-static Shader shaderUnlit;
+static Shader* shaderLit;
+static Shader* shaderUnlit;
 
 
 void unInit();
@@ -75,13 +74,13 @@ void initShaders()
 
     if (graphicsAPI == "OpenGL")
     {
-        shaderLit = Resource::LoadShader("shaders/glsl/Lit.glsl");
-        shaderUnlit = Resource::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
+        shaderLit = AssetLoader::LoadShader("shaders/glsl/Lit.glsl");
+        shaderUnlit = AssetLoader::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
     }
     else if (graphicsAPI == "DirectX11")
     {
-        shaderLit = Resource::LoadShader("shaders/hlsl/Lit.hlsl");
-        shaderUnlit = Resource::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
+        shaderLit = AssetLoader::LoadShader("shaders/hlsl/Lit.hlsl");
+        shaderUnlit = AssetLoader::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
     }
     else if(graphicsAPI == "OpenGLES1")
     {
@@ -117,8 +116,8 @@ void initLighting()
 
 void initStaticCube()
 {
-    Material material(shaderLit);
-    material.texture = Resource::LoadTexture("textures/dev.png");
+    Material material(*shaderLit);
+    material.texture = AssetLoader::LoadTexture("textures/dev.png");
 
     entity = new Entity();
     entity->transform.position = Vector3(0, -1, 0);
@@ -127,7 +126,7 @@ void initStaticCube()
 
     entity->transform.scale = Vector3(2, 1, 2);
     Mesh mesh = MeshGenerator::GetCube();
-    MeshData* meshData = entity->AddComponent<MeshData>();
+    MeshFilter* meshFilter = entity->AddComponent<MeshFilter>();
     Renderer* renderer = entity->AddComponent<Renderer>();
     RigidBody* rigidBody1 = entity->AddComponent<RigidBody>();
 
@@ -135,43 +134,43 @@ void initStaticCube()
     MiscRotate* miscRotate = entity->AddComponent<MiscRotate>();
     miscRotate->direction = Vector3(-5, -5, 5);
 
-    meshData->mesh = mesh;
+    meshFilter->mesh = mesh;
     renderer->material = material;
     rigidBody1->IsStatic = true;
 }
 
 void initDynamicCube()
 {
-    Material material2(shaderUnlit);
-    material2.texture = Resource::LoadTexture("textures/dev.png");
+    Material material2(*shaderUnlit);
+    material2.texture = AssetLoader::LoadTexture("textures/dev.png");
 
     entity2 = new Entity();
     entity2->transform.position = Vector3(0.0, 1.0f, 0.0f);
     Mesh mesh2 = MeshGenerator::GetCube();
-    MeshData* meshData2 = entity2->AddComponent<MeshData>();
+    MeshFilter* meshFilter2 = entity2->AddComponent<MeshFilter>();
     Renderer* renderer2 = entity2->AddComponent<Renderer>();
     entity2->AddComponent<RigidBody>();
     entity2->AddComponent<MeshCollider>();
 
-    meshData2->mesh = mesh2;
+    meshFilter2->mesh = mesh2;
     renderer2->material = material2;
 }
 
 void initText()
 {
-    Font font = Resource::LoadFont("fonts/arial.ttf");
+    Font font = AssetLoader::LoadFont("fonts/arial.ttf");
     Mesh textMesh = TextMesh::Generate(font, U"Hello World");
 
-    Material material(shaderUnlit);
-    material.texture = Resource::LoadTexture("textures/dev_og.png");
+    Material material(*shaderUnlit);
+    material.texture = AssetLoader::LoadTexture("textures/dev_og.png");
 
     textEntity = new Entity();
     textEntity->transform.position = Vector3(0, 1, -1);
 
-    MeshData* meshData = textEntity->AddComponent<MeshData>();
+    MeshFilter* meshFilter = textEntity->AddComponent<MeshFilter>();
     Renderer* renderer = textEntity->AddComponent<Renderer>();
 
-    meshData->mesh = textMesh;
+    meshFilter->mesh = textMesh;
     renderer->material = material;
 }
 
@@ -183,6 +182,8 @@ void unInit()
     delete lightEntity2;
     delete camController;
     delete textEntity;
+    delete shaderLit;
+    delete shaderUnlit;
 
     entity = nullptr;
     entity2 = nullptr;
@@ -190,4 +191,6 @@ void unInit()
     lightEntity2 = nullptr;
     camController = nullptr;
     textEntity = nullptr;
+    shaderLit = nullptr;
+    shaderUnlit = nullptr;
 }

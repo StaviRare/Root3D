@@ -1,29 +1,39 @@
 #pragma once
 
-#include <list>
 #include <d3d11.h>
+#include <d3dcompiler.h>
 #include <DirectXMath.h>
-#include "GraphicsAPI.h"
-#include "Texture.h"
+#include <unordered_map>
+#include "IGraphicsAPI.h"
 #include "Types.h"
 
 using DirectX::XMFLOAT3;
 using DirectX::XMMATRIX;
+using DirectX::XMMatrixIdentity;
+using DirectX::XMMatrixTranspose;
 
-struct ShaderProgram
+struct DX11Shader
 {
-    unsigned int ID = 0;
     ID3D11InputLayout* inputLayout = nullptr;
     ID3D11PixelShader* pixelShader = nullptr;
     ID3D11VertexShader* vertexShader = nullptr;
 };
 
-// Model-View-Projection
-struct MVPBuffer
+struct DX11Texture
 {
-    XMMATRIX model;
+    ID3D11Texture2D* d3dTexture = nullptr;
+    ID3D11ShaderResourceView* textureView = nullptr;
+};
+
+struct VPBuffer
+{
     XMMATRIX view;
     XMMATRIX projection;
+};
+
+struct MBuffer
+{
+    XMMATRIX model;
 };
 
 // Uses padding to meet DirectX 16-byte alignment requirements.
@@ -52,44 +62,44 @@ struct LightBuffer
     XMFLOAT3 padding6;
 };
 
-class DirectX11 : public GraphicsAPI
+class DirectX11 : public IGraphicsAPI
 {
     public:
-    void Initialize();
-    void ClearScreen();
-    void ExecuteRenderCommands();
-    void SwapFrameBuffers();
-    void UnInitialize();
+    void Initialize() override;
+    void UnInitialize() override;
+    void BeginFrame(FrameUniform cmd) override;
+    void DrawObject(ObjectUniform cmd) override;
+    void EndFrame() override;
+    void DestroyShader(uniqueID id) override;
+    void DestroyTexture(uniqueID id) override;
+    uniqueID CreateShader(const ShaderUpload data) override;
+    uniqueID CreateTexture(const TextureUpload data) override;
 
     private:
     void CreateDeviceAndSwapChain(HWND hwnd);
     void CreateRenderTargetView();
     void SetupViewport(UINT width, UINT height);
-    void CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag, ID3D11Buffer** buffer);
-    void BindTexture(Texture& texture);
-    unsigned int CreateShaderProgram(const string& vertexSource, const string& fragmentSource);
-    void CompileShader(const string& source, const char* entryPoint, const char* shaderModel, ID3DBlob** blobOut);
+    ID3D11Buffer* CreateBuffer(void* data, UINT size, D3D11_BIND_FLAG bindFlag);
+    ID3DBlob* CompileShader(const string& source, const char* entryPoint, const char* shaderModel);
 
-    ID3D11Device* device = nullptr;
-    ID3D11DeviceContext* context = nullptr;
-    IDXGISwapChain* swapChain = nullptr;
-    ID3D11RenderTargetView* backBufferRTV = nullptr;
-    ID3D11DepthStencilView* depthStencilView = nullptr;
-    ID3D11DepthStencilState* depthStencilState = nullptr;
-    ID3D11RasterizerState* rasterizerState = nullptr;
-
-    ID3D11Buffer* vertexBuffer = nullptr;
-    ID3D11Buffer* indexBuffer = nullptr;
-    ID3D11Buffer* texCoordBuffer = nullptr;
-    ID3D11Buffer* normalBuffer = nullptr;
-    ID3D11Buffer* mvpBuffer = nullptr;
-    ID3D11Buffer* lightBuffer = nullptr;
-
-    bool initialized = false;
-    unsigned int nextShaderID = 0;
-    std::list<ShaderProgram> shaderMap;
-    MVPBuffer mvpBufferData;
-    LightBuffer lightBufferData;
-
-    const int MAX_LIGHTS = 20;
+    private:
+    bool m_initialized = false;
+    ID3D11Buffer* m_vertexBuffer = nullptr;
+    ID3D11Buffer* m_indexBuffer = nullptr;
+    ID3D11Buffer* m_texCoordBuffer = nullptr;
+    ID3D11Buffer* m_normalBuffer = nullptr;
+    ID3D11Buffer* m_viewProjBuffer = nullptr;
+    ID3D11Buffer* m_modelBuffer = nullptr;
+    ID3D11Buffer* m_lightBuffer = nullptr;
+    ID3D11Device* m_device = nullptr;
+    ID3D11DeviceContext* m_context = nullptr;
+    IDXGISwapChain* m_swapChain = nullptr;
+    ID3D11RenderTargetView* m_backBufferRTV = nullptr;
+    ID3D11DepthStencilView* m_depthStencilView = nullptr;
+    ID3D11RasterizerState* m_rasterizerState = nullptr;
+    ID3D11DepthStencilState* m_depthStencilState = nullptr;
+    uniqueID m_nextShaderID = 0;
+    uniqueID m_nextTextureID = 0;
+    std::unordered_map<uniqueID, DX11Shader> m_shaderMap;
+    std::unordered_map<uniqueID, DX11Texture> m_textureMap;
 };

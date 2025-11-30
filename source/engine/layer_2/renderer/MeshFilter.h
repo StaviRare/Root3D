@@ -3,7 +3,7 @@
 #include "Mesh.h"
 #include "Component.h"
 
-class MeshData : public Component
+class MeshFilter : public Component
 {
 public:
     Mesh mesh;

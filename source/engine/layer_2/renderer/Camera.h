@@ -21,7 +21,7 @@ class Camera : public Component
 
     public:
     static bool Exists();
-    static Camera& GetInstance();
+    static Camera* GetInstance();
 
     private:
     float customAspect = 0;

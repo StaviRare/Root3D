@@ -1,9 +1,13 @@
 // Vertex Shader
-cbuffer MVPBuffer : register(b0) 
+cbuffer VPBuffer : register(b0) 
 {
-    matrix model;
     matrix view;
     matrix projection;
+};
+
+cbuffer MBuffer : register(b1) 
+{
+    matrix model;
 };
 
 struct VS_INPUT 
@@ -61,7 +65,7 @@ struct Light
     float3 padding7;
 };
 
-cbuffer LightBuffer : register(b1)
+cbuffer LightBuffer : register(b2)
 {
     Light lights[MAX_LIGHTS];
     int numLights;

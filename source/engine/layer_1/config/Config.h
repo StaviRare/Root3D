@@ -14,7 +14,7 @@ struct RuntimeSettings
 
     // Graphics
     int MaxLights = 10;
-    GraphicsType RenderingAPI = GraphicsType::Null;
+    GraphicsAPI RenderingAPI = GraphicsAPI::Null;
 
     // Physics
     Vector3 Gravity = Vector3(0, -9.81f, 0);
@@ -38,7 +38,7 @@ class Config
                 returnValue.ScreenWidth = 960;
                 returnValue.ScreenHeight = 540;
                 returnValue.MaxLights = 20;
-                returnValue.RenderingAPI = GraphicsType::DirectX11;
+                returnValue.RenderingAPI = GraphicsAPI::DirectX11;
                 returnValue.PhysicsTypeAPI = PhysicsType::Jolt;
             break;
 
@@ -46,7 +46,7 @@ class Config
                 returnValue.ScreenWidth = 960;
                 returnValue.ScreenHeight = 540;
                 returnValue.MaxLights = 10;
-                returnValue.RenderingAPI = GraphicsType::OpenGLES1;
+                returnValue.RenderingAPI = GraphicsAPI::OpenGLES1;
                 returnValue.PhysicsTypeAPI = PhysicsType::Jolt;
             break;
         }

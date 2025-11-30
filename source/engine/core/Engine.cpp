@@ -4,7 +4,7 @@
 #include "SceneManager.h"
 #include "Graphics.h"
 #include "PlatformDetector.h"
-#include "RenderCommandHandler.h"
+#include "RenderManager.h"
 #include "Screen.h"
 #include "Input.h"
 #include "Physics.h"
@@ -58,7 +58,7 @@ void Engine::Tick()
     // Calculate loop time
     Timer::CalculateLoopTime();
 
-    // FixedUpdate:
+    // Fixed update:
     while (Timer::accumulatedTime >= Timer::fixedTimeStep)
     {
         PhysicsHandler::SetData(); // sync-in
@@ -67,26 +67,27 @@ void Engine::Tick()
         Timer::UpdateFixedTime();
     }
 
-    // InputEvents:
+    // Input events:
     Input::Tick();
     Screen::PollEvents();
 
     // Update:
     SceneManager::Tick();
 
-    // LateUpdate:
+    // Late update:
     SceneManager::LateTick();
 
-    // ScenePreRender:
-    Graphics::ClearScreen();
-    RenderCommandHandler::Tick();
+    // Scene pre render:
+    //Graphics::ClearScreen();
+    RenderManager::PreRender();
 
-    // SceneRender:
-    Graphics::ExecuteRenderCommands();
-    Graphics::SwapFrameBuffers();
+    // Scene render:
+    //Graphics::ExecuteRenderCommands();
+    //Graphics::SwapFrameBuffers();
+    RenderManager::Render();
 
-    // ScenePostRender:
-    // ToDo!
+    // Scene post render:
+    RenderManager::PostRender();
 
     // GuiRender:
     // ToDo!

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Types.h"
-#include "GraphicsAPI.h"
+#include "IGraphicsAPI.h"
 
-enum class GraphicsType
+enum class GraphicsAPI
 {
     Null,
     OpenGL,
@@ -14,18 +14,25 @@ enum class GraphicsType
 class Graphics
 {
     friend class Engine;
+    friend class RenderManager;
+    friend class ShaderManager;
+    friend class TextureManager;
 
     public:
     static string TypeName();
 
     private:
-    static GraphicsAPI* _currentAPI;
-    static GraphicsType _currentType;
+    static IGraphicsAPI* _currentAPI;
+    static GraphicsAPI _currentType;
 
     private:
     static void Initialize();
-    static void ClearScreen();
-    static void ExecuteRenderCommands();
     static void UnInitialize();
-    static void SwapFrameBuffers();
+    static void BeginFrame(FrameUniform cmd);
+    static void DrawObject(ObjectUniform cmd);
+    static void EndFrame();
+    static void DestroyShader(uniqueID id);
+    static void DestroyTexture(uniqueID id);
+    static uniqueID CreateShader(const ShaderUpload data);
+    static uniqueID CreateTexture(const TextureUpload data);
 };

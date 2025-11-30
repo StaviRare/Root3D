@@ -13,6 +13,6 @@ class Object
     void SetName(const string& name);
 
     protected:
-    uniqueID m_id;
+    uniqueID m_id; // change to instance_id
     string m_name;
 };

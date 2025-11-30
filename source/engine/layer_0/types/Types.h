@@ -21,6 +21,7 @@ using float32 = float;
 using float64 = double;
 
 // Others
+using hash = size_t;
 using byte = uint8;
 using uniqueID  = uint64;
 using string = std::string;
