@@ -8,7 +8,6 @@
 
 #include "Types.h"
 #include "IGraphicsAPI.h"
-#include "Texture.h"
 
 struct GLShader
 {

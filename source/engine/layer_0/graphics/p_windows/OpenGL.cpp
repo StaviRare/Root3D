@@ -4,8 +4,6 @@
 #include "Screen.h"
 #include "Calc.h"
 
-#define MAX_LIGTHS 20
-
 void OpenGL::Initialize()
 {
     Screen::RegisterResizeCallback(OnWindowResize);
@@ -60,6 +58,8 @@ void OpenGL::UnInitialize()
     glDeleteBuffers(1, &m_normalBuffer);
     glDeleteBuffers(1, &m_indexBuffer);
     glDeleteVertexArrays(1, &m_vertexArrayObject);
+
+    m_initialized = false;
 }
 
 void OpenGL::BeginFrame(FrameUniform cmd)
@@ -111,8 +111,10 @@ void OpenGL::DrawObject(ObjectUniform cmd)
         }
     }
 
+    size_t numLights = sizeof(m_currentFrame.lights) / sizeof(m_currentFrame.lights[0]);
+
     // Set lighting uniforms
-    for (size_t i = 0; i < 20; ++i)
+    for (size_t i = 0; i < numLights; ++i)
     {
         const LightUniform& light = m_currentFrame.lights[i];
         std::string prefix = "lights[" + std::to_string(i) + "].";
@@ -145,7 +147,7 @@ void OpenGL::DrawObject(ObjectUniform cmd)
     }
 
     GLint numLightsLoc = glGetUniformLocation(shaderProgram, "numLights");
-    glUniform1i(numLightsLoc, 20);
+    glUniform1i(numLightsLoc, numLights);
 
     // Upload vertex data
     glBindVertexArray(m_vertexArrayObject);

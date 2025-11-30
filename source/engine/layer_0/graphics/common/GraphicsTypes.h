@@ -60,5 +60,5 @@ struct FrameUniform
     float viewMatrix[16];
     float projectionMatrix[16];
 
-    LightUniform lights[20]; // for now. same in shader code.
+    LightUniform lights[20]; // For now. same in shader code.
 };

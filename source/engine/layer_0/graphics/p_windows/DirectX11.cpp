@@ -127,9 +127,10 @@ void DirectX11::BeginFrame(FrameUniform cmd)
 
     // LightBuffer (b2)
     LightBuffer lightData;
-    lightData.numLights = 20;
+    size_t numLights = sizeof(cmd.lights) / sizeof(cmd.lights[0]);
+    lightData.numLights = numLights;
 
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < numLights; i++)
     {
         LightUniform lightCommands = cmd.lights[i];
 
@@ -163,7 +164,7 @@ void DirectX11::BeginFrame(FrameUniform cmd)
 
 void DirectX11::DrawObject(ObjectUniform cmd)
 {
-    GPUShader* shaderProgram = nullptr;
+    DX11Shader* shaderProgram = nullptr;
     auto shaderIt = m_shaderMap.find(cmd.shaderHandle);
     if (shaderIt != m_shaderMap.end())
     {
@@ -181,7 +182,7 @@ void DirectX11::DrawObject(ObjectUniform cmd)
         m_context->UpdateSubresource(m_modelBuffer, 0, nullptr, &mData, 0, 0);
         m_context->VSSetConstantBuffers(1, 1, &m_modelBuffer);
 
-        GPUTexture* gpuTexture = nullptr;
+        DX11Texture* gpuTexture = nullptr;
         auto texIt = m_textureMap.find(cmd.textureHandle);
         if (texIt != m_textureMap.end())
         {
@@ -286,7 +287,7 @@ uniqueID DirectX11::CreateShader(const ShaderUpload data)
     }
 
     m_nextShaderID++;
-    GPUShader gpuShader{inputLayout, pixelShader, vertexShader};
+    DX11Shader gpuShader{inputLayout, pixelShader, vertexShader};
     m_shaderMap[m_nextShaderID] = gpuShader;
 
     return m_nextShaderID;
@@ -323,7 +324,7 @@ uniqueID DirectX11::CreateTexture(const TextureUpload data)
 
     // Store it
     m_nextTextureID++;
-    GPUTexture gpuTex{d3dTexture, textureView};
+    DX11Texture gpuTex{d3dTexture, textureView};
     m_textureMap[m_nextTextureID] = gpuTex;
 
     return m_nextTextureID;

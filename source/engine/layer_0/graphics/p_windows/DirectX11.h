@@ -5,7 +5,6 @@
 #include <DirectXMath.h>
 #include <unordered_map>
 #include "IGraphicsAPI.h"
-#include "Texture.h"
 #include "Types.h"
 
 using DirectX::XMFLOAT3;
@@ -13,14 +12,14 @@ using DirectX::XMMATRIX;
 using DirectX::XMMatrixIdentity;
 using DirectX::XMMatrixTranspose;
 
-struct GPUShader
+struct DX11Shader
 {
     ID3D11InputLayout* inputLayout = nullptr;
     ID3D11PixelShader* pixelShader = nullptr;
     ID3D11VertexShader* vertexShader = nullptr;
 };
 
-struct GPUTexture
+struct DX11Texture
 {
     ID3D11Texture2D* d3dTexture = nullptr;
     ID3D11ShaderResourceView* textureView = nullptr;
@@ -101,6 +100,6 @@ class DirectX11 : public IGraphicsAPI
     ID3D11DepthStencilState* m_depthStencilState = nullptr;
     uniqueID m_nextShaderID = 0;
     uniqueID m_nextTextureID = 0;
-    std::unordered_map<uniqueID, GPUShader> m_shaderMap;
-    std::unordered_map<uniqueID, GPUTexture> m_textureMap;
+    std::unordered_map<uniqueID, DX11Shader> m_shaderMap;
+    std::unordered_map<uniqueID, DX11Texture> m_textureMap;
 };
