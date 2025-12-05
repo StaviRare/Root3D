@@ -1,7 +1,7 @@
 #include "SystemPlatform.h"
 
-#if defined(__ANDROID__)
-Platform SystemPlatform::s_current = Platform::Android;
+#if defined(_WIN32) || defined(_WIN64)
+Platform SystemPlatform::s_current = Platform::Windows;
 #else
 Platform SystemPlatform::s_current = Platform::Unknown;
 #endif
@@ -15,9 +15,9 @@ string SystemPlatform::GetName()
 {
     string returnValue = "Unknown";
 
-    if (s_current == Platform::Android)
+    if (s_current == Platform::Windows)
     {
-        returnValue = "Android";
+        returnValue = "Windows";
     }
 
     return returnValue;

@@ -3,7 +3,6 @@
 #include "Timer.h"
 #include "SceneManager.h"
 #include "Graphics.h"
-#include "PlatformDetector.h"
 #include "RenderManager.h"
 #include "Screen.h"
 #include "Input.h"
@@ -13,7 +12,6 @@
 
 bool Engine::Initialize()
 {
-    PlatformDetector::Initialize();
     Timer::Initialize();
 
     float timeSinceEpoch = Timer::TimeSinceEpoch();

@@ -3,7 +3,7 @@
 #include "Vector3.h"
 #include "Physics.h"
 #include "Graphics.h"
-#include "PlatformDetector.h"
+#include "SystemPlatform.h"
 
 struct RuntimeSettings
 {
@@ -27,8 +27,7 @@ class Config
     static RuntimeSettings Runtime()
     {
         RuntimeSettings returnValue;
-
-        auto platform = PlatformDetector::GetPlatform();
+        Platform platform = SystemPlatform::Get();
 
         // MaxLights - Not yet implemented. ShaderManager will handle that.
 
