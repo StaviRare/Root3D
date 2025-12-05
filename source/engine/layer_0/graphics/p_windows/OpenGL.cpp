@@ -111,6 +111,10 @@ void OpenGL::DrawObject(ObjectUniform cmd)
         }
     }
 
+    // Set the 'time' uniform
+    m_time = glGetUniformLocation(shaderProgram, "time");
+    glUniform1f(m_time, Timer::TimeSinceInit());
+
     size_t numLights = sizeof(m_currentFrame.lights) / sizeof(m_currentFrame.lights[0]);
 
     // Set lighting uniforms

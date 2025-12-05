@@ -38,12 +38,13 @@ class OpenGL : public IGraphicsAPI
 
     private:
     bool m_initialized = false;
-    GLuint m_indexBuffer;
-    GLuint m_vertexBuffer;
-    GLuint m_texCoordBuffer;
-    GLuint m_normalBuffer;
-    GLuint m_vertexArrayObject;
-    HDC m_deviceContext;
+    GLuint m_time = -1;
+    GLuint m_indexBuffer = -1;
+    GLuint m_vertexBuffer = -1;
+    GLuint m_texCoordBuffer = -1;
+    GLuint m_normalBuffer = -1;
+    GLuint m_vertexArrayObject = -1;
+    HDC m_deviceContext = nullptr;
     uniqueID m_nextShaderID = 0;
     uniqueID m_nextTextureID = 0;
     std::unordered_map<uniqueID, GLShader> m_shaderMap;
