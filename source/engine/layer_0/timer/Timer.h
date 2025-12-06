@@ -1,29 +1,9 @@
 #pragma once
-#include <chrono>
-
-using resClock = std::chrono::high_resolution_clock;
-using timePoint = std::chrono::time_point<resClock>;
-using timeDuration = std::chrono::duration<float>;
+#include "TimeTypes.h"
 
 class Timer
 {
     friend class Engine;
-
-    public:
-    static float DeltaTime();
-    static float FixedDeltaTime();
-    static float TimeSinceInit();
-
-    private:
-    static float deltaTime;
-    static float fixedTimeStep;
-    static float accumulatedTime;
-    static float maximumAllowedTimeStep;
-    static timePoint pauseTime;
-    static timePoint loopStartTime;
-    static timePoint loopEndTime;
-    static timePoint initTime;
-    static timePoint fixedUpdateStartTime;
 
     private:
     static void Initialize();
@@ -31,5 +11,23 @@ class Timer
     static void Resume();
     static void CalculateLoopTime();
     static void UpdateFixedTime();
+
+    public:
+    static float DeltaTime();
+    static float FixedDeltaTime();
+    static float TimeSinceInit();
     static float TimeSinceEpoch();
+    static float AccumulatedTime();
+    static void SetFixedStep(float seconds);
+    static void SetMaximumStep(float seconds);
+
+    private:
+    static bool s_paused;
+    static Duration s_delta;
+    static Duration s_accumulated;
+    static Duration s_fixedStep;
+    static Duration s_maxStep;
+    static TimePoint s_startTime;
+    static TimePoint s_lastTime;
+    static TimePoint s_pauseTime;
 };

@@ -1,19 +1,22 @@
-#pragma once
+#include "TimeTypes.h"
 
-#include <chrono>
+class Stopwatch
+{
+    public:
+    void start();
+    void stop();
+    void reset();
+    void restart();
+    bool isRunning() const;
+    long long getElapsedSeconds() const;
+    long long getElapsedMilliseconds() const;
+    long long getElapsedMicroseconds() const;
 
-class Stopwatch {
-public:
-    Stopwatch();
+    private:
+    Duration getElapsedTime() const;
 
-    void Start();
-    void Stop();
-    bool IsRunning() const;
-    void Reset();
-    long long ElapsedMilliseconds() const;
-
-private:
-    std::chrono::steady_clock::time_point start_time;
-    std::chrono::steady_clock::time_point end_time;
-    bool running;
+    private:
+    bool m_isRunning = false;
+    TimePoint m_startTime;
+    Duration m_elapsedTime = Duration::zero();
 };

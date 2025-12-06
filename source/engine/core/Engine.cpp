@@ -16,6 +16,7 @@ bool Engine::Initialize()
 
     float timeSinceEpoch = Timer::TimeSinceEpoch();
     unsigned int seed = static_cast<unsigned int>(timeSinceEpoch);
+
     Random::InitState(seed);
 
     Input::Initialize();
@@ -57,7 +58,7 @@ void Engine::Tick()
     Timer::CalculateLoopTime();
 
     // Fixed update:
-    while (Timer::accumulatedTime >= Timer::fixedTimeStep)
+    while (Timer::s_accumulated >= Timer::s_fixedStep)
     {
         PhysicsHandler::SetData(); // sync-in
         Physics::Simulate();
