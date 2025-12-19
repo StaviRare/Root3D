@@ -22,12 +22,9 @@ string Graphics::TypeName()
     }
 }
 
-void Graphics::Initialize()
+void Graphics::Initialize(GraphicsAPI api, void* windowHandle)
 {
-    RuntimeSettings config = Config::Runtime();
-    GraphicsAPI type = config.RenderingAPI;
-
-    switch (type)
+    switch (api)
     {
         case ( GraphicsAPI::OpenGL ):
         _currentAPI = new OpenGL();
@@ -40,8 +37,8 @@ void Graphics::Initialize()
 
     if (_currentAPI != nullptr)
     {
-        _currentType = type;
-        _currentAPI->Initialize();
+        _currentType = api;
+        _currentAPI->Initialize(windowHandle);
     }
     else
     {

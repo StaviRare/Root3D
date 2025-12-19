@@ -4,14 +4,16 @@
 #include "SceneManager.h"
 #include "Graphics.h"
 #include "RenderManager.h"
-#include "Screen.h"
 #include "Input.h"
 #include "Physics.h"
 #include "PhysicsHandler.h"
 #include "Random.h"
+#include "Config.h"
 
 bool Engine::Initialize()
 {
+    RuntimeSettings config = Config::Runtime();
+
     Timer::Initialize();
 
     float timeSinceEpoch = Timer::TimeSinceEpoch();
@@ -20,14 +22,19 @@ bool Engine::Initialize()
     Random::InitState(seed);
 
     Input::Initialize();
-    Screen::Initialize();
-    Graphics::Initialize();
+
+    m_window = new Window();
+    m_window->Initialize(config.ScreenWidth, config.ScreenHeight);
+    auto windowHandle = m_window->GetNativeHandle();
+
+    Graphics::Initialize(config.RenderingAPI, windowHandle);
+
     Physics::Initialize();
     SceneManager::Initialze();
 
     // For now.
-    isRunning = true;
-    return isRunning;
+    m_isRunning = true;
+    return m_isRunning;
 }
 
 void Engine::UnInitialize()
@@ -36,20 +43,20 @@ void Engine::UnInitialize()
     SceneManager::UnInitialize();
     Physics::UnInitialize();
     Graphics::UnInitialize();
-    Screen::UnInitialize();
+    m_window->UnInitialize();
     Input::UnInitialize();
 }
 
 void Engine::Resume()
 {
-    Screen::Resume();
+    m_window->Resume();
     Timer::Resume();
 }
 
 void Engine::Pause()
 {
     Timer::Pause();
-    Screen::Pause();
+    m_window->Pause();
 }
 
 void Engine::Tick()
@@ -68,7 +75,7 @@ void Engine::Tick()
 
     // Input events:
     Input::Tick();
-    Screen::PollEvents();
+    m_window->PollEvents();
 
     // Update:
     SceneManager::Tick();
@@ -94,5 +101,5 @@ void Engine::Tick()
 
 bool Engine::IsRunning()
 {
-    return isRunning;
+    return m_isRunning;
 }

@@ -1,15 +1,13 @@
 #include "Log.h"
 #include "OpenGL.h"
 #include "Timer.h"
-#include "Screen.h"
 #include "Calc.h"
 
-void OpenGL::Initialize()
+void OpenGL::Initialize(void* windowHandle)
 {
-    Screen::RegisterResizeCallback(OnWindowResize);
+    //Window::RegisterResizeCallback(OnWindowResize);
 
-    void* nativeHandle = Screen::GetNativeHandle();
-    HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(nativeHandle));
+    HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(windowHandle));
     m_deviceContext = GetDC(hwnd);
 
     m_initialized = glewInit() == GLEW_OK && m_deviceContext != nullptr;
@@ -51,7 +49,7 @@ void OpenGL::Initialize()
 
 void OpenGL::UnInitialize()
 {
-    Screen::UnRegisterResizeCallback(OnWindowResize);
+    //Window::UnRegisterResizeCallback(OnWindowResize);
 
     glDeleteBuffers(1, &m_vertexBuffer);
     glDeleteBuffers(1, &m_texCoordBuffer);

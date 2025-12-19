@@ -1,25 +1,7 @@
 #pragma once
 
-#include "Vector3.h"
-#include "Physics.h"
-#include "Graphics.h"
 #include "SystemPlatform.h"
-
-struct RuntimeSettings
-{
-    // Window
-    int ScreenWidth = -1;
-    int ScreenHeight = -1;
-    bool FullScreen = true;
-
-    // Graphics
-    int MaxLights = 10;
-    GraphicsAPI RenderingAPI = GraphicsAPI::Null;
-
-    // Physics
-    Vector3 Gravity = Vector3(0, -9.81f, 0);
-    PhysicsType PhysicsTypeAPI = PhysicsType::Null;
-};
+#include "RuntimeSettings.h"
 
 class Config
 {
@@ -36,6 +18,7 @@ class Config
             case Platform::Windows:
                 returnValue.ScreenWidth = 960;
                 returnValue.ScreenHeight = 540;
+                returnValue.FullScreen = true;
                 returnValue.MaxLights = 20;
                 returnValue.RenderingAPI = GraphicsAPI::DirectX11;
                 returnValue.PhysicsTypeAPI = PhysicsType::Jolt;
@@ -44,6 +27,7 @@ class Config
             case Platform::Android:
                 returnValue.ScreenWidth = 960;
                 returnValue.ScreenHeight = 540;
+                returnValue.FullScreen = true;
                 returnValue.MaxLights = 10;
                 returnValue.RenderingAPI = GraphicsAPI::OpenGLES1;
                 returnValue.PhysicsTypeAPI = PhysicsType::Jolt;

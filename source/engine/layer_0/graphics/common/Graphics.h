@@ -26,7 +26,7 @@ class Graphics
     static GraphicsAPI _currentType;
 
     private:
-    static void Initialize();
+    static void Initialize(GraphicsAPI api, void* windowHandle);
     static void UnInitialize();
     static void BeginFrame(FrameUniform cmd);
     static void DrawObject(ObjectUniform cmd);

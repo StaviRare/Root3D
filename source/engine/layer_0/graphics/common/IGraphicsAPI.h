@@ -5,7 +5,7 @@
 class IGraphicsAPI
 {
     public:
-    virtual void Initialize() = 0;
+    virtual void Initialize(void* windowHandle) = 0;
     virtual void UnInitialize() = 0;
     virtual void BeginFrame(FrameUniform cmd) = 0;
     virtual void DrawObject(ObjectUniform cmd) = 0;

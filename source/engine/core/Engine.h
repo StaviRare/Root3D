@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Window.h"
+
 class Engine
 {
     public:
@@ -11,6 +13,7 @@ class Engine
 	bool IsRunning();
 
 	private:
-	bool isRunning;
+	bool m_isRunning = false;
+	Window* m_window = nullptr;
 };
 

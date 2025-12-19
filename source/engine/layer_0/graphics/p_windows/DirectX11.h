@@ -65,7 +65,7 @@ struct LightBuffer
 class DirectX11 : public IGraphicsAPI
 {
     public:
-    void Initialize() override;
+    void Initialize(void* windowHandle) override;
     void UnInitialize() override;
     void BeginFrame(FrameUniform cmd) override;
     void DrawObject(ObjectUniform cmd) override;
