@@ -37,7 +37,6 @@ class OpenGL : public IGraphicsAPI
     GLuint  CompileShader(const string& source, GLuint type);
 
     private:
-    bool m_initialized = false;
     GLuint m_time = -1;
     GLuint m_indexBuffer = -1;
     GLuint m_vertexBuffer = -1;

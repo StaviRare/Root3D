@@ -49,9 +49,17 @@ float Camera::GetAspect()
     }
     else
     {
-        Window& window = Window::getInstance();
-        //ENGINE_ERROR(std::to_string(window.GetWidth()));
-        returnValue = static_cast<float>( window.GetWidth() ) / window.GetHeight();
+        Window* window = Window::getInstance();
+        
+        if (window)
+        {
+            returnValue = static_cast<float>( window->GetWidth() ) / window->GetHeight();
+        }
+        else
+        {
+            returnValue = 1;
+            Log::Error("could nto find window.");
+        }
     }
 
     return returnValue;

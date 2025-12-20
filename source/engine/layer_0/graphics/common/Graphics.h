@@ -2,14 +2,9 @@
 
 #include "Types.h"
 #include "IGraphicsAPI.h"
+#include "GraphicsConfig.h"
+#include "GraphicsAPI.h"
 
-enum class GraphicsAPI
-{
-    Null,
-    OpenGL,
-    OpenGLES1,
-    DirectX11
-};
 
 class Graphics
 {
@@ -26,7 +21,7 @@ class Graphics
     static GraphicsAPI _currentType;
 
     private:
-    static void Initialize(GraphicsAPI api, void* windowHandle);
+    static void Initialize(GraphicsConfig config);
     static void UnInitialize();
     static void BeginFrame(FrameUniform cmd);
     static void DrawObject(ObjectUniform cmd);

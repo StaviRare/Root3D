@@ -83,7 +83,6 @@ class DirectX11 : public IGraphicsAPI
     ID3DBlob* CompileShader(const string& source, const char* entryPoint, const char* shaderModel);
 
     private:
-    bool m_initialized = false;
     ID3D11Buffer* m_vertexBuffer = nullptr;
     ID3D11Buffer* m_indexBuffer = nullptr;
     ID3D11Buffer* m_texCoordBuffer = nullptr;

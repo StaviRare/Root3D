@@ -1,9 +1,9 @@
 #pragma once
 
-#include "PhysicsAPI.h"
+#include "IPhysicsAPI.h"
 #include "JoltHelpers.h"
 
-class Jolt : public PhysicsAPI
+class Jolt : public IPhysicsAPI
 {
     public:
     void Initialize() override;

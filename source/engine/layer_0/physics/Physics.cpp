@@ -1,17 +1,16 @@
 #include "Log.h"
 #include "Physics.h"
-#include "Config.h"
 #include "Jolt.h"
 
-PhysicsType Physics:: _currentType;
-PhysicsAPI* Physics::_currentAPI = nullptr;
+PhysicsAPI Physics:: _currentType;
+IPhysicsAPI* Physics::_currentAPI = nullptr;
 Vector3 Physics::_gravity = Vector3(0,0,0);
 
 string Physics::TypeName()
 {
     switch (_currentType)
     {
-        case ( PhysicsType::Jolt ):
+        case ( PhysicsAPI::Jolt ):
         return "Jolt";
 
         default:
@@ -29,22 +28,20 @@ void Physics::SetGravity(Vector3 gravity)
     _gravity = gravity;
 }
 
-void Physics::Initialize()
+void Physics::Initialize(PhysicsConfig desc)
 {
-    RuntimeSettings config = Config::Runtime();
-    PhysicsType type = config.PhysicsTypeAPI;
-    _gravity = config.Gravity;
+    _gravity = desc.Gravity;
 
-    switch (type)
+    switch (desc.PhysicsTypeAPI)
     {
-        case ( PhysicsType::Jolt ):
+        case ( PhysicsAPI::Jolt ):
         _currentAPI = new Jolt();
         break;
     }
 
     if (_currentAPI != nullptr)
     {
-        _currentType = type;
+        _currentType = desc.PhysicsTypeAPI;
         _currentAPI->Initialize();
     }
     else
@@ -69,7 +66,7 @@ void Physics::UnInitialize()
 
         delete _currentAPI;
         _currentAPI = nullptr;
-        _currentType = PhysicsType::Null;
+        _currentType = PhysicsAPI::Null;
     }
 }
 

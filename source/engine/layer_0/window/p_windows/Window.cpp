@@ -12,9 +12,9 @@ Window* Window::s_instance = nullptr;
 // Forward declarations
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-Window& Window::getInstance()
+Window* Window::getInstance()
 {
-    return *s_instance;
+    return s_instance;
 }
 
 const uint32 Window::GetWidth()
@@ -43,9 +43,6 @@ void Window::SetFullScreen(bool enable)
     }
     else
     {
-        // Restore the window style
-        SetWindowLongPtr(windowHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
-
         // Restore the window placement
         lastWindowPlacement.showCmd = SW_SHOWNORMAL; // Force the window to restore to its normal state
         SetWindowPlacement(windowHandle, &lastWindowPlacement);
@@ -59,13 +56,19 @@ void Window::SetResolution(uint32 width, uint32 height)
 {
     if (windowHandle != nullptr)
     {
-        RECT rect;
-        GetWindowRect(windowHandle, &rect);
-        SetWindowPos(windowHandle, NULL, rect.left, rect.top, width, height, SWP_NOZORDER | SWP_NOMOVE);
+        m_width = width;
+        m_height = height;
+        ENGINE_INFO(std::to_string(m_width));
+
+        // update render view
+
+        //RECT rect;
+        //GetWindowRect(windowHandle, &rect);
+        //SetWindowPos(windowHandle, NULL, rect.left, rect.top, width, height, SWP_NOZORDER | SWP_NOMOVE);
     }
 }
 
-void Window::Initialize(uint32 width, uint32 height)
+void Window::Initialize(WindowConfig config)
 {
     if (s_instance != nullptr)
     {
@@ -75,25 +78,27 @@ void Window::Initialize(uint32 width, uint32 height)
     {
         s_instance = this;
 
-        m_width = width;
-        m_height = height;
+        m_width = config.width;
+        m_height = config.height;
 
         HINSTANCE hInstance = GetModuleHandle(nullptr);
-        LPCWSTR className = L"MyWindowClass"; // Changed to wide-char string
-
-                                              // Register the window class.
+        LPCWSTR className = L"MyWindowClass";
         WNDCLASS wc = {};
-        wc.lpfnWndProc = WindowProc; // Use StaticWindowProc here
+        wc.lpfnWndProc = WindowProc;
         wc.hInstance = hInstance;
         wc.lpszClassName = className;
 
         RegisterClass(&wc);
 
+        // title
+        std::string title = config.title;
+        std::wstring wtitle(title.begin(), title.end());
+
         // Create the window.
         windowHandle = CreateWindowEx(
             0,                                      // Optional window styles.
             className,                              // Window class
-            L"Root3D",                              // Window title - wide-char string
+            wtitle.c_str(),                         // Window title - wide-char string
             WS_OVERLAPPEDWINDOW,                    // Window style
             CW_USEDEFAULT, CW_USEDEFAULT, m_width, m_height,
             NULL,                                   // Parent window    
@@ -107,6 +112,9 @@ void Window::Initialize(uint32 width, uint32 height)
             ENGINE_ERROR("hWnd is NULL. Unable to proceed");
             return;
         }
+
+        SetWindowLongPtr(windowHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+
 
         ShowWindow(windowHandle, SW_SHOW);
 
@@ -168,37 +176,16 @@ void Window::PollEvents()
 {
     MSG msg;
 
-    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
     {
-        switch (msg.message)
-        {
-            case WM_SIZE:
-            {
-                Log::Debug("size");
-
-                uint32 newWidth = LOWORD(msg.lParam);
-                uint32 newHeight = HIWORD(msg.lParam);
-
-                if (newWidth != m_width || newHeight != m_height)
-                {
-                    m_width = newWidth;
-                    m_height = newHeight;
-
-                    Log::Debug(std::to_string(m_width));
-
-                }
-                break;
-            }
-
-            case WM_QUIT:
-            {
-                UnInitialize();
-                break;
-            }
-        }
-
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+
+        if (msg.message == WM_QUIT)
+        {
+            UnInitialize();
+            break;
+        }
     }
 }
 
@@ -207,26 +194,56 @@ void* Window::GetNativeHandle()
     return windowHandle;
 }
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    switch (msg)
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+
+    switch (message)
     {
         case WM_SETCURSOR:
         {
-            if ((HWND)wParam == hwnd && LOWORD(lParam) == HTCLIENT)
+            bool insideWindow = (HWND) wParam == hwnd
+                && LOWORD(lParam) == HTCLIENT;
+
+            if (insideWindow)
             {
                 SetCursor(LoadCursor(nullptr, IDC_ARROW));
                 return TRUE;
             }
-            break;
-        }
 
+            break; // ignore other types
+        }
         case WM_DESTROY:
         {
-            //PostQuitMessage(0);
+            PostQuitMessage(0);
             return 0;
+        }
+        case WM_SIZE:
+        {
+            auto instance = Window::getInstance();
+
+            auto width = LOWORD(lParam);
+            auto height = HIWORD(lParam);
+
+            if (width > 0 && height > 0)
+            {
+                instance->SetResolution(width, height);
+            }
+
+            //ENGINE_ERROR(std::to_string(width));
+            //instance.SetResolution(LOWORD(lParam), HIWORD(lParam));
+            //width = LOWORD(lParam);
+            //height = HIWORD(lParam);
+
+            //for (auto& funcPtr : callbacks)
+            //{
+            //    if (funcPtr)
+            //    {
+            //        funcPtr(width, height);
+            //    }
+            //}
+
+            break;
         }
     }
 
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+    return DefWindowProc(hwnd, message, wParam, lParam);
 }

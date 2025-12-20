@@ -14,5 +14,8 @@ class IGraphicsAPI
     virtual void DestroyTexture(uniqueID id) = 0;
     virtual uniqueID CreateShader(const ShaderUpload data) = 0;
     virtual uniqueID CreateTexture(const TextureUpload data) = 0;
+
+    protected:
+    bool m_initialized = false;
 };
 

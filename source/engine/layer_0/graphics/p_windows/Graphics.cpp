@@ -2,7 +2,6 @@
 #include "Graphics.h"
 #include "OpenGL.h"
 #include "DirectX11.h"
-#include "Config.h"
 
 GraphicsAPI Graphics:: _currentType;
 IGraphicsAPI* Graphics::_currentAPI = nullptr;
@@ -22,9 +21,9 @@ string Graphics::TypeName()
     }
 }
 
-void Graphics::Initialize(GraphicsAPI api, void* windowHandle)
+void Graphics::Initialize(GraphicsConfig desc)
 {
-    switch (api)
+    switch (desc.RenderingAPI)
     {
         case ( GraphicsAPI::OpenGL ):
         _currentAPI = new OpenGL();
@@ -37,8 +36,8 @@ void Graphics::Initialize(GraphicsAPI api, void* windowHandle)
 
     if (_currentAPI != nullptr)
     {
-        _currentType = api;
-        _currentAPI->Initialize(windowHandle);
+        _currentType = desc.RenderingAPI;
+        _currentAPI->Initialize(desc.windowHandle);
     }
     else
     {
