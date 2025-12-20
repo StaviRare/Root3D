@@ -5,10 +5,12 @@
 
 void OpenGL::Initialize(void* windowHandle)
 {
-    //Window::RegisterResizeCallback(OnWindowResize);
-
     HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(windowHandle));
     m_deviceContext = GetDC(hwnd);
+
+    // Create OpenGL rendering context
+    HGLRC hRC = wglCreateContext(m_deviceContext);
+    wglMakeCurrent(m_deviceContext, hRC);
 
     m_initialized = glewInit() == GLEW_OK && m_deviceContext != nullptr;
 
@@ -49,7 +51,11 @@ void OpenGL::Initialize(void* windowHandle)
 
 void OpenGL::UnInitialize()
 {
-    //Window::UnRegisterResizeCallback(OnWindowResize);
+    HGLRC hRC = wglGetCurrentContext();
+
+    // Release rendering context
+    wglMakeCurrent(NULL, NULL);
+    wglDeleteContext(hRC);
 
     glDeleteBuffers(1, &m_vertexBuffer);
     glDeleteBuffers(1, &m_texCoordBuffer);

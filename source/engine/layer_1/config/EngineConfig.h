@@ -1,12 +1,14 @@
 #pragma once
 
-#include "PhysicsConfig.h"
-#include "GraphicsConfig.h"
-#include "WindowConfig.h"
+#include "WindowDesc.h"
+#include "GraphicsDesc.h"
+#include "PhysicsDesc.h"
+#include "TimeDesc.h"
 
 struct EngineConfig
 {
-    WindowConfig window;
-    GraphicsConfig graphics;
-    PhysicsConfig physics;
+    TimeDesc time;
+    WindowDesc window;
+    GraphicsDesc graphics;
+    PhysicsDesc physics;
 };

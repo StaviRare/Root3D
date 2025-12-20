@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <vector>
+#include <queue>
 
 #include "Log.h"
 #include "Window.h"
@@ -9,8 +10,17 @@ static HWND windowHandle;
 
 Window* Window::s_instance = nullptr;
 
+struct WindowEvent {
+    UINT message;
+    WPARAM wParam;
+    LPARAM lParam;
+};
+
 // Forward declarations
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+static std::queue<std::pair<HWND, WindowEvent>> g_messageQueue;
+
 
 Window* Window::getInstance()
 {
@@ -68,7 +78,7 @@ void Window::SetResolution(uint32 width, uint32 height)
     }
 }
 
-void Window::Initialize(WindowConfig config)
+void Window::Initialize(WindowDesc config)
 {
     if (s_instance != nullptr)
     {
@@ -80,6 +90,7 @@ void Window::Initialize(WindowConfig config)
 
         m_width = config.width;
         m_height = config.height;
+
 
         HINSTANCE hInstance = GetModuleHandle(nullptr);
         LPCWSTR className = L"MyWindowClass";
@@ -113,7 +124,8 @@ void Window::Initialize(WindowConfig config)
             return;
         }
 
-        SetWindowLongPtr(windowHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+        // this is good but we have no use for it at the moment (can use getWindowLongPtr)
+        //SetWindowLongPtr(windowHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 
 
         ShowWindow(windowHandle, SW_SHOW);
@@ -136,9 +148,11 @@ void Window::Initialize(WindowConfig config)
         int pixelFormat = ChoosePixelFormat(deviceContext, &pfd);
         SetPixelFormat(deviceContext, pixelFormat, &pfd);
 
-        // Create OpenGL rendering context
-        HGLRC hRC = wglCreateContext(deviceContext);
-        wglMakeCurrent(deviceContext, hRC);
+        // ToDo - Should be better.
+        if (config.fullscreen)
+        {
+            SetFullScreen(true);
+        }
     }
 }
 
@@ -154,14 +168,6 @@ void Window::Resume()
 
 void Window::UnInitialize()
 {
-    // ToDo - OPEN GL code here. Handle better.
-    // Get current rendering context
-    HGLRC hRC = wglGetCurrentContext();
-
-    // Release rendering context
-    wglMakeCurrent(NULL, NULL);
-    wglDeleteContext(hRC);
-
     // Release device context
     ReleaseDC(windowHandle, deviceContext);
 
@@ -172,19 +178,58 @@ void Window::UnInitialize()
     }
 }
 
+
+// This will not work with multiple windows as i just pop them all.
 void Window::PollEvents()
 {
     MSG msg;
 
-    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+    // Flush the OS message queue; events are handled via g_messageQueue.
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) 
     {
-        TranslateMessage(&msg);
         DispatchMessage(&msg);
+    }
 
-        if (msg.message == WM_QUIT)
+    // Handle queued events per window instance
+    while (!g_messageQueue.empty())
+    {
+        auto [hwnd, ev] = g_messageQueue.front();
+        g_messageQueue.pop();
+
+        if (windowHandle == hwnd)
         {
-            UnInitialize();
-            break;
+            switch (ev.message)
+            {
+                case WM_SETFOCUS:
+                {
+                    // FocusGained
+                    break;
+                }
+                case WM_KILLFOCUS:
+                {
+                    // FocusLost
+                    break;
+                }
+                case WM_SIZE:
+                {
+                    m_width = LOWORD(ev.lParam);
+                    m_height = HIWORD(ev.lParam);
+                    break;
+                }
+                case WM_DESTROY:
+                {
+                    UnInitialize();
+                    break;
+                }
+                case WM_SETCURSOR:
+                {
+                    if ((HWND) ev.wParam == hwnd && LOWORD(ev.lParam) == HTCLIENT)
+                    {
+                        SetCursor(LoadCursor(nullptr, IDC_ARROW));
+                        break;
+                    }
+                }
+            }
         }
     }
 }
@@ -194,56 +239,9 @@ void* Window::GetNativeHandle()
     return windowHandle;
 }
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-
-    switch (message)
-    {
-        case WM_SETCURSOR:
-        {
-            bool insideWindow = (HWND) wParam == hwnd
-                && LOWORD(lParam) == HTCLIENT;
-
-            if (insideWindow)
-            {
-                SetCursor(LoadCursor(nullptr, IDC_ARROW));
-                return TRUE;
-            }
-
-            break; // ignore other types
-        }
-        case WM_DESTROY:
-        {
-            PostQuitMessage(0);
-            return 0;
-        }
-        case WM_SIZE:
-        {
-            auto instance = Window::getInstance();
-
-            auto width = LOWORD(lParam);
-            auto height = HIWORD(lParam);
-
-            if (width > 0 && height > 0)
-            {
-                instance->SetResolution(width, height);
-            }
-
-            //ENGINE_ERROR(std::to_string(width));
-            //instance.SetResolution(LOWORD(lParam), HIWORD(lParam));
-            //width = LOWORD(lParam);
-            //height = HIWORD(lParam);
-
-            //for (auto& funcPtr : callbacks)
-            //{
-            //    if (funcPtr)
-            //    {
-            //        funcPtr(width, height);
-            //    }
-            //}
-
-            break;
-        }
-    }
-
+static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
+{
+    WindowEvent ev{ message, wParam, lParam };
+    g_messageQueue.push({ hwnd, ev });
     return DefWindowProc(hwnd, message, wParam, lParam);
 }

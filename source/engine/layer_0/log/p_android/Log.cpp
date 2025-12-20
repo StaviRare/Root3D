@@ -13,12 +13,12 @@ void Log::Info(const string& message)
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "%s", message.c_str());
 }
 
-void Log::Error(const string& errorMessage)
+void Log::Error(const string& message)
 {
-    __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "%s", errorMessage.c_str());
+    __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "%s", message.c_str());
 }
 
-void Log::Warning(const string& warningMessage)
+void Log::Warning(const string& message)
 {
-    __android_log_print(ANDROID_LOG_WARN, LOG_TAG, "%s", warningMessage.c_str());
+    __android_log_print(ANDROID_LOG_WARN, LOG_TAG, "%s", message.c_str());
 }

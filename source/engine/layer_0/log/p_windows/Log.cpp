@@ -1,4 +1,6 @@
+#include <windows.h>
 #include <iostream>
+
 #include "Log.h"
 
 void Log::Debug(const string& message)
@@ -11,12 +13,22 @@ void Log::Info(const string& message)
     std::cout << message << std::endl;
 }
 
-void Log::Error(const string& errorMessage)
+void Log::Error(const string& message)
 {
-    std::cout << "\033[1;31m" << errorMessage << "\033[0m" << std::endl;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
+    std::cout << message << std::endl;
+
+    // Reset color to default
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
-void Log::Warning(const string& warningMessage)
+void Log::Warning(const string& message)
 {
-    std::cout << "\033[1;33m" << warningMessage << "\033[0m" << std::endl;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+    std::cout << message << std::endl;
+
+    // Reset color to default
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }

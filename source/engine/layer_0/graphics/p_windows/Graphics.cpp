@@ -11,32 +11,39 @@ string Graphics::TypeName()
     switch (_currentType)
     {
         case ( GraphicsAPI::OpenGL ):
-        return "OpenGL";
-
+        {
+            return "OpenGL";
+        }
         case ( GraphicsAPI::DirectX11 ):
-        return "DirectX11";
-
+        {
+            return "DirectX11";
+        }
         default:
-        return "Null";
+        {
+            return "Null";
+        }
     }
 }
 
-void Graphics::Initialize(GraphicsConfig desc)
+void Graphics::Initialize(GraphicsDesc desc)
 {
-    switch (desc.RenderingAPI)
+    switch (desc.graphicsAPI)
     {
         case ( GraphicsAPI::OpenGL ):
-        _currentAPI = new OpenGL();
-        break;
-
+        {
+            _currentAPI = new OpenGL();
+            break;
+        }
         case ( GraphicsAPI::DirectX11 ):
-        _currentAPI = new DirectX11();
-        break;
+        {
+            _currentAPI = new DirectX11();
+            break;
+        }
     }
 
     if (_currentAPI != nullptr)
     {
-        _currentType = desc.RenderingAPI;
+        _currentType = desc.graphicsAPI;
         _currentAPI->Initialize(desc.windowHandle);
     }
     else

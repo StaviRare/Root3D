@@ -28,11 +28,11 @@ void Physics::SetGravity(Vector3 gravity)
     _gravity = gravity;
 }
 
-void Physics::Initialize(PhysicsConfig desc)
+void Physics::Initialize(PhysicsDesc desc)
 {
-    _gravity = desc.Gravity;
+    _gravity = desc.gravity;
 
-    switch (desc.PhysicsTypeAPI)
+    switch (desc.physicsAPI)
     {
         case ( PhysicsAPI::Jolt ):
         _currentAPI = new Jolt();
@@ -41,7 +41,7 @@ void Physics::Initialize(PhysicsConfig desc)
 
     if (_currentAPI != nullptr)
     {
-        _currentType = desc.PhysicsTypeAPI;
+        _currentType = desc.physicsAPI;
         _currentAPI->Initialize();
     }
     else

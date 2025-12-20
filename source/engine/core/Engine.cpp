@@ -15,9 +15,6 @@ bool Engine::Initialize()
     // Engine config
     Platform currentPlatform = SystemPlatform::Get();
     EngineConfig engineConfig = BuildEngineConfig(currentPlatform);
-    WindowConfig windowConfig = engineConfig.window;
-    GraphicsConfig graphicsConfig = engineConfig.graphics;
-    PhysicsConfig physicsConfig = engineConfig.physics;
 
     Timer::Initialize();
 
@@ -27,14 +24,19 @@ bool Engine::Initialize()
 
     Input::Initialize();
 
+    WindowDesc windowConfig = engineConfig.window;
     m_window = new Window();
     m_window->Initialize(windowConfig);
-    auto windowHandle = m_window->GetNativeHandle();
-    graphicsConfig.windowHandle = windowHandle;
-
+    
+    
+    GraphicsDesc graphicsConfig = engineConfig.graphics;
+    graphicsConfig.windowHandle = m_window->GetNativeHandle();
     Graphics::Initialize(graphicsConfig);
 
+    PhysicsDesc physicsConfig = engineConfig.physics;
     Physics::Initialize(physicsConfig);
+
+
     SceneManager::Initialze();
 
     // For now.
@@ -87,7 +89,6 @@ void Engine::Tick()
     // if resize
     // update graphics
 
-
     // Update:
     SceneManager::Tick();
 
@@ -95,12 +96,9 @@ void Engine::Tick()
     SceneManager::LateTick();
 
     // Scene pre render:
-    //Graphics::ClearScreen();
     RenderManager::PreRender();
 
     // Scene render:
-    //Graphics::ExecuteRenderCommands();
-    //Graphics::SwapFrameBuffers();
     RenderManager::Render();
 
     // Scene post render:
@@ -117,32 +115,35 @@ bool Engine::IsRunning()
 
 EngineConfig Engine::BuildEngineConfig(Platform platform)
 {
-    EngineConfig returnValue;
+    EngineConfig config;
 
     // For all platforms
-    returnValue.window.title = "Root3D";
-    returnValue.physics.Gravity = Vector3(0, -9.81f, 0);
-    returnValue.physics.PhysicsTypeAPI = PhysicsAPI::Jolt;
+    config.window.title = "Root3D";
+    config.physics.gravity = Vector3(0, -9.81f, 0);
+    config.physics.physicsAPI = PhysicsAPI::Jolt;
 
     // Per platform
     switch (platform)
     {
         case Platform::Windows:
-        returnValue.window.width = 960;
-        returnValue.window.height = 540;
-        returnValue.window.fullscreen = false;
-        returnValue.graphics.MaxLights = 20;
-        returnValue.graphics.RenderingAPI = GraphicsAPI::DirectX11;
-        break;
-
+        {
+            config.window.width = 960;
+            config.window.height = 540;
+            config.window.fullscreen = false;
+            config.graphics.maxLights = 20;
+            config.graphics.graphicsAPI = GraphicsAPI::DirectX11;
+            break;
+        }
         case Platform::Android:
-        returnValue.window.width = 960;
-        returnValue.window.height = 540;
-        returnValue.window.fullscreen = true;
-        returnValue.graphics.MaxLights = 10;
-        returnValue.graphics.RenderingAPI = GraphicsAPI::OpenGLES1;
-        break;
+        {
+            config.window.width = 960;
+            config.window.height = 540;
+            config.window.fullscreen = true;
+            config.graphics.maxLights = 10;
+            config.graphics.graphicsAPI = GraphicsAPI::OpenGLES1;
+            break;
+        }
     }
 
-    return returnValue;
+    return config;
 }

@@ -2,7 +2,7 @@
 
 #include "Types.h"
 #include "IGraphicsAPI.h"
-#include "GraphicsConfig.h"
+#include "GraphicsDesc.h"
 #include "GraphicsAPI.h"
 
 
@@ -21,7 +21,7 @@ class Graphics
     static GraphicsAPI _currentType;
 
     private:
-    static void Initialize(GraphicsConfig config);
+    static void Initialize(GraphicsDesc config);
     static void UnInitialize();
     static void BeginFrame(FrameUniform cmd);
     static void DrawObject(ObjectUniform cmd);

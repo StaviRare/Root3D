@@ -4,7 +4,7 @@
 #include "Vector3.h"
 #include "IPhysicsAPI.h"
 #include "PhysicsAPI.h"
-#include "PhysicsConfig.h"
+#include "PhysicsDesc.h"
 
 class Physics
 {
@@ -23,7 +23,7 @@ class Physics
     static PhysicsAPI _currentType;
 
     private:
-    static void Initialize(PhysicsConfig config);
+    static void Initialize(PhysicsDesc config);
     static void Simulate();
     static void UnInitialize();
 };

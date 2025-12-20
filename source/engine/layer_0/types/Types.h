@@ -3,9 +3,6 @@
 #include <cstdint>
 #include <string>
 
-// Define primitive data types for the Platform Independence Layer (PIL).
-// These types will replace the larger data types previously used in the PIL and the renderCommand.
-
 // Integers
 using int8 = std::int8_t;
 using int16 = std::int16_t;
