@@ -1,6 +1,4 @@
 #include <windows.h>
-#include <vector>
-#include <queue>
 
 #include "Log.h"
 #include "Window.h"
@@ -10,7 +8,7 @@ static HWND windowHandle;
 
 Window* Window::s_instance = nullptr;
 
-struct WindowEvent {
+struct WindowsEvent {
     UINT message;
     WPARAM wParam;
     LPARAM lParam;
@@ -19,7 +17,7 @@ struct WindowEvent {
 // Forward declarations
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-static std::queue<std::pair<HWND, WindowEvent>> g_messageQueue;
+static std::queue<std::pair<HWND, WindowsEvent>> g_messageQueue;
 
 
 Window* Window::getInstance()
@@ -68,13 +66,13 @@ void Window::SetResolution(uint32 width, uint32 height)
     {
         m_width = width;
         m_height = height;
-        ENGINE_INFO(std::to_string(m_width));
+        //ENGINE_INFO(std::to_string(m_width));
 
         // update render view
 
-        //RECT rect;
-        //GetWindowRect(windowHandle, &rect);
-        //SetWindowPos(windowHandle, NULL, rect.left, rect.top, width, height, SWP_NOZORDER | SWP_NOMOVE);
+        RECT rect;
+        GetWindowRect(windowHandle, &rect);
+        SetWindowPos(windowHandle, NULL, rect.left, rect.top, width, height, SWP_NOZORDER | SWP_NOMOVE);
     }
 }
 
@@ -178,14 +176,20 @@ void Window::UnInitialize()
     }
 }
 
+void* Window::GetNativeHandle()
+{
+    return windowHandle;
+}
 
 // This will not work with multiple windows as i just pop them all.
-void Window::PollEvents()
+std::vector<WindowEvent> Window::PollEvents()
 {
+    std::vector<WindowEvent> returnValue;
+
     MSG msg;
 
     // Flush the OS message queue; events are handled via g_messageQueue.
-    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) 
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
     {
         DispatchMessage(&msg);
     }
@@ -198,50 +202,60 @@ void Window::PollEvents()
 
         if (windowHandle == hwnd)
         {
+            WindowEvent we{};
             switch (ev.message)
             {
                 case WM_SETFOCUS:
                 {
-                    // FocusGained
+                    we.type = WindowEventType::FocusGained;
+                    returnValue.push_back(we);
                     break;
                 }
                 case WM_KILLFOCUS:
                 {
-                    // FocusLost
+                    we.type = WindowEventType::FocusLost;
+                    returnValue.push_back(we);
                     break;
                 }
                 case WM_SIZE:
                 {
                     m_width = LOWORD(ev.lParam);
                     m_height = HIWORD(ev.lParam);
+                    we.type = WindowEventType::Resize;
+                    we.width = m_width;
+                    we.height = m_height;
+
+                    //Log::Error("S: " + std::to_string(m_width) + ":" + std::to_string(m_height));
+
+
+                    returnValue.push_back(we);
                     break;
                 }
                 case WM_DESTROY:
                 {
+                    we.type = WindowEventType::Close;
+                    returnValue.push_back(we);
                     UnInitialize();
                     break;
                 }
                 case WM_SETCURSOR:
                 {
-                    if ((HWND) ev.wParam == hwnd && LOWORD(ev.lParam) == HTCLIENT)
+                    if ((HWND)ev.wParam == hwnd && LOWORD(ev.lParam) == HTCLIENT)
                     {
                         SetCursor(LoadCursor(nullptr, IDC_ARROW));
-                        break;
                     }
+                    break;
                 }
             }
         }
     }
-}
 
-void* Window::GetNativeHandle()
-{
-    return windowHandle;
+    return returnValue;
 }
 
 static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
-    WindowEvent ev{ message, wParam, lParam };
+    WindowsEvent ev{ message, wParam, lParam };
     g_messageQueue.push({ hwnd, ev });
     return DefWindowProc(hwnd, message, wParam, lParam);
 }

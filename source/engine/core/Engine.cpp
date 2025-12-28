@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "Engine.h"
 #include "Debug.h"
 #include "Timer.h"
@@ -83,12 +85,46 @@ void Engine::Tick()
 
     // Input events:
     Input::Tick();
-    m_window->PollEvents();
 
-    // swithc events
-    // foreach
-    // if resize
-    // update graphics
+    // Window events:
+    std::vector<WindowEvent> events = m_window->PollEvents();
+
+    for (auto& e : events)
+    {
+        switch (e.type)
+        {
+            case WindowEventType::Resize:
+            {
+                Graphics::Resize(e.width, e.height);
+                break;
+            }
+            case WindowEventType::Close:
+            {
+                // debug win:
+                m_isRunning = false;
+                // debug win:
+                // debug win:
+
+
+
+                Debug::Log("WindowClose");
+                // Pass it to SceneManager
+                break;
+            }
+            case WindowEventType::FocusGained:
+            {
+                Debug::Log("WindowFocusGained");
+                // Pass it to SceneManager
+                break;
+            }
+            case WindowEventType::FocusLost:
+            {
+                Debug::Log("WindowFocusLost");
+                // Pass it to SceneManager
+                break;
+            }
+        }
+    }
 
     // Update:
     SceneManager::Tick();

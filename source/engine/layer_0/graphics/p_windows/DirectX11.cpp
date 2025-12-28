@@ -6,38 +6,32 @@
 
 void DirectX11::Initialize(void* windowHandle)
 {
-    HRESULT hr = E_FAIL;
+    m_initialized = false;
 
-    // Setup Device and Swap Chain
-    HWND hwnd = reinterpret_cast<HWND>( const_cast<void*>( windowHandle ) );
+    HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(windowHandle));
     CreateDeviceAndSwapChain(hwnd);
-
-    // Initialize Render Target and Viewport
     CreateRenderTargetView();
 
-
     RECT rect;
-    if (GetClientRect(hwnd, &rect))
+    if (!GetClientRect(hwnd, &rect))
+    {
+        ENGINE_ERROR("Failed to get client rect");
+    }
+    else
     {
         auto width = rect.right - rect.left;
         auto height = rect.bottom - rect.top;
 
         SetupViewport(width, height);
 
-
-        // Create view/projection buffer
         VPBuffer initialVP{XMMatrixIdentity(), XMMatrixIdentity()};
-        m_viewProjBuffer = CreateBuffer(&initialVP, sizeof(VPBuffer), D3D11_BIND_CONSTANT_BUFFER);
-
-        // Create model buffer
         MBuffer initialM{XMMatrixIdentity()};
-        m_modelBuffer = CreateBuffer(&initialM, sizeof(MBuffer), D3D11_BIND_CONSTANT_BUFFER);
-
-        // Create light buffer
         LightBuffer initialLight{};
+
+        m_modelBuffer = CreateBuffer(&initialM, sizeof(MBuffer), D3D11_BIND_CONSTANT_BUFFER);
+        m_viewProjBuffer = CreateBuffer(&initialVP, sizeof(VPBuffer), D3D11_BIND_CONSTANT_BUFFER);
         m_lightBuffer = CreateBuffer(&initialLight, sizeof(LightBuffer), D3D11_BIND_CONSTANT_BUFFER);
 
-        // Setup Depth Stencil Texture
         D3D11_TEXTURE2D_DESC descDepth = {};
         descDepth.Width = width;
         descDepth.Height = height;
@@ -47,54 +41,38 @@ void DirectX11::Initialize(void* windowHandle)
         descDepth.SampleDesc.Count = 1;
         descDepth.Usage = D3D11_USAGE_DEFAULT;
         descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
         ID3D11Texture2D* depthStencilTexture = nullptr;
+        m_device->CreateTexture2D(&descDepth, nullptr, &depthStencilTexture);
 
-        if (FAILED(m_device->CreateTexture2D(&descDepth, nullptr, &depthStencilTexture)))
-        {
-            ENGINE_ERROR("Failed to create Depth Stencil Texture");
-            return;
-        }
-
-        // Setup Depth Stencil View
         D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
         descDSV.Format = descDepth.Format;
         descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
         descDSV.Texture2D.MipSlice = 0;
 
-        if (FAILED(m_device->CreateDepthStencilView(depthStencilTexture, &descDSV, &m_depthStencilView)))
-        {
-            ENGINE_ERROR("Failed to create Depth Stencil View");
-            depthStencilTexture->Release();
-            return;
-        }
-
+        m_device->CreateDepthStencilView(depthStencilTexture, &descDSV, &m_depthStencilView);
         depthStencilTexture->Release();
 
-        m_context->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
-
-        // Configure and Set Depth Stencil State
         D3D11_DEPTH_STENCIL_DESC dsDesc = {true, D3D11_DEPTH_WRITE_MASK_ALL, D3D11_COMPARISON_LESS};
-        hr = m_device->CreateDepthStencilState(&dsDesc, &m_depthStencilState);
-        if (FAILED(hr))
-        {
-            ENGINE_ERROR("Failed to configure Depth Stencil State");
-            return;
-        }
+        m_device->CreateDepthStencilState(&dsDesc, &m_depthStencilState);
 
-        m_context->OMSetDepthStencilState(m_depthStencilState, 1);
-
-        // Setup and Apply Rasterizer State
         D3D11_RASTERIZER_DESC rasterizerDesc = {D3D11_FILL_SOLID, D3D11_CULL_BACK, TRUE, TRUE};
-        hr = m_device->CreateRasterizerState(&rasterizerDesc, &m_rasterizerState);
-        if (FAILED(hr))
+        m_device->CreateRasterizerState(&rasterizerDesc, &m_rasterizerState);
+
+        bool allValid = m_viewProjBuffer && m_modelBuffer && m_lightBuffer &&
+            m_depthStencilView && m_depthStencilState && m_rasterizerState;
+
+        if (allValid)
         {
-            ENGINE_ERROR("Failed to configure Rasterizer State");
-            return;
+            m_context->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+            m_context->OMSetDepthStencilState(m_depthStencilState, 1);
+            m_context->RSSetState(m_rasterizerState);
+            m_initialized = true;
         }
-
-        m_context->RSSetState(m_rasterizerState);
-
-        m_initialized = true;
+        else
+        {
+            ENGINE_ERROR("DirectX11 initialization failed");
+        }
     }
 }
 
@@ -116,6 +94,74 @@ void DirectX11::UnInitialize()
     if (m_device) m_device->Release();
 
     m_initialized = false;
+}
+
+void DirectX11::Resize(uint32_t width, uint32_t height)
+{
+    if (m_swapChain && m_device && m_context)
+    {
+        // Release old views
+        if (m_backBufferRTV)
+        {
+            m_backBufferRTV->Release(); m_backBufferRTV = nullptr;
+        }
+        if (m_depthStencilView)
+        {
+            m_depthStencilView->Release(); m_depthStencilView = nullptr;
+        }
+
+        // Resize swap chain buffers
+        HRESULT hr = m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+        
+        if (FAILED(hr))
+        {
+            ENGINE_ERROR("Failed to resize swap chain buffers. Error code: " + std::to_string(hr));
+        }
+        else
+        {
+            // Recreate render target view
+            CreateRenderTargetView();
+
+            // Recreate depth stencil
+            D3D11_TEXTURE2D_DESC descDepth = {};
+            descDepth.Width = width;
+            descDepth.Height = height;
+            descDepth.MipLevels = 1;
+            descDepth.ArraySize = 1;
+            descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+            descDepth.SampleDesc.Count = 1;
+            descDepth.Usage = D3D11_USAGE_DEFAULT;
+            descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+            ID3D11Texture2D* depthStencilTexture = nullptr;
+            if (FAILED(m_device->CreateTexture2D(&descDepth, nullptr, &depthStencilTexture)))
+            {
+                ENGINE_ERROR("Failed to create Depth Stencil Texture");
+            }
+            else
+            {
+                D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
+                descDSV.Format = descDepth.Format;
+                descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+                descDSV.Texture2D.MipSlice = 0;
+
+                if (FAILED(m_device->CreateDepthStencilView(depthStencilTexture, &descDSV, &m_depthStencilView)))
+                {
+                    ENGINE_ERROR("Failed to create Depth Stencil View");
+                    depthStencilTexture->Release();
+                }
+                else
+                {
+                    depthStencilTexture->Release();
+
+                    m_context->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+
+                    // Update viewport
+                    SetupViewport(width, height);
+                }
+            }
+        }
+    }
 }
 
 void DirectX11::BeginFrame(FrameUniform cmd)

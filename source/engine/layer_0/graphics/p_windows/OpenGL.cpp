@@ -278,7 +278,7 @@ uniqueID OpenGL::CreateTexture(const TextureUpload data)
     return m_nextTextureID;
 }
 
-void OpenGL::OnWindowResize(int width, int height)
+void OpenGL::Resize(uint32_t width, uint32_t height)
 {
     glViewport(0, 0, width, height);
 }

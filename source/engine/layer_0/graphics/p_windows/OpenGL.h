@@ -24,6 +24,7 @@ class OpenGL : public IGraphicsAPI
     public:
     void Initialize(void* windowHandle) override;
     void UnInitialize() override;
+    void Resize(uint32_t width, uint32_t height) override;
     void BeginFrame(FrameUniform cmd) override;
     void DrawObject(ObjectUniform cmd) override;
     void EndFrame() override;
@@ -33,7 +34,6 @@ class OpenGL : public IGraphicsAPI
     uniqueID CreateTexture(const TextureUpload data) override;
 
     private:
-    static void OnWindowResize(int width, int height);
     GLuint  CompileShader(const string& source, GLuint type);
 
     private:

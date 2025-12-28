@@ -52,6 +52,26 @@ void Graphics::Initialize(GraphicsDesc desc)
     }
 }
 
+void Graphics::UnInitialize()
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->UnInitialize();
+
+        delete _currentAPI;
+        _currentAPI = nullptr;
+        _currentType = GraphicsAPI::Null;
+    }
+}
+
+void Graphics::Resize(uint32_t width, uint32_t height)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->Resize(width, height);
+    }
+}
+
 void Graphics::BeginFrame(FrameUniform cmd)
 {
     if (_currentAPI != nullptr)
@@ -73,18 +93,6 @@ void Graphics::EndFrame()
     if (_currentAPI != nullptr)
     {
         _currentAPI->EndFrame();
-    }
-}
-
-void Graphics::UnInitialize()
-{
-    if (_currentAPI != nullptr)
-    {
-        _currentAPI->UnInitialize();
-
-        delete _currentAPI;
-        _currentAPI = nullptr;
-        _currentType = GraphicsAPI::Null;
     }
 }
 
