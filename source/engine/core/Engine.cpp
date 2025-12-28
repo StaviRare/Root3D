@@ -16,7 +16,8 @@ bool Engine::Initialize()
     Platform currentPlatform = SystemPlatform::Get();
     EngineConfig engineConfig = BuildEngineConfig(currentPlatform);
 
-    Timer::Initialize();
+    TimeDesc timeConfig = engineConfig.time;
+    Timer::Initialize(timeConfig);
 
     float timeSinceEpoch = Timer::TimeSinceEpoch();
     unsigned int seed = static_cast<unsigned int>(timeSinceEpoch);
@@ -119,6 +120,9 @@ EngineConfig Engine::BuildEngineConfig(Platform platform)
 
     // For all platforms
     config.window.title = "Root3D";
+    config.time.timeScale = 1.00f;
+    config.time.maxDeltaTime = 0.10f;
+    config.time.fixedTimeStep = 0.02f;
     config.physics.gravity = Vector3(0, -9.81f, 0);
     config.physics.physicsAPI = PhysicsAPI::Jolt;
 

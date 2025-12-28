@@ -6,13 +6,13 @@ TimePoint Timer::s_lastTime;
 TimePoint Timer::s_pauseTime;
 Duration Timer::s_delta = Duration::zero();
 Duration Timer::s_accumulated = Duration::zero();
+Duration Timer::s_maxStep = Duration::zero();
+Duration Timer::s_fixedStep = Duration::zero();
 
-// ToDo - config will pass this in future.
-Duration Timer::s_maxStep = std::chrono::duration_cast<Duration>(FloatDuration(0.1f));
-Duration Timer::s_fixedStep = std::chrono::duration_cast<Duration>(FloatDuration(0.02f));
-
-void Timer::Initialize()
+void Timer::Initialize(TimeDesc desc)
 {
+    s_maxStep = std::chrono::duration_cast<Duration>( FloatDuration(desc.maxDeltaTime) );
+    s_fixedStep = std::chrono::duration_cast<Duration>( FloatDuration(desc.fixedTimeStep) );
     s_startTime = s_lastTime = HighResClock::now();
     s_delta = Duration::zero();
     s_accumulated = Duration::zero();
@@ -83,14 +83,4 @@ float Timer::TimeSinceEpoch()
 float Timer::AccumulatedTime()
 {
     return FloatDuration(s_accumulated).count();
-}
-
-void Timer::SetFixedStep(float seconds)
-{
-    s_fixedStep = std::chrono::duration_cast<Duration>( FloatDuration(seconds) );
-}
-
-void Timer::SetMaximumStep(float seconds)
-{
-    s_maxStep = std::chrono::duration_cast<Duration>( FloatDuration(seconds) );
 }

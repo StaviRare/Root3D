@@ -1,9 +1,5 @@
 #pragma once
 
-#include "Types.h"
-
-// ToDo - Implement. Maybe timer should do less.
-
 struct TimeDesc
 {
 	float timeScale = 1.00f;

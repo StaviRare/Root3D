@@ -1,16 +1,10 @@
 #pragma once
 #include "TimeTypes.h"
+#include "TimeDesc.h"
 
 class Timer
 {
     friend class Engine;
-
-    private:
-    static void Initialize();
-    static void Pause();
-    static void Resume();
-    static void CalculateLoopTime();
-    static void UpdateFixedTime();
 
     public:
     static float DeltaTime();
@@ -18,8 +12,13 @@ class Timer
     static float TimeSinceInit();
     static float TimeSinceEpoch();
     static float AccumulatedTime();
-    static void SetFixedStep(float seconds);
-    static void SetMaximumStep(float seconds);
+
+    private:
+    static void Initialize(TimeDesc desc);
+    static void Pause();
+    static void Resume();
+    static void CalculateLoopTime();
+    static void UpdateFixedTime();
 
     private:
     static bool s_paused;
