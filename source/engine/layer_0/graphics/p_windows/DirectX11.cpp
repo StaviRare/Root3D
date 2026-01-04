@@ -164,6 +164,16 @@ void DirectX11::Resize(uint32_t width, uint32_t height)
     }
 }
 
+void DirectX11::OnSurfaceLost()
+{
+    // No need in windows
+}
+
+void DirectX11::OnSurfaceRecreated(void* windowHandle)
+{
+    // No need in windows
+}
+
 void DirectX11::BeginFrame(FrameUniform cmd)
 {
     const float* bg = cmd.backgroundColor;

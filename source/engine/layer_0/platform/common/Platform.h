@@ -1,8 +1,17 @@
 #pragma once
 
-enum class Platform 
+#include <queue>
+#include <mutex>
+
+#include "Types.h"
+#include "PlatformType.h"
+
+class Platform
 {
-    Unknown,
-    Windows,
-    Android
+    public:
+    static string GetName();
+    static PlatformType GetType();
+
+    private:
+    static PlatformType s_current;
 };

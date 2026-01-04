@@ -8,6 +8,8 @@ class IGraphicsAPI
     virtual void Initialize(void* windowHandle) = 0;
     virtual void UnInitialize() = 0;
     virtual void Resize(uint32_t width, uint32_t height) = 0;
+    virtual void OnSurfaceLost() = 0;
+    virtual void OnSurfaceRecreated(void* windowHandle) = 0;
     virtual void BeginFrame(FrameUniform cmd) = 0;
     virtual void DrawObject(ObjectUniform cmd) = 0;
     virtual void EndFrame() = 0;

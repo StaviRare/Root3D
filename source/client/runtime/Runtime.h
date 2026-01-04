@@ -8,8 +8,8 @@ class Runtime
 	public:
 	void Initialize();
 	void UnInitialize();
-	void Pause();
-	void Resume();
+	void Pause(); // not sure we need it.
+	void Resume(); // not sure we need it.
 	void Tick();
 	bool IsRunning();
 

@@ -2,7 +2,7 @@
 
 #include "Window.h"
 #include "EngineConfig.h"
-#include "Platform.h"
+#include "PlatformType.h"
 
 class Engine
 {
@@ -19,6 +19,6 @@ class Engine
 	Window* m_window = nullptr;
 
 	private:
-	EngineConfig BuildEngineConfig(Platform platform);
+	EngineConfig BuildEngineConfig(PlatformType platform);
 };
 

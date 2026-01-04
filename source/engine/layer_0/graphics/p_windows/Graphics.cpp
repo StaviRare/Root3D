@@ -72,6 +72,22 @@ void Graphics::Resize(uint32_t width, uint32_t height)
     }
 }
 
+void Graphics::OnSurfaceLost()
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->OnSurfaceLost();
+    }
+}
+
+void Graphics::OnSurfaceRecreated(void* windowHandle)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->OnSurfaceRecreated(windowHandle);
+    }
+}
+
 void Graphics::BeginFrame(FrameUniform cmd)
 {
     if (_currentAPI != nullptr)

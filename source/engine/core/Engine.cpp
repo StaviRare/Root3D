@@ -10,12 +10,13 @@
 #include "Physics.h"
 #include "PhysicsHandler.h"
 #include "Random.h"
-#include "SystemPlatform.h"
+#include "Platform.h"
+#include "PlatformEventQueue.h"
 
 bool Engine::Initialize()
 {
     // Engine config
-    Platform currentPlatform = SystemPlatform::Get();
+    PlatformType currentPlatform = Platform::GetType();
     EngineConfig engineConfig = BuildEngineConfig(currentPlatform);
 
     TimeDesc timeConfig = engineConfig.time;
@@ -86,41 +87,38 @@ void Engine::Tick()
     // Input events:
     Input::Tick();
 
-    // Window events:
-    std::vector<WindowEvent> events = m_window->PollEvents();
+    m_window->PollEvents();
 
-    for (auto& e : events)
+    PlatformEvent e;
+    while (PlatformEventQueue::Poll(e)) 
     {
         switch (e.type)
         {
-            case WindowEventType::Resize:
+            //// Debug::Log("AppPause");
+            //// Debug::Log("AppResume");
+            //// Debug::Log("WindowFocusLost");
+            //// Debug::Log("WindowFocusGained");
+            // Pass it to SceneManager
+
+            case EventType::Close:
+            {
+                m_isRunning = false;
+                break;
+            }
+            case EventType::Resize:
             {
                 Graphics::Resize(e.width, e.height);
                 break;
             }
-            case WindowEventType::Close:
+            case EventType::SurfaceCreated:
             {
-                // debug win:
-                m_isRunning = false;
-                // debug win:
-                // debug win:
-
-
-
-                Debug::Log("WindowClose");
-                // Pass it to SceneManager
+                void* windowHandle = m_window->GetNativeHandle();
+                Graphics::OnSurfaceRecreated(windowHandle);
                 break;
             }
-            case WindowEventType::FocusGained:
+            case EventType::SurfaceDestroyed:
             {
-                Debug::Log("WindowFocusGained");
-                // Pass it to SceneManager
-                break;
-            }
-            case WindowEventType::FocusLost:
-            {
-                Debug::Log("WindowFocusLost");
-                // Pass it to SceneManager
+                Graphics::OnSurfaceLost();
                 break;
             }
         }
@@ -150,7 +148,7 @@ bool Engine::IsRunning()
     return m_isRunning;
 }
 
-EngineConfig Engine::BuildEngineConfig(Platform platform)
+EngineConfig Engine::BuildEngineConfig(PlatformType platform)
 {
     EngineConfig config;
 
@@ -165,7 +163,7 @@ EngineConfig Engine::BuildEngineConfig(Platform platform)
     // Per platform
     switch (platform)
     {
-        case Platform::Windows:
+        case PlatformType::Windows:
         {
             config.window.width = 960;
             config.window.height = 540;
@@ -174,7 +172,7 @@ EngineConfig Engine::BuildEngineConfig(Platform platform)
             config.graphics.graphicsAPI = GraphicsAPI::DirectX11;
             break;
         }
-        case Platform::Android:
+        case PlatformType::Android:
         {
             config.window.width = 960;
             config.window.height = 540;

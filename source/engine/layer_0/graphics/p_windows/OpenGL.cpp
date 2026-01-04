@@ -66,6 +66,21 @@ void OpenGL::UnInitialize()
     m_initialized = false;
 }
 
+void OpenGL::Resize(uint32_t width, uint32_t height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void OpenGL::OnSurfaceLost()
+{
+    // No need in windows
+}
+
+void OpenGL::OnSurfaceRecreated(void* windowHandle)
+{
+    // No need in windows
+}
+
 void OpenGL::BeginFrame(FrameUniform cmd)
 {
     const float* bg = cmd.backgroundColor;
@@ -276,11 +291,6 @@ uniqueID OpenGL::CreateTexture(const TextureUpload data)
     m_textureMap[m_nextTextureID] = gpuTex;
 
     return m_nextTextureID;
-}
-
-void OpenGL::Resize(uint32_t width, uint32_t height)
-{
-    glViewport(0, 0, width, height);
 }
 
 GLuint OpenGL::CompileShader(const string& source, GLuint  type)

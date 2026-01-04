@@ -24,6 +24,7 @@ file(GLOB_RECURSE SOURCES
 	"${rootPath}source/engine/layer_0/graphics/p_android/*.cpp"
 	"${rootPath}source/engine/layer_0/input/p_android/*.cpp"
 	"${rootPath}source/engine/layer_0/physics/*.cpp"
+	"${rootPath}source/engine/layer_0/platform/common/*.cpp"
 	"${rootPath}source/engine/layer_0/platform/p_android/*.cpp"
 	"${rootPath}source/engine/layer_0/window/p_android/*.cpp"
 	"${rootPath}source/engine/layer_0/timer/*.cpp"

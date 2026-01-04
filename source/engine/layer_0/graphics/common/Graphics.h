@@ -24,6 +24,9 @@ class Graphics
     static void Initialize(GraphicsDesc config);
     static void UnInitialize();
     static void Resize(uint32_t width, uint32_t height);
+    static void OnSurfaceLost();
+    static void OnSurfaceRecreated(void* windowHandle);
+
     static void BeginFrame(FrameUniform cmd);
     static void DrawObject(ObjectUniform cmd);
     static void EndFrame();

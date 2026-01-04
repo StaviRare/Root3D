@@ -2,23 +2,15 @@
 
 #include "Log.h"
 #include "Window.h"
+#include "PlatformEventQueue.h"
 
 static HDC deviceContext;
 static HWND windowHandle;
 
 Window* Window::s_instance = nullptr;
 
-struct WindowsEvent {
-    UINT message;
-    WPARAM wParam;
-    LPARAM lParam;
-};
-
 // Forward declarations
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-static std::queue<std::pair<HWND, WindowsEvent>> g_messageQueue;
-
 
 Window* Window::getInstance()
 {
@@ -27,12 +19,24 @@ Window* Window::getInstance()
 
 const uint32 Window::GetWidth()
 {
-	return m_width;
+    if (!windowHandle) return 0;
+    RECT rect;
+    if (GetClientRect(windowHandle, &rect))
+    {
+        return static_cast<uint32>(rect.right - rect.left);
+    }
+    return 0;
 }
 
 const uint32 Window::GetHeight()
 {
-    return m_height;
+    if (!windowHandle) return 0;
+    RECT rect;
+    if (GetClientRect(windowHandle, &rect))
+    {
+        return static_cast<uint32>(rect.bottom - rect.top);
+    }
+    return 0;
 }
 
 void Window::SetFullScreen(bool enable)
@@ -64,15 +68,9 @@ void Window::SetResolution(uint32 width, uint32 height)
 {
     if (windowHandle != nullptr)
     {
-        m_width = width;
-        m_height = height;
-        //ENGINE_INFO(std::to_string(m_width));
-
-        // update render view
-
-        RECT rect;
-        GetWindowRect(windowHandle, &rect);
-        SetWindowPos(windowHandle, NULL, rect.left, rect.top, width, height, SWP_NOZORDER | SWP_NOMOVE);
+        //RECT rect;
+        //GetWindowRect(windowHandle, &rect);
+        //SetWindowPos(windowHandle, NULL, rect.left, rect.top, width, height, SWP_NOZORDER | SWP_NOMOVE);
     }
 }
 
@@ -80,15 +78,11 @@ void Window::Initialize(WindowDesc config)
 {
     if (s_instance != nullptr)
     {
-
+        ENGINE_ERROR("Window already initialized.");
     }
     else
     {
         s_instance = this;
-
-        m_width = config.width;
-        m_height = config.height;
-
 
         HINSTANCE hInstance = GetModuleHandle(nullptr);
         LPCWSTR className = L"MyWindowClass";
@@ -109,7 +103,7 @@ void Window::Initialize(WindowDesc config)
             className,                              // Window class
             wtitle.c_str(),                         // Window title - wide-char string
             WS_OVERLAPPEDWINDOW,                    // Window style
-            CW_USEDEFAULT, CW_USEDEFAULT, m_width, m_height,
+            CW_USEDEFAULT, CW_USEDEFAULT, config.width, config.height,
             NULL,                                   // Parent window    
             NULL,                                   // Menu
             hInstance,                              // Instance handle
@@ -181,81 +175,46 @@ void* Window::GetNativeHandle()
     return windowHandle;
 }
 
-// This will not work with multiple windows as i just pop them all.
-std::vector<WindowEvent> Window::PollEvents()
+void Window::PollEvents()
 {
-    std::vector<WindowEvent> returnValue;
-
     MSG msg;
 
-    // Flush the OS message queue; events are handled via g_messageQueue.
     while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
     {
         DispatchMessage(&msg);
     }
-
-    // Handle queued events per window instance
-    while (!g_messageQueue.empty())
-    {
-        auto [hwnd, ev] = g_messageQueue.front();
-        g_messageQueue.pop();
-
-        if (windowHandle == hwnd)
-        {
-            WindowEvent we{};
-            switch (ev.message)
-            {
-                case WM_SETFOCUS:
-                {
-                    we.type = WindowEventType::FocusGained;
-                    returnValue.push_back(we);
-                    break;
-                }
-                case WM_KILLFOCUS:
-                {
-                    we.type = WindowEventType::FocusLost;
-                    returnValue.push_back(we);
-                    break;
-                }
-                case WM_SIZE:
-                {
-                    m_width = LOWORD(ev.lParam);
-                    m_height = HIWORD(ev.lParam);
-                    we.type = WindowEventType::Resize;
-                    we.width = m_width;
-                    we.height = m_height;
-
-                    //Log::Error("S: " + std::to_string(m_width) + ":" + std::to_string(m_height));
-
-
-                    returnValue.push_back(we);
-                    break;
-                }
-                case WM_DESTROY:
-                {
-                    we.type = WindowEventType::Close;
-                    returnValue.push_back(we);
-                    UnInitialize();
-                    break;
-                }
-                case WM_SETCURSOR:
-                {
-                    if ((HWND)ev.wParam == hwnd && LOWORD(ev.lParam) == HTCLIENT)
-                    {
-                        SetCursor(LoadCursor(nullptr, IDC_ARROW));
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    return returnValue;
 }
 
 static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
-    WindowsEvent ev{ message, wParam, lParam };
-    g_messageQueue.push({ hwnd, ev });
+    switch (message)
+    {
+        case WM_SIZE:
+        {
+            PlatformEvent ev;
+            ev.type = EventType::Resize;
+            ev.width = LOWORD(lParam);
+            ev.height = HIWORD(lParam);
+            PlatformEventQueue::Push(ev);
+            break;
+        }
+        case WM_CLOSE:
+        {
+            PlatformEvent ev;
+            ev.type = EventType::Close;
+            PlatformEventQueue::Push(ev);
+            break;
+        }
+        case WM_SETCURSOR:
+        {
+            if (LOWORD(lParam) == HTCLIENT)
+            {
+                SetCursor(LoadCursor(nullptr, IDC_ARROW));
+                return TRUE;
+            }
+            break;
+        }
+    }
+
     return DefWindowProc(hwnd, message, wParam, lParam);
 }

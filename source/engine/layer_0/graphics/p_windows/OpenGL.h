@@ -25,6 +25,8 @@ class OpenGL : public IGraphicsAPI
     void Initialize(void* windowHandle) override;
     void UnInitialize() override;
     void Resize(uint32_t width, uint32_t height) override;
+    void OnSurfaceLost() override;
+    void OnSurfaceRecreated(void* windowHandle) override;
     void BeginFrame(FrameUniform cmd) override;
     void DrawObject(ObjectUniform cmd) override;
     void EndFrame() override;

@@ -1,8 +1,6 @@
 #pragma once
 
 #include <queue>
-#include <vector>
-
 #include "Types.h"
 #include "WindowDesc.h"
 #include "WindowEvent.h"
@@ -23,12 +21,9 @@ class Window
     void UnInitialize();
     void Resume();
     void Pause();
+    void PollEvents();
     void* GetNativeHandle();
-    std::vector<WindowEvent> PollEvents();
 
     private:
     static Window* s_instance;
-    uint32 m_width;
-    uint32 m_height;
-    std::vector<WindowEvent> events;
 };

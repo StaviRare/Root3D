@@ -69,11 +69,9 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
 
     public void destroy()
     {
-
-            handler.removeCallbacks(renderTask);
-            nativeUnInitialize();
-            isInitialized = false;
-
+        handler.removeCallbacks(renderTask);
+        nativeUnInitialize();
+        isInitialized = false;
     }
 
     public void configurationChanged(Configuration newConfig)
@@ -126,9 +124,9 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     {
         surfaceHolder = holder;
         Surface surface = holder.getSurface();
-        nativeSetSurface(surface);
+        nativeOnSurfaceCreated(surface);
 
-        if (!isInitialized)
+        if (isInitialized == false)
         {
             nativeInitialize();
             isInitialized = true;
@@ -156,10 +154,12 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder)
     {
         handler.removeCallbacks(renderTask);
+        nativeOnSurfaceDestroyed();
     }
 
     // Native methods
-    private native void nativeSetSurface(Surface surface);
+    private native void nativeOnSurfaceCreated(Surface surface);
+    private native void nativeOnSurfaceDestroyed();
     private native void nativeSetAssetManager(AssetManager assetManager);
     private native void nativeInitialize();
     private native void nativeUnInitialize();
