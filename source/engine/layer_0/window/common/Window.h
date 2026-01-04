@@ -3,7 +3,6 @@
 #include <queue>
 #include "Types.h"
 #include "WindowDesc.h"
-#include "WindowEvent.h"
 
 class Window
 {

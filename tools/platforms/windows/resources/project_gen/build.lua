@@ -60,6 +60,7 @@ project "Root3D"
         SOURCE_DIR .. "engine/layer_0/physics/**.h",
         SOURCE_DIR .. "engine/layer_0/physics/**.cpp",			
         SOURCE_DIR .. "engine/layer_0/platform/common/**.h",
+		SOURCE_DIR .. "engine/layer_0/platform/common/**.cpp",
         SOURCE_DIR .. "engine/layer_0/platform/p_windows/**.cpp",				
         SOURCE_DIR .. "engine/layer_0/window/common/**.h",
         SOURCE_DIR .. "engine/layer_0/window/p_windows/**.cpp",	
