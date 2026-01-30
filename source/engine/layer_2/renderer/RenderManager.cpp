@@ -24,7 +24,7 @@ void RenderManager::UnInitialize()
 
 void RenderManager::PreRender()
 {
-	_camera = Camera::GetInstance();
+	_camera = Camera::GetMainCamera();
 
 	if (_camera)
 	{

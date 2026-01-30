@@ -28,6 +28,8 @@ static Entity* entity2;
 static Entity* lightEntity;
 static Entity* lightEntity2;
 static Entity* camController;
+static Entity* camController2;
+
 static Entity* textEntity;
 static Shader* shaderLit;
 static Shader* shaderUnlit;
@@ -61,6 +63,7 @@ void initCamera()
     camController = new Entity();
     camController->AddComponent<Camera>();
     camController->AddComponent<CameraController>();
+    camController->transform.position = Vector3(0, 0, 4);
 
     // Collide with dynamic box
     camController->AddComponent<BoxCollider>();

@@ -11,4 +11,11 @@ class CameraController : public Component
 
     private:
     void HandleCamMovement();
+
+    public:
+    float m_cameraMoveSpeed = 3.00f;
+    float m_cameraLookSpeed = 2.00f;
+
+    private:
+    Camera* m_camera = nullptr;
 };
