@@ -2,7 +2,6 @@
 #include "Timer.h"
 #include "Input.h"
 #include "Mesh.h"
-#include "Entity.h"
 #include "MeshFilter.h"
 #include "MeshGenerator.h"
 #include "Debug.h"
@@ -23,26 +22,6 @@
 #include "MiscRotate.h"
 #include "TextMesh.h"
 
-static Entity* entity;
-static Entity* entity2;
-static Entity* lightEntity;
-static Entity* lightEntity2;
-static Entity* camController;
-static Entity* camController2;
-
-static Entity* textEntity;
-static Shader* shaderLit;
-static Shader* shaderUnlit;
-
-
-void unInit();
-void initCamera();
-void initShaders();
-void initLighting();
-void initStaticCube();
-void initDynamicCube();
-void initText();
-
 void ExampleScene::onLoad()
 {
     initCamera();
@@ -58,32 +37,32 @@ void ExampleScene::onUnload()
     unInit();
 }
 
-void initCamera()
+void ExampleScene::initCamera()
 {
-    camController = new Entity();
-    camController->AddComponent<Camera>();
-    camController->AddComponent<CameraController>();
-    camController->transform.position = Vector3(0, 0, 4);
+    m_playerController = new Entity();
+    m_playerController->AddComponent<Camera>();
+    m_playerController->AddComponent<CameraController>();
+    m_playerController->transform.position = Vector3(0, 0, 4);
 
     // Collide with dynamic box
-    camController->AddComponent<BoxCollider>();
-    RigidBody* rigidBody1 = camController->AddComponent<RigidBody>();
+    m_playerController->AddComponent<BoxCollider>();
+    RigidBody* rigidBody1 = m_playerController->AddComponent<RigidBody>();
     rigidBody1->IsStatic = true;
 }
 
-void initShaders()
+void ExampleScene::initShaders()
 {
     string graphicsAPI = Graphics::TypeName();
 
     if (graphicsAPI == "OpenGL")
     {
-        shaderLit = AssetLoader::LoadShader("shaders/glsl/Lit.glsl");
-        shaderUnlit = AssetLoader::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
+        m_shaderLit = AssetLoader::LoadShader("shaders/glsl/Lit.glsl");
+        m_shaderUnlit = AssetLoader::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
     }
     else if (graphicsAPI == "DirectX11")
     {
-        shaderLit = AssetLoader::LoadShader("shaders/hlsl/Lit.hlsl");
-        shaderUnlit = AssetLoader::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
+        m_shaderLit = AssetLoader::LoadShader("shaders/hlsl/Lit.hlsl");
+        m_shaderUnlit = AssetLoader::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
     }
     else if(graphicsAPI == "OpenGLES1")
     {
@@ -95,46 +74,43 @@ void initShaders()
     }
 }
 
-void initLighting()
+void ExampleScene::initLighting()
 {
     // Point light
-    lightEntity = new Entity();
-    lightEntity->transform.eulerAngles = Vector3(0, 0, 0);
-    lightEntity->transform.position = Vector3(0, 0, 0);
-    Light* light = lightEntity->AddComponent<Light>();
+    m_pointLight = new Entity();
+    m_pointLight->transform.eulerAngles = Vector3(0, 0, 0);
+    m_pointLight->transform.position = Vector3(0, 0, 0);
+    Light* light = m_pointLight->AddComponent<Light>();
     light->type = LightType::Point;
     light->color = Color(0, 1, 0);
     light->range = 1.8f;
     light->intensity = 1;
 
     // Directional light
-    lightEntity2 = new Entity();
-    lightEntity2->transform.eulerAngles = Vector3(-1, 0, 0);
-    lightEntity2->transform.position = Vector3(0, 0, 0);
-    Light* light2 = lightEntity2->AddComponent<Light>();
+    m_dirLight = new Entity();
+    m_dirLight->transform.eulerAngles = Vector3(-1, 0, 0);
+    m_dirLight->transform.position = Vector3(0, 0, 0);
+    Light* light2 = m_dirLight->AddComponent<Light>();
     light2->type = LightType::Directional;
     light2->color = Color(1, 0, 0);
     light2->intensity = 1;
 }
 
-void initStaticCube()
+void ExampleScene::initStaticCube()
 {
-    Material material(*shaderLit);
+    Material material(*m_shaderLit);
     material.texture = AssetLoader::LoadTexture("textures/dev.png");
 
-    entity = new Entity();
-    entity->transform.position = Vector3(0, -1, 0);
-
-    entity->transform.rotation = Quaternion::FromEuler(Vector3(15, 15, 0));
-
-    entity->transform.scale = Vector3(2, 1, 2);
+    m_staticCube = new Entity();
+    m_staticCube->transform.scale = Vector3(2, 1, 2);
+    m_staticCube->transform.position = Vector3(0, -1, 0);
+    m_staticCube->transform.rotation = Quaternion::FromEuler(Vector3(15, 15, 0));
     Mesh mesh = MeshGenerator::GetCube();
-    MeshFilter* meshFilter = entity->AddComponent<MeshFilter>();
-    Renderer* renderer = entity->AddComponent<Renderer>();
-    RigidBody* rigidBody1 = entity->AddComponent<RigidBody>();
-
-    entity->AddComponent<MeshCollider>();
-    MiscRotate* miscRotate = entity->AddComponent<MiscRotate>();
+    MeshFilter* meshFilter = m_staticCube->AddComponent<MeshFilter>();
+    Renderer* renderer = m_staticCube->AddComponent<Renderer>();
+    RigidBody* rigidBody1 = m_staticCube->AddComponent<RigidBody>();
+    m_staticCube->AddComponent<MeshCollider>();
+    MiscRotate* miscRotate = m_staticCube->AddComponent<MiscRotate>();
     miscRotate->direction = Vector3(-5, -5, 5);
 
     meshFilter->mesh = mesh;
@@ -142,58 +118,58 @@ void initStaticCube()
     rigidBody1->IsStatic = true;
 }
 
-void initDynamicCube()
+void ExampleScene::initDynamicCube()
 {
-    Material material2(*shaderUnlit);
+    Material material2(*m_shaderUnlit);
     material2.texture = AssetLoader::LoadTexture("textures/dev.png");
 
-    entity2 = new Entity();
-    entity2->transform.position = Vector3(0.0, 1.0f, 0.0f);
+    m_dynamicCube = new Entity();
+    m_dynamicCube->transform.position = Vector3(0.0, 1.0f, 0.0f);
     Mesh mesh2 = MeshGenerator::GetCube();
-    MeshFilter* meshFilter2 = entity2->AddComponent<MeshFilter>();
-    Renderer* renderer2 = entity2->AddComponent<Renderer>();
-    entity2->AddComponent<RigidBody>();
-    entity2->AddComponent<MeshCollider>();
+    MeshFilter* meshFilter2 = m_dynamicCube->AddComponent<MeshFilter>();
+    Renderer* renderer2 = m_dynamicCube->AddComponent<Renderer>();
+    m_dynamicCube->AddComponent<RigidBody>();
+    m_dynamicCube->AddComponent<MeshCollider>();
 
     meshFilter2->mesh = mesh2;
     renderer2->material = material2;
 }
 
-void initText()
+void ExampleScene::initText()
 {
     Font font = AssetLoader::LoadFont("fonts/arial.ttf");
     Mesh textMesh = TextMesh::Generate(font, U"Hello World");
 
-    Material material(*shaderUnlit);
+    Material material(*m_shaderUnlit);
     material.texture = AssetLoader::LoadTexture("textures/dev_og.png");
 
-    textEntity = new Entity();
-    textEntity->transform.position = Vector3(0, 1, -1);
+    m_textEntity = new Entity();
+    m_textEntity->transform.position = Vector3(0, 1, -1);
 
-    MeshFilter* meshFilter = textEntity->AddComponent<MeshFilter>();
-    Renderer* renderer = textEntity->AddComponent<Renderer>();
+    MeshFilter* meshFilter = m_textEntity->AddComponent<MeshFilter>();
+    Renderer* renderer = m_textEntity->AddComponent<Renderer>();
 
     meshFilter->mesh = textMesh;
     renderer->material = material;
 }
 
-void unInit()
+void ExampleScene::unInit()
 {
-    delete entity;
-    delete entity2;
-    delete lightEntity;
-    delete lightEntity2;
-    delete camController;
-    delete textEntity;
-    delete shaderLit;
-    delete shaderUnlit;
+    delete m_staticCube;
+    delete m_dynamicCube;
+    delete m_pointLight;
+    delete m_dirLight;
+    delete m_playerController;
+    delete m_textEntity;
+    delete m_shaderLit;
+    delete m_shaderUnlit;
 
-    entity = nullptr;
-    entity2 = nullptr;
-    lightEntity = nullptr;
-    lightEntity2 = nullptr;
-    camController = nullptr;
-    textEntity = nullptr;
-    shaderLit = nullptr;
-    shaderUnlit = nullptr;
+    m_staticCube = nullptr;
+    m_dynamicCube = nullptr;
+    m_pointLight = nullptr;
+    m_dirLight = nullptr;
+    m_playerController = nullptr;
+    m_textEntity = nullptr;
+    m_shaderLit = nullptr;
+    m_shaderUnlit = nullptr;
 }

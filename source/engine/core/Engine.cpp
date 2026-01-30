@@ -39,7 +39,7 @@ bool Engine::Initialize()
     Physics::Initialize(physicsConfig);
 
 
-    SceneManager::Initialze();
+    SceneManager::Initialize();
 
     // For now.
     m_isRunning = true;
@@ -139,6 +139,8 @@ void Engine::Tick()
 
     // GuiRender:
     // ToDo!
+
+    SceneManager::EndFrame();
 }
 
 bool Engine::IsRunning()

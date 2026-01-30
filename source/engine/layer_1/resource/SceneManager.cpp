@@ -1,9 +1,67 @@
 #include "Log.h"
 #include "SceneManager.h"
 
-Scene* SceneManager::currentScene = nullptr;
+Scene* SceneManager::s_nextScene = nullptr;
+Scene* SceneManager::s_currentScene = nullptr;
+std::map<int, std::function<Scene*()>> SceneManager::s_sceneRegistry;
 
-void SceneManager::Initialze()
+void SceneManager::LoadScene(int index)
+{
+    auto it = s_sceneRegistry.find(index);
+
+    if (it != s_sceneRegistry.end())
+    {
+        Scene* newScene = it->second();
+
+        // If first scene, don't queue
+        if (s_currentScene == nullptr)
+        {
+            s_currentScene = newScene;
+            s_currentScene->onLoad();
+        }
+        else
+        {
+            if (s_nextScene)
+            {
+                delete s_nextScene;
+            }
+
+            s_nextScene = newScene;
+        }
+    }
+    else
+    {
+        ENGINE_ERROR("Scene " + std::to_string(index) + " not found.");
+    }
+}
+
+void SceneManager::UnloadScene()
+{
+    if (s_currentScene)
+    {
+        s_currentScene->onUnload();
+        delete s_currentScene;
+        s_currentScene = nullptr;
+    }
+}
+
+Scene* SceneManager::GetCurrentScene()
+{
+    return s_currentScene;
+}
+
+void SceneManager::RegisterScene(int index, std::function<Scene* ()> constructor)
+{
+    if (s_sceneRegistry.find(index) != s_sceneRegistry.end())
+    {
+        ENGINE_ERROR("Scene " + std::to_string(index) + " index already taken.");
+        return;
+    }
+
+    s_sceneRegistry[index] = constructor;
+}
+
+void SceneManager::Initialize()
 {
     // Nothing at the moment
 }
@@ -15,67 +73,32 @@ void SceneManager::UnInitialize()
 
 void SceneManager::Tick()
 {
-    if (currentScene)
+    if (s_currentScene)
     {
-        currentScene->Tick();
+        s_currentScene->Tick();
     }
 }
 
 void SceneManager::LateTick()
 {
-    if (currentScene)
+    if (s_currentScene)
     {
-        currentScene->LateTick();
+        s_currentScene->LateTick();
     }
 }
 
-
-void SceneManager::RegisterScene(int index, std::function<Scene* ()> constructor)
+void SceneManager::EndFrame()
 {
-    auto& registry = getSceneRegistry();
-
-    if (registry.find(index) != registry.end())
+    if (s_nextScene)
     {
-        ENGINE_ERROR("Scene " + std::to_string(index) + " index already taken.");
-    }
-
-    registry[index] = constructor;
-}
-
-void SceneManager::LoadScene(int index)
-{
-    auto& registry = getSceneRegistry();
-    auto it = registry.find(index);
-    
-    if (it != registry.end())
-    {
-        if (currentScene != nullptr)
+        if (s_currentScene)
         {
-            delete currentScene;
+            s_currentScene->onUnload();
+            delete s_currentScene;
         }
 
-        currentScene = it->second();
-        currentScene->onLoad();
+        s_currentScene = s_nextScene;
+        s_nextScene = nullptr;
+        s_currentScene->onLoad();
     }
-}
-
-void SceneManager::UnloadScene()
-{
-    if (currentScene != nullptr)
-    {
-        currentScene->onUnload();
-        delete currentScene;
-        currentScene = nullptr;
-    }
-}
-
-Scene* SceneManager::GetCurrentScene()
-{
-    return currentScene;
-}
-
-std::map<int, std::function<Scene* ()>>& SceneManager::getSceneRegistry()
-{
-    static std::map<int, std::function<Scene* ()>> sceneFactory;
-    return sceneFactory;
 }
