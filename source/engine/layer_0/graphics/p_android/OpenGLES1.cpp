@@ -20,10 +20,11 @@ void OpenGLES1::Initialize(void* windowHandle)
         glFrontFace(GL_CW);
         glCullFace(GL_FRONT);
 
+        // Need to move to GLES3. No light for now.
         // Light support. Hard coded for now. Should be in graphics desc.
-        glEnable(GL_LIGHTING);
-        float globalAmbient[4] = {0.3f, 0.3f, 0.3f, 1.0f};
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+//        glEnable(GL_LIGHTING);
+//        float globalAmbient[4] = {0.3f, 0.3f, 0.3f, 1.0f};
+//        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
 
         m_initialized = true;
     }

@@ -1,10 +1,12 @@
 #include "App.h"
 #include "SceneManager.h"
+#include "SplashScene.h"
 #include "ExampleScene.h"
 
 void App::Initialize()
 {
-	SceneManager::RegisterScene(0, [] { return new ExampleScene(); });
+	SceneManager::RegisterScene(0, [] { return new SplashScene(); });
+	SceneManager::RegisterScene(1, [] { return new ExampleScene(); });
 	SceneManager::LoadScene(0);
 }
 
