@@ -14,8 +14,9 @@ class JniBridge
     static void SetAssetManager(JNIEnv* env, jobject assetManagerObj);
     static void Initialize();
     static void UnInitialize();
-    static void Resume();
     static void Pause();
+    static void Resume();
+    static void FocusChanged(bool hasFocus);
     static void Tick();
     static ANativeWindow* GetNativeWindow();
     static AAssetManager* GetAssetManager();

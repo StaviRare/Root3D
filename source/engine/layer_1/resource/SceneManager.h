@@ -25,5 +25,7 @@ class SceneManager
     static void UnInitialize();
     static void Tick();
     static void LateTick();
+    static void OnAppFocus(bool hasFocus);
+    static void OnAppPause(bool isPaused);
     static void EndFrame();
 };

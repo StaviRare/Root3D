@@ -198,6 +198,20 @@ static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
             PlatformEventQueue::Push(ev);
             break;
         }
+        case WM_SETFOCUS:
+        {
+            PlatformEvent ev;
+            ev.type = EventType::FocusGained;
+            PlatformEventQueue::Push(ev);
+            break;
+        }
+        case WM_KILLFOCUS:
+        {
+            PlatformEvent ev;
+            ev.type = EventType::FocusLost;
+            PlatformEventQueue::Push(ev);
+            break;
+        }
         case WM_CLOSE:
         {
             PlatformEvent ev;

@@ -52,3 +52,19 @@ void Entity::LateTick()
         c->LateTick();
     }
 }
+
+void Entity::OnAppFocus(bool hasFocus)
+{
+    for (Component* c : components)
+    {
+        c->OnAppFocus(hasFocus);
+    }
+}
+
+void Entity::OnAppPause(bool isPaused)
+{
+    for (Component* c : components)
+    {
+        c->OnAppPause(isPaused);
+    }
+}

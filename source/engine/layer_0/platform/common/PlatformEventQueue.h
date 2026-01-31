@@ -5,6 +5,9 @@
 
 #include "Types.h"
 
+// No Pause/Resume because we want to handle it right away
+// Either rename to windowEvents or handle it better in poll events
+
 enum class EventType
 {
     Resize,
@@ -13,8 +16,6 @@ enum class EventType
     Close,
     FocusGained,
     FocusLost,
-    Pause,
-    Resume
 };
 
 struct PlatformEvent

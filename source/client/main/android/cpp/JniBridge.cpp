@@ -91,6 +91,14 @@ void JniBridge::UnInitialize()
     }
 }
 
+void JniBridge::Pause()
+{
+    if(runtime)
+    {
+        runtime->Pause();
+    }
+}
+
 void JniBridge::Resume()
 {
     if(runtime)
@@ -99,12 +107,13 @@ void JniBridge::Resume()
     }
 }
 
-void JniBridge::Pause()
+void JniBridge::FocusChanged(bool hasFocus)
 {
-    if(runtime)
-    {
-        runtime->Pause();
-    }
+    PlatformEvent ev;
+    ev.type = hasFocus
+            ? EventType::FocusGained
+            : EventType::FocusLost;
+    PlatformEventQueue::Push(ev);
 }
 
 void JniBridge::Tick()
@@ -162,14 +171,19 @@ extern "C"
         JniBridge::Resume();
     }
 
-    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeTick(JNIEnv* env, jobject obj)
-    {
-        JniBridge::Tick();
-    }
-
     JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativePause(JNIEnv* env, jobject obj)
     {
         JniBridge::Pause();
+    }
+
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeFocusChanged(JNIEnv* env, jobject obj, jboolean hasFocus)
+    {
+        JniBridge::FocusChanged(hasFocus);
+    }
+
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeTick(JNIEnv* env, jobject obj)
+    {
+        JniBridge::Tick();
     }
 
     JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeUnInitialize(JNIEnv* env, jobject obj)

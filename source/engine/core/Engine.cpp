@@ -60,12 +60,14 @@ void Engine::Resume()
 {
     m_window->Resume();
     Timer::Resume();
+    SceneManager::OnAppPause(false);
 }
 
 void Engine::Pause()
 {
     Timer::Pause();
     m_window->Pause();
+    SceneManager::OnAppPause(true);
 }
 
 void Engine::Tick()
@@ -92,12 +94,16 @@ void Engine::Tick()
     {
         switch (e.type)
         {
-            //// Debug::Log("AppPause");
-            //// Debug::Log("AppResume");
-            //// Debug::Log("WindowFocusLost");
-            //// Debug::Log("WindowFocusGained");
-            // Pass it to SceneManager
-
+            case EventType::FocusLost:
+            {
+                SceneManager::OnAppFocus(false);
+                break;
+            }
+            case EventType::FocusGained:
+            {
+                SceneManager::OnAppFocus(true);
+                break;
+            }
             case EventType::Close:
             {
                 m_isRunning = false;

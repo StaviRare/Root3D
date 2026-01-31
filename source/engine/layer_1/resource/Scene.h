@@ -32,6 +32,28 @@ class Scene
         }
     }
 
+    void OnAppFocus(bool hasFocus)
+    {
+        for (Entity* entity : entities)
+        {
+            if (entity)
+            {
+                entity->OnAppFocus(hasFocus);
+            }
+        }
+    }
+
+    void OnAppPause(bool isPaused)
+    {
+        for (Entity* entity : entities)
+        {
+            if (entity)
+            {
+                entity->OnAppPause(isPaused);
+            }
+        }
+    }
+
     void AddEntity(Entity* entity)
     {
         if (entity)

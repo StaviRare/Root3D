@@ -48,8 +48,14 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
         initialize();
     }
 
+    public void start()
+    {
+        // Nothing at the moment.
+    }
+
     public void resume()
     {
+        // Only resume when the surface is ready
         if (surfaceHolder != null && surfaceHolder.getSurface().isValid())
         {
             nativeResume();
@@ -65,6 +71,11 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     {
         nativePause();
         handler.removeCallbacks(renderTask);
+    }
+
+    public void stop()
+    {
+        // Nothing at the moment.
     }
 
     public void destroy()
@@ -85,6 +96,8 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
         {
             setImmersiveMode();
         }
+
+        nativeFocusChanged(hasFocus);
     }
 
     private void initialize()
@@ -165,6 +178,7 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     private native void nativeUnInitialize();
     private native void nativeResume();
     private native void nativePause();
+    private native void nativeFocusChanged(boolean hasFocus);
     private native void nativeTick();
     private native void nativeResize(int width, int height);
 }

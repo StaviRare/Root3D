@@ -87,6 +87,22 @@ void SceneManager::LateTick()
     }
 }
 
+void SceneManager::OnAppFocus(bool hasFocus)
+{
+    if (s_currentScene)
+    {
+        s_currentScene->OnAppFocus(hasFocus);
+    }
+}
+
+void SceneManager::OnAppPause(bool isPaused)
+{
+    if (s_currentScene)
+    {
+        s_currentScene->OnAppPause(isPaused);
+    }
+}
+
 void SceneManager::EndFrame()
 {
     if (s_nextScene)

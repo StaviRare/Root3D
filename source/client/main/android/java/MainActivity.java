@@ -27,17 +27,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart()
+    protected void onStop()
     {
-        super.onStart();
-        enginePlayer.resume();
+        super.onStop();
+        enginePlayer.stop();
     }
 
     @Override
-    protected void onResume()
+    protected void onStart()
     {
-        super.onResume();
-        enginePlayer.resume();
+        super.onStart();
+        enginePlayer.start();
     }
 
     @Override
@@ -48,10 +48,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop()
+    protected void onResume()
     {
-        super.onStop();
-        enginePlayer.pause();
+        super.onResume();
+        enginePlayer.resume();
     }
 
     @Override
