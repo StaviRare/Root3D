@@ -20,6 +20,8 @@ class Entity : public Object
 
     void Tick();
     void LateTick();
+    void OnAppFocus(bool hasFocus);
+    void OnAppPause(bool isPaused);
 
     public:
     template <typename T>

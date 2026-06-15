@@ -1,14 +1,16 @@
 #include "JniBridge.h"
-#include "Debug.h"
+#include "Log.h"
 #include "Runtime.h"
-#include "Screen.h"
+#include "PlatformEventQueue.h"
 
 Runtime* JniBridge::runtime = nullptr;
 ANativeWindow* JniBridge::window = nullptr;
 AAssetManager* JniBridge::assetManager = nullptr;
 
-void JniBridge::SetSurface(JNIEnv* env, jobject surface)
+void JniBridge::OnSurfaceCreated(JNIEnv* env, jobject surface)
 {
+    ENGINE_INFO("On Surface Created");
+
     if (surface)
     {
         if (window)
@@ -20,12 +22,29 @@ void JniBridge::SetSurface(JNIEnv* env, jobject surface)
 
         if (window)
         {
-            Debug::Log("Surface set");
+            PlatformEvent ev;
+            ev.type = EventType::SurfaceCreated;
+            PlatformEventQueue::Push(ev);
         }
         else
         {
-            Debug::LogError("Surface was not initialized!");
+            ENGINE_ERROR("Surface was not initialized!");
         }
+    }
+}
+
+void JniBridge::OnSurfaceDestroyed()
+{
+    ENGINE_INFO("On Surface Destroyed");
+
+    if (window)
+    {
+        PlatformEvent ev;
+        ev.type = EventType::SurfaceDestroyed;
+        PlatformEventQueue::Push(ev);
+
+        ANativeWindow_release(window);
+        window = nullptr;
     }
 }
 
@@ -35,11 +54,11 @@ void JniBridge::SetAssetManager(JNIEnv* env, jobject assetManagerObj)
 
     if (assetManager)
     {
-        Debug::Log("Asset manager initialized");
+        ENGINE_INFO("Asset manager initialized");
     }
     else
     {
-        Debug::LogError("Asset manager was not initialized!");
+        ENGINE_ERROR("Asset manager was not initialized!");
     }
 }
 
@@ -52,7 +71,7 @@ void JniBridge::Initialize()
     }
     else
     {
-        Debug::LogError("Initialization failed due to missing resources");
+        ENGINE_ERROR("Initialization failed due to missing resources");
     }
 }
 
@@ -72,6 +91,14 @@ void JniBridge::UnInitialize()
     }
 }
 
+void JniBridge::Pause()
+{
+    if(runtime)
+    {
+        runtime->Pause();
+    }
+}
+
 void JniBridge::Resume()
 {
     if(runtime)
@@ -80,12 +107,13 @@ void JniBridge::Resume()
     }
 }
 
-void JniBridge::Pause()
+void JniBridge::FocusChanged(bool hasFocus)
 {
-    if(runtime)
-    {
-        runtime->Pause();
-    }
+    PlatformEvent ev;
+    ev.type = hasFocus
+            ? EventType::FocusGained
+            : EventType::FocusLost;
+    PlatformEventQueue::Push(ev);
 }
 
 void JniBridge::Tick()
@@ -98,7 +126,11 @@ void JniBridge::Tick()
 
 void JniBridge::Resize(int width, int height)
 {
-    Screen::SetResolution(width, height);
+    PlatformEvent ev;
+    ev.type = EventType::Resize;
+    ev.width = width;
+    ev.height = height;
+    PlatformEventQueue::Push(ev);
 }
 
 ANativeWindow* JniBridge::GetNativeWindow()
@@ -112,12 +144,16 @@ AAssetManager* JniBridge::GetAssetManager()
 }
 
 
-
 extern "C"
 {
-    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeSetSurface(JNIEnv *env, jobject obj, jobject surface)
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeOnSurfaceCreated(JNIEnv *env, jobject obj, jobject surface)
     {
-        JniBridge::SetSurface(env, surface);
+        JniBridge::OnSurfaceCreated(env, surface);
+    }
+
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeOnSurfaceDestroyed()
+    {
+        JniBridge::OnSurfaceDestroyed();
     }
 
     JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeSetAssetManager(JNIEnv *env, jobject obj, jobject assetManager)
@@ -135,14 +171,19 @@ extern "C"
         JniBridge::Resume();
     }
 
-    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeTick(JNIEnv* env, jobject obj)
-    {
-        JniBridge::Tick();
-    }
-
     JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativePause(JNIEnv* env, jobject obj)
     {
         JniBridge::Pause();
+    }
+
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeFocusChanged(JNIEnv* env, jobject obj, jboolean hasFocus)
+    {
+        JniBridge::FocusChanged(hasFocus);
+    }
+
+    JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeTick(JNIEnv* env, jobject obj)
+    {
+        JniBridge::Tick();
     }
 
     JNIEXPORT void JNICALL Java_com_root3d_player_EnginePlayer_nativeUnInitialize(JNIEnv* env, jobject obj)

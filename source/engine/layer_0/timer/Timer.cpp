@@ -1,72 +1,86 @@
 #include "Timer.h"
 
-float Timer::deltaTime = 0.0f;
-float Timer::fixedTimeStep = 0.02f;
-float Timer::accumulatedTime = 0.0f;
-float Timer::maximumAllowedTimeStep = 0.1f;
+bool Timer::s_paused = false;
+TimePoint Timer::s_startTime;
+TimePoint Timer::s_lastTime;
+TimePoint Timer::s_pauseTime;
+Duration Timer::s_delta = Duration::zero();
+Duration Timer::s_accumulated = Duration::zero();
+Duration Timer::s_maxStep = Duration::zero();
+Duration Timer::s_fixedStep = Duration::zero();
 
-timePoint Timer::loopStartTime;
-timePoint Timer::loopEndTime;
-timePoint Timer::initTime;
-timePoint Timer::pauseTime;
-
-void Timer::Initialize()
+void Timer::Initialize(TimeDesc desc)
 {
-    initTime = loopStartTime = resClock::now();
+    s_maxStep = std::chrono::duration_cast<Duration>( FloatDuration(desc.maxDeltaTime) );
+    s_fixedStep = std::chrono::duration_cast<Duration>( FloatDuration(desc.fixedTimeStep) );
+    s_startTime = s_lastTime = HighResClock::now();
+    s_delta = Duration::zero();
+    s_accumulated = Duration::zero();
+    s_paused = false;
 }
 
 void Timer::Pause()
 {
-    pauseTime = resClock::now();
+    if (s_paused == false)
+    {
+        s_pauseTime = HighResClock::now();
+        s_paused = true;
+    }
 }
 
 void Timer::Resume()
 {
-    timePoint resumeTime = resClock::now();
-    timeDuration pausedDuration = resumeTime - pauseTime;
-
-    // ToDo - Ugly fix. Make it +=
-    loopStartTime = resumeTime;
-    loopEndTime = resumeTime;
-}
-
-float Timer::DeltaTime()
-{
-    return deltaTime;
-}
-
-float Timer::FixedDeltaTime()
-{
-    return fixedTimeStep;
-}
-
-float Timer::TimeSinceInit()
-{
-    return std::chrono::duration<float>(resClock::now() - initTime).count();
-}
-
-float Timer::TimeSinceEpoch()
-{
-    return std::chrono::duration<float>(resClock::now().time_since_epoch()).count();
+    if (s_paused)
+    {
+        Duration pausedDuration = HighResClock::now() - s_pauseTime;
+        s_startTime += pausedDuration;
+        s_lastTime += pausedDuration;
+        s_paused = false;
+    }
 }
 
 void Timer::CalculateLoopTime()
 {
-    loopEndTime = resClock::now();
-    timeDuration delta = loopEndTime - loopStartTime;
-    deltaTime = delta.count();
-    loopStartTime = loopEndTime;
-
-    accumulatedTime += deltaTime;
-
-    // Cap accumulated time to prevent long physics steps
-    if (accumulatedTime > maximumAllowedTimeStep)
+    if (s_paused == false)
     {
-        accumulatedTime = maximumAllowedTimeStep;
+        TimePoint now = HighResClock::now();
+        s_delta = std::chrono::duration_cast<Duration>( now - s_lastTime );
+        s_lastTime = now;
+
+        s_accumulated += s_delta;
+        if (s_accumulated > s_maxStep)
+        {
+            s_accumulated = s_maxStep;
+        }
     }
 }
 
 void Timer::UpdateFixedTime()
 {
-    accumulatedTime -= fixedTimeStep;
+    s_accumulated -= s_fixedStep;
+}
+
+float Timer::DeltaTime()
+{
+    return FloatDuration(s_delta).count();
+}
+
+float Timer::FixedDeltaTime()
+{
+    return FloatDuration(s_fixedStep).count();
+}
+
+float Timer::TimeSinceInit()
+{
+    return FloatDuration(HighResClock::now() - s_startTime).count();
+}
+
+float Timer::TimeSinceEpoch()
+{
+    return FloatDuration(HighResClock::now().time_since_epoch()).count();
+}
+
+float Timer::AccumulatedTime()
+{
+    return FloatDuration(s_accumulated).count();
 }

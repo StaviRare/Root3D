@@ -1,47 +1,62 @@
 #include "Stopwatch.h"
 
-Stopwatch::Stopwatch()
-    : running(false) {
-}
-
-void Stopwatch::Start() 
+void Stopwatch::start()
 {
-    if (!running) 
+    if (!m_isRunning)
     {
-        start_time = std::chrono::steady_clock::now();
-        running = true;
+        m_startTime = HighResClock::now();
+        m_isRunning = true;
     }
 }
 
-void Stopwatch::Stop() 
+void Stopwatch::stop()
 {
-    if (running) 
+    if (m_isRunning)
     {
-        end_time = std::chrono::steady_clock::now();
-        running = false;
+        auto endTime = HighResClock::now();
+        m_elapsedTime += endTime - m_startTime;
+        m_isRunning = false;
     }
 }
 
-bool Stopwatch::IsRunning() const 
+void Stopwatch::reset()
 {
-    return running;
+    stop();
+    m_elapsedTime = Duration::zero();
 }
 
-void Stopwatch::Reset() 
+void Stopwatch::restart()
 {
-    running = false;
-    start_time = std::chrono::steady_clock::now();
+    reset();
+    start();
 }
 
-long long Stopwatch::ElapsedMilliseconds() const 
+bool Stopwatch::isRunning() const
 {
-    if (running) 
+    return m_isRunning;
+}
+
+long long Stopwatch::getElapsedSeconds() const
+{
+    return std::chrono::duration_cast<Seconds>( getElapsedTime() ).count();
+}
+
+long long Stopwatch::getElapsedMilliseconds() const
+{
+    return std::chrono::duration_cast<Milliseconds>( getElapsedTime() ).count();
+}
+
+long long Stopwatch::getElapsedMicroseconds() const
+{
+    return std::chrono::duration_cast<Microseconds>( getElapsedTime() ).count();
+}
+
+Duration Stopwatch::getElapsedTime() const
+{
+    if (m_isRunning)
     {
-        auto current_time = std::chrono::steady_clock::now();
-        return std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time).count();
+        auto now = HighResClock::now();
+        return m_elapsedTime + ( now - m_startTime );
     }
-    else 
-    {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-    }
+    return m_elapsedTime;
 }

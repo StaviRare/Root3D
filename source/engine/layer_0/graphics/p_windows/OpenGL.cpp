@@ -1,16 +1,16 @@
 #include "Log.h"
 #include "OpenGL.h"
 #include "Timer.h"
-#include "Screen.h"
 #include "Calc.h"
 
-void OpenGL::Initialize()
+void OpenGL::Initialize(void* windowHandle)
 {
-    Screen::RegisterResizeCallback(OnWindowResize);
-
-    void* nativeHandle = Screen::GetNativeHandle();
-    HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(nativeHandle));
+    HWND hwnd = reinterpret_cast<HWND>(const_cast<void*>(windowHandle));
     m_deviceContext = GetDC(hwnd);
+
+    // Create OpenGL rendering context
+    HGLRC hRC = wglCreateContext(m_deviceContext);
+    wglMakeCurrent(m_deviceContext, hRC);
 
     m_initialized = glewInit() == GLEW_OK && m_deviceContext != nullptr;
 
@@ -51,7 +51,11 @@ void OpenGL::Initialize()
 
 void OpenGL::UnInitialize()
 {
-    Screen::UnRegisterResizeCallback(OnWindowResize);
+    HGLRC hRC = wglGetCurrentContext();
+
+    // Release rendering context
+    wglMakeCurrent(NULL, NULL);
+    wglDeleteContext(hRC);
 
     glDeleteBuffers(1, &m_vertexBuffer);
     glDeleteBuffers(1, &m_texCoordBuffer);
@@ -60,6 +64,21 @@ void OpenGL::UnInitialize()
     glDeleteVertexArrays(1, &m_vertexArrayObject);
 
     m_initialized = false;
+}
+
+void OpenGL::Resize(uint32_t width, uint32_t height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void OpenGL::OnSurfaceLost()
+{
+    // No need in windows
+}
+
+void OpenGL::OnSurfaceRecreated(void* windowHandle)
+{
+    // No need in windows
 }
 
 void OpenGL::BeginFrame(FrameUniform cmd)
@@ -110,6 +129,10 @@ void OpenGL::DrawObject(ObjectUniform cmd)
             glUniform1i(texLoc, 0);
         }
     }
+
+    // Set the 'time' uniform
+    m_time = glGetUniformLocation(shaderProgram, "time");
+    glUniform1f(m_time, Timer::TimeSinceInit());
 
     size_t numLights = sizeof(m_currentFrame.lights) / sizeof(m_currentFrame.lights[0]);
 
@@ -268,11 +291,6 @@ uniqueID OpenGL::CreateTexture(const TextureUpload data)
     m_textureMap[m_nextTextureID] = gpuTex;
 
     return m_nextTextureID;
-}
-
-void OpenGL::OnWindowResize(int width, int height)
-{
-    glViewport(0, 0, width, height);
 }
 
 GLuint OpenGL::CompileShader(const string& source, GLuint  type)

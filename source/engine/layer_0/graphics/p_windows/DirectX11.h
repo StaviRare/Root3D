@@ -65,8 +65,11 @@ struct LightBuffer
 class DirectX11 : public IGraphicsAPI
 {
     public:
-    void Initialize() override;
+    void Initialize(void* windowHandle) override;
     void UnInitialize() override;
+    void Resize(uint32_t width, uint32_t height) override;
+    void OnSurfaceLost() override;
+    void OnSurfaceRecreated(void* windowHandle) override;
     void BeginFrame(FrameUniform cmd) override;
     void DrawObject(ObjectUniform cmd) override;
     void EndFrame() override;
@@ -83,7 +86,6 @@ class DirectX11 : public IGraphicsAPI
     ID3DBlob* CompileShader(const string& source, const char* entryPoint, const char* shaderModel);
 
     private:
-    bool m_initialized = false;
     ID3D11Buffer* m_vertexBuffer = nullptr;
     ID3D11Buffer* m_indexBuffer = nullptr;
     ID3D11Buffer* m_texCoordBuffer = nullptr;

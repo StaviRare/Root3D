@@ -16,12 +16,16 @@ class SceneManager
     static Scene* GetCurrentScene();
     
     private:
-    static Scene* currentScene;
-    static std::map<int, std::function<Scene* ( )>>& getSceneRegistry();
+    static Scene* s_nextScene;
+    static Scene* s_currentScene;
+    static std::map<int, std::function<Scene*()>> s_sceneRegistry;
 
     private:
-    static void Initialze();
+    static void Initialize();
     static void UnInitialize();
     static void Tick();
     static void LateTick();
+    static void OnAppFocus(bool hasFocus);
+    static void OnAppPause(bool isPaused);
+    static void EndFrame();
 };

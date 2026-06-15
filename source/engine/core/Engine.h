@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Window.h"
+#include "EngineConfig.h"
+#include "PlatformType.h"
+
 class Engine
 {
     public:
@@ -11,6 +15,10 @@ class Engine
 	bool IsRunning();
 
 	private:
-	bool isRunning;
+	bool m_isRunning = false;
+	Window* m_window = nullptr;
+
+	private:
+	EngineConfig BuildEngineConfig(PlatformType platform);
 };
 

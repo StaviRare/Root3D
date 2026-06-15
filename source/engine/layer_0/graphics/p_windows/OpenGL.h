@@ -22,8 +22,11 @@ struct GLTexture
 class OpenGL : public IGraphicsAPI
 {
     public:
-    void Initialize() override;
+    void Initialize(void* windowHandle) override;
     void UnInitialize() override;
+    void Resize(uint32_t width, uint32_t height) override;
+    void OnSurfaceLost() override;
+    void OnSurfaceRecreated(void* windowHandle) override;
     void BeginFrame(FrameUniform cmd) override;
     void DrawObject(ObjectUniform cmd) override;
     void EndFrame() override;
@@ -33,17 +36,16 @@ class OpenGL : public IGraphicsAPI
     uniqueID CreateTexture(const TextureUpload data) override;
 
     private:
-    static void OnWindowResize(int width, int height);
     GLuint  CompileShader(const string& source, GLuint type);
 
     private:
-    bool m_initialized = false;
-    GLuint m_indexBuffer;
-    GLuint m_vertexBuffer;
-    GLuint m_texCoordBuffer;
-    GLuint m_normalBuffer;
-    GLuint m_vertexArrayObject;
-    HDC m_deviceContext;
+    GLuint m_time = -1;
+    GLuint m_indexBuffer = -1;
+    GLuint m_vertexBuffer = -1;
+    GLuint m_texCoordBuffer = -1;
+    GLuint m_normalBuffer = -1;
+    GLuint m_vertexArrayObject = -1;
+    HDC m_deviceContext = nullptr;
     uniqueID m_nextShaderID = 0;
     uniqueID m_nextTextureID = 0;
     std::unordered_map<uniqueID, GLShader> m_shaderMap;

@@ -21,5 +21,7 @@ class Component
     virtual void OnCreate() {}
     virtual void Tick() {}
     virtual void LateTick() {}
+    virtual void OnAppFocus(bool hasFocus) {}
+    virtual void OnAppPause(bool isPaused) {}
     virtual void OnDestroy() {}
 };

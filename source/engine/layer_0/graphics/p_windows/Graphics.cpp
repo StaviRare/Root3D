@@ -2,7 +2,6 @@
 #include "Graphics.h"
 #include "OpenGL.h"
 #include "DirectX11.h"
-#include "Config.h"
 
 GraphicsAPI Graphics:: _currentType;
 IGraphicsAPI* Graphics::_currentAPI = nullptr;
@@ -12,40 +11,80 @@ string Graphics::TypeName()
     switch (_currentType)
     {
         case ( GraphicsAPI::OpenGL ):
-        return "OpenGL";
-
+        {
+            return "OpenGL";
+        }
         case ( GraphicsAPI::DirectX11 ):
-        return "DirectX11";
-
+        {
+            return "DirectX11";
+        }
         default:
-        return "Null";
+        {
+            return "Null";
+        }
     }
 }
 
-void Graphics::Initialize()
+void Graphics::Initialize(GraphicsDesc desc)
 {
-    RuntimeSettings config = Config::Runtime();
-    GraphicsAPI type = config.RenderingAPI;
-
-    switch (type)
+    switch (desc.graphicsAPI)
     {
         case ( GraphicsAPI::OpenGL ):
-        _currentAPI = new OpenGL();
-        break;
-
+        {
+            _currentAPI = new OpenGL();
+            break;
+        }
         case ( GraphicsAPI::DirectX11 ):
-        _currentAPI = new DirectX11();
-        break;
+        {
+            _currentAPI = new DirectX11();
+            break;
+        }
     }
 
     if (_currentAPI != nullptr)
     {
-        _currentType = type;
-        _currentAPI->Initialize();
+        _currentType = desc.graphicsAPI;
+        _currentAPI->Initialize(desc.windowHandle);
     }
     else
     {
         ENGINE_ERROR("Unsupported Graphics API selected!");
+    }
+}
+
+void Graphics::UnInitialize()
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->UnInitialize();
+
+        delete _currentAPI;
+        _currentAPI = nullptr;
+        _currentType = GraphicsAPI::Null;
+    }
+}
+
+void Graphics::Resize(uint32_t width, uint32_t height)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->Resize(width, height);
+    }
+}
+
+void Graphics::OnSurfaceLost()
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->OnSurfaceLost();
+    }
+}
+
+void Graphics::OnSurfaceRecreated(void* windowHandle)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->OnSurfaceRecreated(windowHandle);
     }
 }
 
@@ -70,18 +109,6 @@ void Graphics::EndFrame()
     if (_currentAPI != nullptr)
     {
         _currentAPI->EndFrame();
-    }
-}
-
-void Graphics::UnInitialize()
-{
-    if (_currentAPI != nullptr)
-    {
-        _currentAPI->UnInitialize();
-
-        delete _currentAPI;
-        _currentAPI = nullptr;
-        _currentType = GraphicsAPI::Null;
     }
 }
 

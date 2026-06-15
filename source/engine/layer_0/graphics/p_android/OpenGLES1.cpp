@@ -1,35 +1,66 @@
 #include <vector>
+
 #include "Log.h"
 #include "OpenGLES1.h"
-#include "JniBridge.h"
-#include "Screen.h"
-#include "Calc.h"
 
-void OpenGLES1::Initialize()
+void OpenGLES1::Initialize(void* windowHandle)
 {
-    Screen::RegisterResizeCallback(OnWindowResize);
-
-    // display / surface
-    EGLHandles* handles = static_cast<EGLHandles*>(Screen::GetNativeHandle());
+    handles = static_cast<EGLHandles*>(windowHandle);
     EGLDisplay display = handles->display;
     EGLSurface surface = handles->surface;
 
-    m_initialized = (display != EGL_NO_DISPLAY) && (surface != EGL_NO_SURFACE);
+    bool validHandles = handles
+        && handles->display != EGL_NO_DISPLAY
+        && handles->surface != EGL_NO_SURFACE;
 
-    if(m_initialized)
+    if (validHandles)
     {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CW);
         glCullFace(GL_FRONT);
+
+        // Need to move to GLES3. No light for now.
+        // Light support. Hard coded for now. Should be in graphics desc.
+//        glEnable(GL_LIGHTING);
+//        float globalAmbient[4] = {0.3f, 0.3f, 0.3f, 1.0f};
+//        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+
+        m_initialized = true;
+    }
+    else
+    {
+        ENGINE_ERROR("OpenGLES1::Initialize failed: invalid display or surface.");
     }
 }
 
 void OpenGLES1::UnInitialize()
 {
-    Screen::UnRegisterResizeCallback(OnWindowResize);
-    
     m_initialized = false;
+}
+
+void OpenGLES1::Resize(uint32_t width, uint32_t height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void OpenGLES1::OnSurfaceLost()
+{
+    m_initialized = false;
+}
+
+void OpenGLES1::OnSurfaceRecreated(void* windowHandle)
+{
+    handles = static_cast<EGLHandles*>(windowHandle);
+
+    bool validHandles = handles
+        && handles->display != EGL_NO_DISPLAY
+        && handles->surface != EGL_NO_SURFACE;
+
+    if (validHandles)
+    {
+        m_initialized = true;
+    }
 }
 
 void OpenGLES1::BeginFrame(FrameUniform cmd)
@@ -52,13 +83,6 @@ void OpenGLES1::BeginFrame(FrameUniform cmd)
     glLoadMatrixf(viewMatrix);
 
     auto lightCommands = cmd.lights;
-
-    // Lighting. Hard coded. No shaders, no unlit. light everywhere.
-    glEnable(GL_LIGHTING);
-
-    // Set global ambient light
-    float globalAmbientColor[4] = {0.3f, 0.3f, 0.3f, 1.0f}; // ToDo! - Add this to Config 'GlobalAmbientColor'
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbientColor);
 
     size_t numLights = sizeof(cmd.lights) / sizeof(cmd.lights[0]);
 
@@ -134,11 +158,12 @@ void OpenGLES1::DrawObject(ObjectUniform cmd)
 
 void OpenGLES1::EndFrame()
 {
-    EGLHandles* handles = static_cast<EGLHandles*>(Screen::GetNativeHandle());
+    bool swapSucceeded
+        = eglSwapBuffers(handles->display, handles->surface);
 
-    if (!eglSwapBuffers(handles->display, handles->surface))
+    if (swapSucceeded == false)
     {
-        ENGINE_ERROR("Failed to swap buffers.");
+        ENGINE_ERROR("EGL swap buffers failed.");
     }
 }
 
@@ -186,9 +211,4 @@ uniqueID OpenGLES1::CreateTexture(const TextureUpload data)
     m_textureMap[m_nextTextureID] = gpuTex;
 
     return m_nextTextureID;
-}
-
-void OpenGLES1::OnWindowResize(int width, int height)
-{
-    glViewport(0, 0, width, height);
 }

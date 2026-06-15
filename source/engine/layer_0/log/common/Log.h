@@ -40,6 +40,6 @@ class Log
     public:
     static void Debug(const string& message);
     static void Info(const string& message);
-    static void Error(const string& errorMessage);
-    static void Warning(const string& warningMessage);
+    static void Error(const string& message);
+    static void Warning(const string& message);
 };

@@ -1,0 +1,28 @@
+#pragma once
+
+#include <queue>
+#include "Types.h"
+#include "WindowDesc.h"
+
+class Window
+{
+    friend class Engine;
+
+    public:
+    static Window* getInstance();
+    const uint32 GetWidth();
+    const uint32 GetHeight();
+    void SetFullScreen(bool enable);
+    void SetResolution(uint32 width, uint32 height);
+
+    private:
+    void Initialize(WindowDesc desc);
+    void UnInitialize();
+    void Resume();
+    void Pause();
+    void PollEvents();
+    void* GetNativeHandle();
+
+    private:
+    static Window* s_instance;
+};

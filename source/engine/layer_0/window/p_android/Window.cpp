@@ -3,85 +3,87 @@
 #include <vector>
 
 #include "Log.h"
-#include "Screen.h"
+#include "Window.h"
 #include "JniBridge.h"
-#include "Config.h"
 #include "OpenGLES1.h"
-
-static int width;
-static int height;
-static std::vector<Func2Arg<int, int>> callbacks;
 
 static EGLHandles eglHandles;
 static EGLDisplay display = EGL_NO_DISPLAY;
 static EGLSurface surface = EGL_NO_SURFACE;
 static EGLContext context = EGL_NO_CONTEXT;
+Window* Window::s_instance = nullptr;
 
 bool CreateEGLSurfaceAndMakeCurrent();
 void DestroyEGLSurfaceAndUnbindContext();
 
-const int Screen::GetWidth()
+Window* Window::getInstance()
 {
-    return width;
+    return s_instance;
 }
 
-const int Screen::GetHeight()
+const uint32 Window::GetWidth()
 {
-    return height;
-}
-
-void Screen::SetFullScreen(bool enable)
-{
-    // Implement
-}
-
-void Screen::SetResolution(int newWidth, int newHeight)
-{
-    width = newWidth;
-    height = newHeight;
-
-    for (auto& callback : callbacks)
+    uint32 returnValue = 0;
+    ANativeWindow* window = JniBridge::GetNativeWindow();
+    if (window)
     {
-        callback(width, height);
+        returnValue = static_cast<uint32>(ANativeWindow_getWidth(window));
+    }
+
+    return returnValue;
+}
+
+const uint32 Window::GetHeight()
+{
+    uint32 returnValue = 0;
+    ANativeWindow* window = JniBridge::GetNativeWindow();
+    if (window)
+    {
+        returnValue = static_cast<uint32>(ANativeWindow_getHeight(window));
+    }
+
+    return returnValue;
+}
+
+void Window::SetFullScreen(bool enable)
+{
+    // No need here.
+}
+
+void Window::SetResolution(uint32 width, uint32 height)
+{
+    // No need here.
+}
+
+void Window::Initialize(WindowDesc desc)
+{
+    if (s_instance != nullptr)
+    {
+        ENGINE_ERROR("Window already initialized.");
+    }
+    else
+    {
+        s_instance = this;
+
+        display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        if (display == EGL_NO_DISPLAY) {
+            Log::Error("Failed to get EGL display");
+            return;
+        }
+
+        if (!eglInitialize(display, nullptr, nullptr)) {
+            Log::Error("Failed to initialize EGL");
+            return;
+        }
+
+        if (!CreateEGLSurfaceAndMakeCurrent()) {
+            Log::Error("Failed to initialize EGL surface and context");
+            return;
+        }
     }
 }
 
-void Screen::RegisterResizeCallback(Func2Arg<int, int> ptr)
-{
-    if (ptr && std::find(callbacks.begin(), callbacks.end(), ptr) == callbacks.end())
-    {
-        callbacks.push_back(ptr);
-    }
-}
-
-void Screen::UnRegisterResizeCallback(Func2Arg<int, int> ptr)
-{
-    callbacks.erase(std::remove(callbacks.begin(), callbacks.end(), ptr), callbacks.end());
-}
-
-void Screen::Initialize()
-{
-    display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    if (display == EGL_NO_DISPLAY)
-    {
-        Log::Error("Failed to get EGL display");
-        return;
-    }
-
-    if (!eglInitialize(display, nullptr, nullptr))
-    {
-        Log::Error("Failed to initialize EGL");
-        return;
-    }
-
-    if (!CreateEGLSurfaceAndMakeCurrent())
-    {
-        Log::Error("Failed to initialize EGL surface and context");
-        return;
-    }
-}
-
-void Screen::UnInitialize()
+void Window::UnInitialize()
 {
     DestroyEGLSurfaceAndUnbindContext();
 
@@ -98,7 +100,7 @@ void Screen::UnInitialize()
     }
 }
 
-void Screen::Resume()
+void Window::Resume()
 {
     if (display != EGL_NO_DISPLAY && surface == EGL_NO_SURFACE)
     {
@@ -110,17 +112,17 @@ void Screen::Resume()
     }
 }
 
-void Screen::Pause()
+void Window::Pause()
 {
     DestroyEGLSurfaceAndUnbindContext();
 }
 
-void Screen::PollEvents()
+void Window::PollEvents()
 {
-    // Implement event polling if necessary
+    // No need here.
 }
 
-void* Screen::GetNativeHandle()
+void* Window::GetNativeHandle()
 {
     eglHandles.display = display;
     eglHandles.surface = surface;
@@ -183,14 +185,19 @@ bool CreateEGLSurfaceAndMakeCurrent()
         return false;
     }
 
-    // Query the surface dimensions
-    eglQuerySurface(display, surface, EGL_WIDTH, &width);
-    eglQuerySurface(display, surface, EGL_HEIGHT, &height);
+    EGLint w = 0;
+    EGLint h = 0;
 
-    // Notify registered callbacks about the new dimensions
-    for (auto& callback : callbacks)
-    {
-        callback(width, height);
+    // Query the surface dimensions
+    eglQuerySurface(display, surface, EGL_WIDTH, &w);
+    eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+
+    Window* wnd = Window::getInstance();
+    if (wnd) {
+        wnd->SetResolution(
+                static_cast<uint32>(w),
+                static_cast<uint32>(h)
+        );
     }
 
     return true;

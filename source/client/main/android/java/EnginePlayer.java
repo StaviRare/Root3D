@@ -48,8 +48,14 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
         initialize();
     }
 
+    public void start()
+    {
+        // Nothing at the moment.
+    }
+
     public void resume()
     {
+        // Only resume when the surface is ready
         if (surfaceHolder != null && surfaceHolder.getSurface().isValid())
         {
             nativeResume();
@@ -67,13 +73,16 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
         handler.removeCallbacks(renderTask);
     }
 
+    public void stop()
+    {
+        // Nothing at the moment.
+    }
+
     public void destroy()
     {
-
-            handler.removeCallbacks(renderTask);
-            nativeUnInitialize();
-            isInitialized = false;
-
+        handler.removeCallbacks(renderTask);
+        nativeUnInitialize();
+        isInitialized = false;
     }
 
     public void configurationChanged(Configuration newConfig)
@@ -87,6 +96,8 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
         {
             setImmersiveMode();
         }
+
+        nativeFocusChanged(hasFocus);
     }
 
     private void initialize()
@@ -126,9 +137,9 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     {
         surfaceHolder = holder;
         Surface surface = holder.getSurface();
-        nativeSetSurface(surface);
+        nativeOnSurfaceCreated(surface);
 
-        if (!isInitialized)
+        if (isInitialized == false)
         {
             nativeInitialize();
             isInitialized = true;
@@ -156,15 +167,18 @@ public class EnginePlayer extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder)
     {
         handler.removeCallbacks(renderTask);
+        nativeOnSurfaceDestroyed();
     }
 
     // Native methods
-    private native void nativeSetSurface(Surface surface);
+    private native void nativeOnSurfaceCreated(Surface surface);
+    private native void nativeOnSurfaceDestroyed();
     private native void nativeSetAssetManager(AssetManager assetManager);
     private native void nativeInitialize();
     private native void nativeUnInitialize();
     private native void nativeResume();
     private native void nativePause();
+    private native void nativeFocusChanged(boolean hasFocus);
     private native void nativeTick();
     private native void nativeResize(int width, int height);
 }

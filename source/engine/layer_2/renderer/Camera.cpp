@@ -1,55 +1,76 @@
 #include "Log.h"
 #include "Camera.h"
-#include "Screen.h"
+#include "Window.h"
 
-Camera* Camera::instance = nullptr;
+std::vector<Camera*> Camera::s_cameras;
 
-void Camera::OnCreate()
+bool Camera::Exists()
 {
-    if (instance == nullptr)
+    return s_cameras.size() > 0;
+}
+
+Camera* Camera::GetMainCamera()
+{
+    Camera* returnValue = nullptr;
+
+    if (s_cameras.empty() == false)
     {
-        instance = this;
+        returnValue = s_cameras[0];
+        int highestDepth = s_cameras[0]->depth;
+
+        for (size_t i = 1; i < s_cameras.size(); i++)
+        {
+            if (s_cameras[i]->depth > highestDepth)
+            {
+                highestDepth = s_cameras[i]->depth;
+                returnValue = s_cameras[i];
+            }
+        }
     }
     else
     {
-        ENGINE_ERROR("Multiple instances of Camera are not supported!");
+        ENGINE_ERROR("No Camera exists!");
     }
+
+    return returnValue;
+}
+
+void Camera::OnCreate()
+{
+    s_cameras.push_back(this);
 }
 
 void Camera::OnDestroy()
 {
-    if (instance == this)
+    auto it = std::find(s_cameras.begin(), s_cameras.end(), this);
+
+    if (it != s_cameras.end())
     {
-        instance = nullptr;
+        s_cameras.erase(it);
     }
-}
-
-bool Camera::Exists()
-{
-    return instance != nullptr;
-}
-
-Camera* Camera::GetInstance()
-{
-    if (instance == nullptr)
-    {
-        ENGINE_ERROR("Camera instance does not exists!");
-    }
-
-    return instance;
 }
 
 float Camera::GetAspect()
 {
     float returnValue;
 
-    if (isUsingCustomAspect)
+    if (m_isUsingCustomAspect)
     {
-        returnValue = customAspect;
+        returnValue = m_customAspect;
     }
     else
     {
-        returnValue = static_cast<float>( Screen::GetWidth() ) / Screen::GetHeight();
+        Window* window = Window::getInstance();
+        
+        if (window)
+        {
+            returnValue = static_cast<float>( window->GetWidth() ) / window->GetHeight();
+        }
+        else
+        {
+            returnValue = 1;
+            Log::Error("could nto find window.");
+        }
     }
 
     return returnValue;
@@ -57,11 +78,11 @@ float Camera::GetAspect()
 
 void Camera::ResetAspect()
 {
-    isUsingCustomAspect = false;
+    m_isUsingCustomAspect = false;
 }
 
 void Camera::SetAspect(float aspect)
 {
-    customAspect = aspect;
-    isUsingCustomAspect = true;
+    m_customAspect = aspect;
+    m_isUsingCustomAspect = true;
 }
