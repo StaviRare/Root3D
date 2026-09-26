@@ -20,7 +20,7 @@ uniqueID ShaderManager::CreateOrGet(const string vs, const string fs)
     {
         const Resource& r = it.second;
 
-        if (r.hash == combinedHash)
+        if (r.contentHash == combinedHash)
         {
             returnValue = it.first;
             m_shaders[returnValue].useCount++;
@@ -42,7 +42,7 @@ uniqueID ShaderManager::CreateOrGet(const string vs, const string fs)
             Resource resource;
             resource.handle = shaderHandle;
             resource.useCount = 1;
-            resource.hash = combinedHash;
+            resource.contentHash = combinedHash;
             m_shaders[m_nextID] = resource;
 
             returnValue = m_nextID;

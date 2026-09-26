@@ -23,7 +23,7 @@ uniqueID TextureManager::CreateOrGet(unsigned char* data, unsigned int width, un
     {
         const Resource& r = it.second;
 
-        if (r.hash == hashValue)
+        if (r.contentHash == hashValue)
         {
             returnValue = it.first;
             m_textures[returnValue].useCount++;
@@ -48,7 +48,7 @@ uniqueID TextureManager::CreateOrGet(unsigned char* data, unsigned int width, un
             Resource resource;
             resource.handle = shaderHandle;
             resource.useCount = 1;
-            resource.hash = hashValue;
+            resource.contentHash = hashValue;
             m_textures[m_nextID] = resource;
 
             returnValue = m_nextID;

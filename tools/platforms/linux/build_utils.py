@@ -16,7 +16,7 @@ CMAKE_PATH = os.path.join(PROJECT_PATH, "CMakeLists.txt")
 BUILD_PATH = os.path.join(ROOT_PATH, "build", "linux", "{configuration}")
 EXECUTABLE_PATH_TEMPLATE = os.path.join(
     BUILD_PATH,
-    "root3d"
+    "Root3D"
 )
 
 DISTROBOX_NAME = "root3d-linux"
