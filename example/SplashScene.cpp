@@ -70,6 +70,10 @@ void SplashScene::initShaders()
     {
         Debug::LogWarning("No shaders in OpenGLES1");
     }
+    else if(graphicsAPI == "OpenGLES2")
+    {
+        m_shader = AssetLoader::LoadShader("shaders/gles2/Unlit.glsl");
+    }
     else
     {
         Debug::LogError("Unsupported graphics API. Shaders not set.");

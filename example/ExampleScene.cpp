@@ -68,6 +68,12 @@ void ExampleScene::initShaders()
     {
         Debug::LogWarning("No shaders in OpenGLES1");
     }
+    else if(graphicsAPI == "OpenGLES2")
+    {
+        Debug::LogWarning("OpenGLES2. Using unlit for all.");
+        m_shaderLit = AssetLoader::LoadShader("shaders/gles2/Unlit.glsl");
+        m_shaderUnlit = AssetLoader::LoadShader("shaders/gles2/Unlit.glsl");
+    }
     else
     {
         Debug::LogError("Unsupported graphics API. Shaders not set.");

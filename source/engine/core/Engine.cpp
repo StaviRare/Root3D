@@ -187,6 +187,15 @@ EngineConfig Engine::BuildEngineConfig(PlatformType platform)
             config.graphics.graphicsAPI = GraphicsAPI::OpenGLES1;
             break;
         }
+        case PlatformType::Linux:
+        {
+            config.window.width = 960;
+            config.window.height = 540;
+            config.window.fullscreen = false;
+            config.graphics.maxLights = 10;
+            config.graphics.graphicsAPI = GraphicsAPI::OpenGLES2;
+            break;
+        }
     }
 
     return config;
