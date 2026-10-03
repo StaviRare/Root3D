@@ -301,8 +301,9 @@ def run(configuration):
         print_regular("** Starting executable...")
 
         try:
-            subprocess.Popen([executable_path])
+            process = subprocess.Popen([executable_path])
             print_success("** Executable started successfully.")
+            process.wait()
         except Exception as error:
             print_error("** Error:")
             print_error(str(error))
