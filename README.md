@@ -2,8 +2,6 @@
 
 Root3D is a 3D engine project focused on platform independence and is still actively in development. Bugs and incomplete features are expected.
 
-> **Note:** The engine is currently developed on x64 Windows, so all instructions and setups have been tested on that platform. The folder structure might change as the project evolves.
-
 Development currently focuses on a small number of platforms to keep development easy, while extending the engine to support additional platforms is straightforward.
 
 ## Features
