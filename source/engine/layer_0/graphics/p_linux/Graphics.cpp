@@ -1,6 +1,6 @@
 #include "Log.h"
 #include "Graphics.h"
-#include "OpenGL.h"
+#include "OpenGLES2.h"
 
 GraphicsAPI Graphics:: _currentType;
 IGraphicsAPI* Graphics::_currentAPI = nullptr;
@@ -9,9 +9,9 @@ string Graphics::TypeName()
 {
     switch (_currentType)
     {
-        case ( GraphicsAPI::OpenGL ):
+        case ( GraphicsAPI::OpenGLES2 ):
         {
-            return "OpenGL";
+            return "OpenGLES2";
         }
         default:
         {
@@ -24,9 +24,9 @@ void Graphics::Initialize(GraphicsDesc desc)
 {
     switch (desc.graphicsAPI)
     {
-        case ( GraphicsAPI::OpenGL ):
+        case ( GraphicsAPI::OpenGLES2 ):
         {
-            _currentAPI = new OpenGL();
+            _currentAPI = new OpenGLES2();
             break;
         }
     }

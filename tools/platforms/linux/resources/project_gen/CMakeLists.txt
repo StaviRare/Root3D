@@ -41,6 +41,7 @@ file(GLOB_RECURSE SOURCES
 		"${rootPath}source/engine/layer_0/platform/common/*.cpp"
 		"${rootPath}source/engine/layer_0/platform/p_linux/*.cpp"
 		"${rootPath}source/engine/layer_0/window/common/*.h"
+		"${rootPath}source/engine/layer_0/window/p_linux/*h"
 		"${rootPath}source/engine/layer_0/window/p_linux/*.cpp"
 		"${rootPath}source/engine/layer_0/timer/*.h"
 		"${rootPath}source/engine/layer_0/timer/*.cpp"
