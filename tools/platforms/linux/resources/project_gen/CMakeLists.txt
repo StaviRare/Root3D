@@ -52,6 +52,7 @@ file(GLOB_RECURSE SOURCES
 		"${rootPath}external/jolt-physics-5.0.0/Jolt/*.cpp"
 		"${rootPath}external/yaml-cpp-0.6.3/src/*.cpp"
 		"${rootPath}external/ttf2mesh/src/*.c"
+		"${rootPath}external/wayland/src/*.c"
 		"${rootPath}example/*.h"
 		"${rootPath}example/*.cpp"
 )
@@ -73,7 +74,6 @@ set(INCLUDE_DIRS
 		"${rootPath}source/engine/layer_0/platform/common/"
 		"${rootPath}source/engine/layer_0/platform/p_linux/"
 		"${rootPath}source/engine/layer_0/window/common/"
-		"${rootPath}source/engine/layer_0/window/p_linux/"
 		"${rootPath}source/engine/layer_0/timer/"
 		"${rootPath}source/engine/layer_0/types/"
 		"${rootPath}source/engine/layer_1/config/"
@@ -90,8 +90,14 @@ set(INCLUDE_DIRS
 		"${rootPath}external/jolt-physics-5.0.0/"
 		"${rootPath}external/yaml-cpp-0.6.3/include/"
 		"${rootPath}external/ttf2mesh/include/"
+		"${rootPath}external/wayland/include/"
 		"${rootPath}example/"
 )
+
+find_library(EGL_LIB EGL REQUIRED)
+find_library(GLESV2_LIB GLESv2 REQUIRED)
+find_library(WAYLAND_EGL_LIB wayland-egl REQUIRED)
+find_library(WAYLAND_CLIENT_LIB wayland-client REQUIRED)
 
 include_directories(${INCLUDE_DIRS})
 
@@ -106,4 +112,8 @@ add_custom_command(
 
 target_link_libraries(
 		Root3D
+		${EGL_LIB}
+		${GLESV2_LIB}
+		${WAYLAND_CLIENT_LIB}
+		${WAYLAND_EGL_LIB}
 )
