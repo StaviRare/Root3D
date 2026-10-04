@@ -17,88 +17,63 @@ static EGLSurface eglSurface = EGL_NO_SURFACE;
 static EGLContext eglContext = EGL_NO_CONTEXT;
 static EGLConfig eglConfig = nullptr;
 
-static bool running = true;
-static bool configured = false;
 static wl_display* display = nullptr;
 static wl_registry* registry = nullptr;
 static wl_compositor* compositor = nullptr;
 static xdg_wm_base* wmBase = nullptr;
-static zxdg_decoration_manager_v1* decorationManager = nullptr;
 static wl_surface* surface = nullptr;
 static xdg_surface* xdgSurface = nullptr;
 static xdg_toplevel* toplevel = nullptr;
-static zxdg_toplevel_decoration_v1* decoration = nullptr;
 static wl_egl_window* eglWindow = nullptr;
-static uint32 windowWidth = 800;
-static uint32 windowHeight = 600;
+static zxdg_toplevel_decoration_v1* decoration = nullptr;
+static zxdg_decoration_manager_v1* decorationManager = nullptr;
 
-// Forward declarations
-static void WaylandEventHandler(WaylandEventType type, void* data);
 static bool CreateEGLSurfaceAndMakeCurrent();
 static void DestroyEGLSurfaceAndUnbindContext();
-
-
-static void registryGlobal(void*, wl_registry* registry, uint32_t name, const char* interface, uint32_t)
-{
-    if (std::strcmp(interface, wl_compositor_interface.name) == 0)
-    {
-        compositor =static_cast<wl_compositor*>(
-                wl_registry_bind(registry, name, &wl_compositor_interface, 4)
-            );
-    }
-    else if (std::strcmp(interface, xdg_wm_base_interface.name) == 0)
-    {
-        wmBase = static_cast<xdg_wm_base*>(
-            wl_registry_bind(registry, name, &xdg_wm_base_interface, 1)
-        );
-
-        xdg_wm_base_add_listener(wmBase, &WaylandHelpers::WmBaseListener, nullptr);
-    }
-    else if (std::strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0)
-    {
-        decorationManager =
-            static_cast<zxdg_decoration_manager_v1*>(
-                wl_registry_bind(
-                    registry,
-                    name,
-                    &zxdg_decoration_manager_v1_interface,
-                    1
-                    )
-                );
-    }
-}
-
-static void registryGlobalRemove(void*, wl_registry*, uint32_t)
-{
-    // Nothing for now.
-}
-
-
-static const wl_registry_listener registryListener =
-{
-    registryGlobal,
-    registryGlobalRemove
-};
-
+static void WaylandEventHandler(WaylandEventType type, void* data);
 
 Window* Window::s_instance = nullptr;
 
-
 Window* Window::getInstance()
 {
-    Window* returnValue = s_instance;
-    return returnValue;
+    return s_instance;
 }
 
 const uint32 Window::GetWidth()
 {
-    const uint32 returnValue = windowWidth;
+    uint32 returnValue = 0;
+
+    if (surface != nullptr && eglWindow != nullptr)
+    {
+        int width = 0;
+
+        wl_egl_window_get_attached_size(
+            eglWindow,
+            &width,
+            nullptr);
+
+        returnValue = static_cast<uint32>(width);
+    }
+
     return returnValue;
 }
 
 const uint32 Window::GetHeight()
 {
-    const uint32 returnValue = windowHeight;
+    uint32 returnValue = 0;
+
+    if (surface != nullptr && eglWindow != nullptr)
+    {
+        int height = 0;
+
+        wl_egl_window_get_attached_size(
+            eglWindow,
+            nullptr,
+            &height);
+
+        returnValue = static_cast<uint32>(height);
+    }
+
     return returnValue;
 }
 
@@ -117,11 +92,8 @@ void Window::SetFullScreen(bool enable)
     }
 }
 
-void Window::SetResolution(uint32 width,uint32 height)
+void Window::SetResolution(uint32 width, uint32 height)
 {
-    windowWidth = width;
-    windowHeight = height;
-
     if (eglWindow != nullptr)
     {
         wl_egl_window_resize(
@@ -129,92 +101,68 @@ void Window::SetResolution(uint32 width,uint32 height)
             static_cast<int32_t>(width),
             static_cast<int32_t>(height),
             0,
-            0
-            );
+            0);
     }
 }
 
 void Window::Initialize(WindowDesc config)
 {
-    bool success = true;
-
     s_instance = this;
-    running = true;
-    configured = false;
+    bool success = true;
 
     WaylandHelpers::SetEventListener(WaylandEventHandler);
 
     display = wl_display_connect(nullptr);
-
-    if (display == nullptr)
-    {
-        success = false;
-    }
+    success = display != nullptr;
 
     if (success)
     {
         registry = wl_display_get_registry(display);
-
-        if (registry == nullptr)
-        {
-            success = false;
-        }
+        success = registry != nullptr;
     }
 
     if (success)
     {
-        wl_registry_add_listener(registry, &registryListener, nullptr);
+        wl_registry_add_listener(
+            registry,
+            &WaylandHelpers::RegistryListener,
+            nullptr);
 
-        if (wl_display_roundtrip(display) < 0)
-        {
-            success = false;
-        }
+        success = wl_display_roundtrip(display) >= 0;
     }
 
     if (success)
     {
-        if (compositor == nullptr ||
-            wmBase == nullptr ||
-            decorationManager == nullptr)
-        {
-            success = false;
-        }
+        success =
+            compositor != nullptr &&
+            wmBase != nullptr &&
+            decorationManager != nullptr;
     }
 
     if (success)
     {
         surface = wl_compositor_create_surface(compositor);
-
-        if (surface == nullptr)
-        {
-            success = false;
-        }
+        success = surface != nullptr;
     }
 
     if (success)
     {
-        xdgSurface = xdg_wm_base_get_xdg_surface(wmBase, surface);
+        xdgSurface = xdg_wm_base_get_xdg_surface(
+            wmBase,
+            surface);
 
-        if (xdgSurface == nullptr)
-        {
-            success = false;
-        }
+        success = xdgSurface != nullptr;
     }
 
     if (success)
     {
         xdg_surface_add_listener(
             xdgSurface,
-            &WaylandHelpers::xdgSurfaceListener,
-            nullptr
-            );
+            &WaylandHelpers::XdgSurfaceListener,
+            nullptr);
 
         toplevel = xdg_surface_get_toplevel(xdgSurface);
-
-        if (toplevel == nullptr)
-        {
-            success = false;
-        }
+        success = toplevel != nullptr;
     }
 
     if (success)
@@ -222,18 +170,15 @@ void Window::Initialize(WindowDesc config)
         xdg_toplevel_add_listener(
             toplevel,
             &WaylandHelpers::ToplevelListener,
-            nullptr
-            );
+            nullptr);
 
         xdg_toplevel_set_title(
             toplevel,
-            config.title
-            );
+            config.title);
 
         xdg_toplevel_set_app_id(
             toplevel,
-            "root3d.com"
-            );
+            "com.root3d.game");
     }
 
     if (success)
@@ -241,42 +186,25 @@ void Window::Initialize(WindowDesc config)
         decoration =
             zxdg_decoration_manager_v1_get_toplevel_decoration(
                 decorationManager,
-                toplevel
-                );
+                toplevel);
 
-        if (decoration == nullptr)
-        {
-            success = false;
-        }
+        success = decoration != nullptr;
     }
 
     if (success)
     {
         zxdg_toplevel_decoration_v1_add_listener(
             decoration,
-            &WaylandHelpers::decorationListener,
-            nullptr
-            );
+            &WaylandHelpers::DecorationListener,
+            nullptr);
 
         zxdg_toplevel_decoration_v1_set_mode(
             decoration,
-            ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE
-            );
+            ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
 
         wl_surface_commit(surface);
 
-        while (!configured && running)
-        {
-            if (wl_display_dispatch(display) < 0)
-            {
-                running = false;
-            }
-        }
-
-        if (!running)
-        {
-            success = false;
-        }
+        success = wl_display_roundtrip(display) >= 0;
     }
 
     if (success)
@@ -284,14 +212,10 @@ void Window::Initialize(WindowDesc config)
         eglWindow =
             wl_egl_window_create(
                 surface,
-                static_cast<int32_t>(windowWidth),
-                static_cast<int32_t>(windowHeight)
-                );
+                static_cast<int32_t>(config.width),
+                static_cast<int32_t>(config.height));
 
-        if (eglWindow == nullptr)
-        {
-            success = false;
-        }
+        success = eglWindow != nullptr;
     }
 
     if (success)
@@ -299,12 +223,9 @@ void Window::Initialize(WindowDesc config)
         success = CreateEGLSurfaceAndMakeCurrent();
     }
 
-    if (success)
+    if (success && config.fullscreen)
     {
-        if (config.fullscreen)
-        {
-            SetFullScreen(true);
-        }
+        SetFullScreen(true);
     }
 }
 
@@ -382,9 +303,6 @@ void Window::UnInitialize()
         display = nullptr;
     }
 
-    configured = false;
-    running = false;
-
     if (s_instance == this)
     {
         s_instance = nullptr;
@@ -402,130 +320,116 @@ void Window::PollEvents()
 {
     if (display != nullptr)
     {
-        // pending - process without blocking.
-        if (wl_display_dispatch_pending(display) < 0)
-        {
-            running = false;
-        }
+        wl_display_dispatch_pending(display);
+        wl_display_flush(display);
     }
 }
 
-
 static bool CreateEGLSurfaceAndMakeCurrent()
 {
-    bool returnValue = true;
+    bool success = true;
 
-    eglDisplay = eglGetDisplay(static_cast<EGLNativeDisplayType>(display));
+    eglDisplay
+        = eglGetDisplay(static_cast<EGLNativeDisplayType>(display));
 
     if (eglDisplay == EGL_NO_DISPLAY)
     {
-        returnValue = false;
+        success = false;
     }
 
-    if (returnValue)
+    if (success)
     {
-        if (!eglInitialize(
-                eglDisplay,
-                nullptr,
-                nullptr))
+        bool initializationFailed
+            = !eglInitialize(eglDisplay, nullptr, nullptr);
+
+        if (initializationFailed)
         {
-            returnValue = false;
+            success = false;
         }
     }
 
-    if (returnValue)
+    if (success)
     {
-        if (!eglBindAPI(EGL_OPENGL_ES_API))
+        bool apiBindingFailed
+            = !eglBindAPI(EGL_OPENGL_ES_API);
+
+        if (apiBindingFailed)
         {
-            returnValue = false;
+            success = false;
         }
     }
 
-    if (returnValue)
+    if (success)
     {
         const EGLint configAttributes[] =
         {
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-            EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
-            EGL_RED_SIZE,        8,
-            EGL_GREEN_SIZE,      8,
-            EGL_BLUE_SIZE,       8,
-            EGL_ALPHA_SIZE,      8,
-            EGL_DEPTH_SIZE,      16,
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_DEPTH_SIZE, 16,
             EGL_NONE
         };
 
         EGLint configCount = 0;
+        bool configSelectionFailed =
+            !eglChooseConfig(eglDisplay, configAttributes, &eglConfig, 1, &configCount)
+            || configCount == 0;
 
-        if (!eglChooseConfig(
-                eglDisplay,
-                configAttributes,
-                &eglConfig,
-                1,
-                &configCount))
+        if (configSelectionFailed)
         {
-            returnValue = false;
-        }
-        else if (configCount == 0)
-        {
-            returnValue = false;
+            success = false;
         }
     }
 
-    if (returnValue)
+    if (success)
     {
-        eglSurface =
-            eglCreateWindowSurface(
-                eglDisplay,
-                eglConfig,
-                reinterpret_cast<EGLNativeWindowType>(
-                    eglWindow
-                    ),
-                nullptr
-                );
+        eglSurface = eglCreateWindowSurface(
+            eglDisplay,
+            eglConfig,
+            reinterpret_cast<EGLNativeWindowType>(eglWindow),
+            nullptr);
 
         if (eglSurface == EGL_NO_SURFACE)
         {
-            returnValue = false;
+            success = false;
         }
     }
 
-    if (returnValue)
+    if (success)
     {
         const EGLint contextAttributes[] =
-            {
-                EGL_CONTEXT_CLIENT_VERSION,
-                2,
-                EGL_NONE
-            };
+        {
+            EGL_CONTEXT_CLIENT_VERSION, 2,
+            EGL_NONE
+        };
 
-        eglContext =
-            eglCreateContext(
-                eglDisplay,
-                eglConfig,
-                EGL_NO_CONTEXT,
-                contextAttributes
-                );
+        eglContext = eglCreateContext(
+            eglDisplay,
+            eglConfig,
+            EGL_NO_CONTEXT,
+            contextAttributes);
 
         if (eglContext == EGL_NO_CONTEXT)
         {
-            returnValue = false;
+            success = false;
         }
     }
 
-    if (returnValue)
+    if (success)
     {
-        if (!eglMakeCurrent(
-                eglDisplay,
-                eglSurface,
-                eglSurface,
-                eglContext))
+        bool makeCurrentFailed =
+            !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+
+        if (makeCurrentFailed)
         {
-            returnValue = false;
+            success = false;
         }
     }
 
-    return returnValue;
+    return success;
 }
 
 static void DestroyEGLSurfaceAndUnbindContext()
@@ -534,44 +438,83 @@ static void DestroyEGLSurfaceAndUnbindContext()
     {
         if (eglContext != EGL_NO_CONTEXT)
         {
-            eglMakeCurrent(
-                eglDisplay,
-                EGL_NO_SURFACE,
-                EGL_NO_SURFACE,
-                EGL_NO_CONTEXT
-                );
-
-            eglDestroyContext(
-                eglDisplay,
-                eglContext
-                );
-
+            eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            eglDestroyContext(eglDisplay, eglContext);
             eglContext = EGL_NO_CONTEXT;
         }
 
         if (eglSurface != EGL_NO_SURFACE)
         {
-            eglDestroySurface(
-                eglDisplay,
-                eglSurface
-                );
-
+            eglDestroySurface(eglDisplay, eglSurface);
             eglSurface = EGL_NO_SURFACE;
         }
 
         eglTerminate(eglDisplay);
-
         eglDisplay = EGL_NO_DISPLAY;
     }
 
     eglConfig = nullptr;
 }
 
-
 static void WaylandEventHandler(WaylandEventType type, void* data)
 {
     switch (type)
     {
+        case WaylandEventType::RegistryGlobal:
+        {
+            RegistryGlobalData* eventData =
+                static_cast<RegistryGlobalData*>(data);
+
+            if (std::strcmp(
+                    eventData->interface,
+                    wl_compositor_interface.name) == 0)
+            {
+                compositor =
+                    static_cast<wl_compositor*>(
+                        wl_registry_bind(
+                            eventData->registry,
+                            eventData->name,
+                            &wl_compositor_interface,
+                            4));
+            }
+            else if (std::strcmp(
+                         eventData->interface,
+                         xdg_wm_base_interface.name) == 0)
+            {
+                wmBase =
+                    static_cast<xdg_wm_base*>(
+                        wl_registry_bind(
+                            eventData->registry,
+                            eventData->name,
+                            &xdg_wm_base_interface,
+                            1));
+
+                xdg_wm_base_add_listener(
+                    wmBase,
+                    &WaylandHelpers::WmBaseListener,
+                    nullptr);
+            }
+            else if (std::strcmp(
+                         eventData->interface,
+                         zxdg_decoration_manager_v1_interface.name) == 0)
+            {
+                decorationManager =
+                    static_cast<zxdg_decoration_manager_v1*>(
+                        wl_registry_bind(
+                            eventData->registry,
+                            eventData->name,
+                            &zxdg_decoration_manager_v1_interface,
+                            1));
+            }
+
+            break;
+        }
+
+        case WaylandEventType::RegistryGlobalRemove:
+        {
+            break;
+        }
+
         case WaylandEventType::ToplevelConfigure:
         {
             ToplevelConfigureData* configureData =
@@ -579,37 +522,23 @@ static void WaylandEventHandler(WaylandEventType type, void* data)
 
             int32_t width = configureData->width;
             int32_t height = configureData->height;
+            bool validSize = width > 0 && height > 0;
 
-            if (width > 0)
-            {
-                windowWidth = static_cast<uint32>(width);
-            }
+            if(validSize){
+                if (eglWindow != nullptr)
+                {
+                    wl_egl_window_resize(
+                        eglWindow,
+                        width,
+                        height,
+                        0,
+                        0);
+                }
 
-            if (height > 0)
-            {
-                windowHeight = static_cast<uint32>(height);
-            }
-
-            if (eglWindow != nullptr &&
-                width > 0 &&
-                height > 0)
-            {
-                wl_egl_window_resize(
-                    eglWindow,
-                    width,
-                    height,
-                    0,
-                    0
-                    );
-            }
-
-            if (width > 0 && height > 0)
-            {
                 PlatformEvent ev;
                 ev.type = EventType::Resize;
                 ev.width = static_cast<uint32>(width);
                 ev.height = static_cast<uint32>(height);
-
                 PlatformEventQueue::Push(ev);
             }
 
@@ -621,12 +550,24 @@ static void WaylandEventHandler(WaylandEventType type, void* data)
             PlatformEvent ev;
             ev.type = EventType::Close;
             PlatformEventQueue::Push(ev);
+
             break;
         }
 
         case WaylandEventType::SurfaceConfigure:
         {
-            configured = true;
+            SurfaceConfigureData* configureData =
+                static_cast<SurfaceConfigureData*>(data);
+
+            xdg_surface_ack_configure(
+                configureData->surface,
+                configureData->serial);
+
+            break;
+        }
+
+        case WaylandEventType::DecorationConfigure:
+        {
             break;
         }
     }
