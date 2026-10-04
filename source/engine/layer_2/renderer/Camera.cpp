@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "Log.h"
 #include "Camera.h"
 #include "Window.h"
@@ -69,7 +71,6 @@ float Camera::GetAspect()
         else
         {
             returnValue = 1;
-            Log::Error("could nto find window.");
         }
     }
 

@@ -1,5 +1,7 @@
 ﻿#include <locale>
 #include <codecvt>
+#include <algorithm>
+
 #include "TextMesh.h"
 #include "Debug.h"
 
