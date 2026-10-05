@@ -1,5 +1,6 @@
 #include "Log.h"
 #include "Graphics.h"
+#include "Vulkan.h"
 #include "OpenGLES2.h"
 
 GraphicsAPI Graphics:: _currentType;
@@ -9,6 +10,10 @@ string Graphics::TypeName()
 {
     switch (_currentType)
     {
+        case ( GraphicsAPI::Vulkan ):
+        {
+            return "Vulkan";
+        }
         case ( GraphicsAPI::OpenGLES2 ):
         {
             return "OpenGLES2";
@@ -24,6 +29,11 @@ void Graphics::Initialize(GraphicsDesc desc)
 {
     switch (desc.graphicsAPI)
     {
+        case ( GraphicsAPI::Vulkan ):
+        {
+            _currentAPI = new Vulkan();
+            break;
+        }
         case ( GraphicsAPI::OpenGLES2 ):
         {
             _currentAPI = new OpenGLES2();

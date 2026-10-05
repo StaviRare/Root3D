@@ -6,5 +6,6 @@ enum class GraphicsAPI
     OpenGL,
     OpenGLES1,
     OpenGLES2,
-    DirectX11
+    DirectX11,
+    Vulkan
 };
