@@ -74,6 +74,10 @@ void SplashScene::initShaders()
     {
         m_shader = AssetLoader::LoadShader("shaders/gles2/Unlit.glsl");
     }
+    else if(graphicsAPI == "Vulkan")
+    {
+        m_shader = AssetLoader::LoadShader("shaders/vulkan/Unlit.glsl");
+    }
     else
     {
         Debug::LogError("Unsupported graphics API. Shaders not set.");
