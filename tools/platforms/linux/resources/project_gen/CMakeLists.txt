@@ -95,26 +95,55 @@ set(INCLUDE_DIRS
 		"${rootPath}example/"
 )
 
+# Dependencies
 find_library(EGL_LIB EGL REQUIRED)
 find_library(GLESV2_LIB GLESv2 REQUIRED)
-find_library(WAYLAND_EGL_LIB wayland-egl REQUIRED)
+find_library(VULKAN_LIB vulkan REQUIRED)
 find_library(WAYLAND_CLIENT_LIB wayland-client REQUIRED)
+find_library(WAYLAND_EGL_LIB wayland-egl REQUIRED)
+find_library(SHADERC_LIB NAMES shaderc shaderc_shared REQUIRED)
 
-include_directories(${INCLUDE_DIRS})
+file(REAL_PATH "${SHADERC_LIB}" SHADERC_RUNTIME_LIB)
 
+# Clean output folder
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/../bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/../bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+
+# Executable
 add_executable(Root3D ${SOURCES})
 
-add_custom_command(
-		TARGET Root3D POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-		"${CMAKE_CURRENT_SOURCE_DIR}/../../assets/packed/resources.bin"
-		"$<TARGET_FILE_DIR:Root3D>/resources.bin"
+target_include_directories(Root3D PRIVATE
+    ${INCLUDE_DIRS}
 )
 
-target_link_libraries(
-		Root3D
-		${EGL_LIB}
-		${GLESV2_LIB}
-		${WAYLAND_CLIENT_LIB}
-		${WAYLAND_EGL_LIB}
+target_link_libraries(Root3D PRIVATE
+    ${EGL_LIB}
+    ${GLESV2_LIB}
+    ${VULKAN_LIB}
+    ${WAYLAND_CLIENT_LIB}
+    ${WAYLAND_EGL_LIB}
+    ${SHADERC_LIB}
+)
+
+set_target_properties(Root3D PROPERTIES
+    BUILD_RPATH "$ORIGIN"
+)
+
+# Copy lib ShaderC
+add_custom_command(
+    TARGET Root3D POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${SHADERC_RUNTIME_LIB}"
+        "$<TARGET_FILE_DIR:Root3D>/"
+    COMMENT "Copying shaderc library..."
+)
+
+# Copy lib Assets
+add_custom_command(
+    TARGET Root3D POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../assets/packed/resources.bin"
+        "$<TARGET_FILE_DIR:Root3D>/resources.bin"
+    COMMENT "Copying packed assets..."
 )
