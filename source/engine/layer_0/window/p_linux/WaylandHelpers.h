@@ -4,6 +4,12 @@
 #include "xdg-shell-client-protocol.h"
 #include "xdg-decoration-client-protocol.h"
 
+struct WindowHandle
+{
+    wl_display* display = nullptr;
+    wl_surface* surface = nullptr;
+};
+
 enum class WaylandEventType
 {
     RegistryGlobal,

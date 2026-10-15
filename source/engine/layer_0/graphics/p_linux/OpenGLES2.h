@@ -1,11 +1,14 @@
 #pragma once
 
 #include <EGL/egl.h>
-#include <GLES/gl.h>
+#include <GLES2/gl2.h>
 #include <unordered_map>
+#include <wayland-egl-core.h>
+#include <wayland-client.h>
 
 #include "Types.h"
 #include "IGraphicsAPI.h"
+#include "WaylandHelpers.h"
 
 struct GLTexture
 {
@@ -15,12 +18,6 @@ struct GLTexture
 struct GLShader
 {
     GLuint programID;
-};
-
-struct EGLHandles
-{
-    EGLDisplay display;
-    EGLSurface surface;
 };
 
 class OpenGLES2 : public IGraphicsAPI
@@ -40,7 +37,11 @@ class OpenGLES2 : public IGraphicsAPI
     uniqueID CreateTexture(const TextureUpload data) override;
 
     private:
-    GLuint  CompileShader(const string& source, GLuint type);
+    void DestroyEGL();
+    void DestroyOpenGL();
+    bool InitializeEGL(WindowHandle* windowHandle);
+    bool InitializeGLES();
+    GLuint CompileShader(const string& source, GLuint type);
 
     private:
     uniqueID m_nextTextureID = 0;
@@ -52,6 +53,9 @@ class OpenGLES2 : public IGraphicsAPI
     GLuint m_vertexBuffer = -1;
     GLuint m_texCoordBuffer = -1;
     GLuint m_normalBuffer = -1;
-    EGLHandles* m_eglHandles = nullptr;
     FrameUniform m_currentFrame;
+    EGLDisplay m_eglDisplay = EGL_NO_DISPLAY;
+    EGLSurface m_eglSurface = EGL_NO_SURFACE;
+    EGLContext m_eglContext = EGL_NO_CONTEXT;
+    wl_egl_window* m_eglWindow = nullptr;
 };
