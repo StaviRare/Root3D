@@ -59,9 +59,6 @@ void OpenGLES2::BeginFrame(FrameUniform cmd)
     const float* bg = cmd.backgroundColor;
     glClearColor(bg[0], bg[1], bg[2], bg[3]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    const float* viewMatrix = cmd.viewMatrix;
-    const float* projectionMatrix = cmd.projectionMatrix;
     m_currentFrame = cmd;
 }
 
