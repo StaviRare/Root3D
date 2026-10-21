@@ -70,9 +70,13 @@ void ExampleScene::initShaders()
     }
     else if(graphicsAPI == "OpenGLES2")
     {
-        Debug::LogWarning("OpenGLES2. Using unlit for all.");
         m_shaderLit = AssetLoader::LoadShader("shaders/gles2/Lit.glsl");
         m_shaderUnlit = AssetLoader::LoadShader("shaders/gles2/Unlit.glsl");
+    }
+    else if(graphicsAPI == "Vulkan")
+    {
+        m_shaderLit = AssetLoader::LoadShader("shaders/vulkan/Lit.glsl");
+        m_shaderUnlit = AssetLoader::LoadShader("shaders/vulkan/Unlit.glsl");
     }
     else
     {
