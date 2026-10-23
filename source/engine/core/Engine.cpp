@@ -193,7 +193,7 @@ EngineConfig Engine::BuildEngineConfig(PlatformType platform)
             config.window.height = 540;
             config.window.fullscreen = false;
             config.graphics.maxLights = 10;
-            config.graphics.graphicsAPI = GraphicsAPI::OpenGLES2;
+            config.graphics.graphicsAPI = GraphicsAPI::Vulkan;
             break;
         }
     }

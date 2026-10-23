@@ -14,10 +14,8 @@ ROOT_PATH = "../../../"
 PROJECT_PATH = os.path.join(ROOT_PATH, "workspaces", "linux")
 CMAKE_PATH = os.path.join(PROJECT_PATH, "CMakeLists.txt")
 BUILD_PATH = os.path.join(ROOT_PATH, "build", "linux", "{configuration}")
-EXECUTABLE_PATH_TEMPLATE = os.path.join(
-    BUILD_PATH,
-    "Root3D"
-)
+OBJECT_PATH_TEMPLATE = os.path.join(BUILD_PATH, "obj")
+EXECUTABLE_PATH_TEMPLATE = os.path.join(BUILD_PATH, "bin", "Root3D")
 
 DISTROBOX_NAME = "root3d-linux"
 DISTROBOX_IMAGE = "ubuntu:24.04"
@@ -28,7 +26,9 @@ PACKAGES = [
     "gdb",
     "libwayland-dev",
     "libegl-dev",
-    "libgles-dev"
+    "libgles-dev",
+    "libvulkan-dev",
+    "libshaderc-dev"
 ]
 
 
@@ -201,7 +201,7 @@ def build(configuration):
 
         build_type = configuration.capitalize()
         build_path = os.path.abspath(
-            BUILD_PATH.format(configuration=configuration)
+            OBJECT_PATH_TEMPLATE.format(configuration=configuration)
         )
         project_path = os.path.abspath(PROJECT_PATH)
 
@@ -215,7 +215,10 @@ def build(configuration):
             project_path,
             "-B",
             build_path,
-            f"-DCMAKE_BUILD_TYPE={build_type}"
+            f"-DCMAKE_BUILD_TYPE={build_type}",
+            f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY={os.path.abspath(os.path.join(BUILD_PATH.format(configuration=configuration), 'bin'))}",
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={os.path.abspath(os.path.join(BUILD_PATH.format(configuration=configuration), 'bin'))}",
+            f"-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY={os.path.abspath(os.path.join(BUILD_PATH.format(configuration=configuration), 'obj', 'lib'))}"
         ]
 
         result = subprocess.run(
@@ -264,7 +267,6 @@ def build(configuration):
             print_error(result.stderr)
 
     return returnValue
-
 
 def validate_toolchain():
     returnValue = True

@@ -1,42 +1,46 @@
-#include <GLES2/gl2.h>
-
 #include "Log.h"
 #include "Timer.h"
 #include "OpenGLES2.h"
 
 void OpenGLES2::Initialize(void* windowHandle)
 {
-    m_eglHandles = static_cast<EGLHandles*>(windowHandle);
+    WindowHandle* window
+        = static_cast<WindowHandle*>(windowHandle);
 
-    bool validHandles = m_eglHandles
-        && m_eglHandles->display != EGL_NO_DISPLAY
-        && m_eglHandles->surface != EGL_NO_SURFACE;
-
-    if (validHandles)
-    {
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glFrontFace(GL_CW);
-        glCullFace(GL_FRONT);
-        glGenBuffers(1,&m_vertexBuffer);
-        glGenBuffers(1,&m_texCoordBuffer);
-        glGenBuffers(1,&m_normalBuffer);
-        glGenBuffers(1,&m_indexBuffer);
-        m_initialized = true;
+    if(window == nullptr){
+        ENGINE_ERROR("OpenGLES2::Initialize failed: invalid window handle.");
     }
-    else
-    {
-        ENGINE_ERROR("OpenGLES2::Initialize failed: invalid display or surface.");
+    else{
+        bool eglSuccess = InitializeEGL(window);
+        bool glSuccess = InitializeGLES();
+
+        m_initialized = eglSuccess && glSuccess;
+
+        if(m_initialized == false){
+            ENGINE_ERROR("OpenGLES2::Initialize failed: graphics initialization failed.");
+        }
     }
 }
 
 void OpenGLES2::UnInitialize()
 {
+    DestroyOpenGL();
+    DestroyEGL();
     m_initialized = false;
 }
 
 void OpenGLES2::Resize(uint32_t width, uint32_t height)
 {
+    if (m_eglWindow != nullptr)
+    {
+        wl_egl_window_resize(
+            m_eglWindow,
+            static_cast<int32_t>(width),
+            static_cast<int32_t>(height),
+            0,
+            0);
+    }
+
     glViewport(0, 0, width, height);
 }
 
@@ -55,9 +59,6 @@ void OpenGLES2::BeginFrame(FrameUniform cmd)
     const float* bg = cmd.backgroundColor;
     glClearColor(bg[0], bg[1], bg[2], bg[3]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    const float* viewMatrix = cmd.viewMatrix;
-    const float* projectionMatrix = cmd.projectionMatrix;
     m_currentFrame = cmd;
 }
 
@@ -184,7 +185,7 @@ void OpenGLES2::DrawObject(ObjectUniform cmd)
 void OpenGLES2::EndFrame()
 {
     bool swapSucceeded
-        = eglSwapBuffers(m_eglHandles->display, m_eglHandles->surface);
+        = eglSwapBuffers(m_eglDisplay, m_eglSurface);
 
     if (swapSucceeded == false)
     {
@@ -313,4 +314,145 @@ GLuint OpenGLES2::CompileShader(const string& source, GLuint type)
     }
 
     return shader;
+}
+
+void OpenGLES2::DestroyEGL()
+{
+    if (m_eglWindow != nullptr)
+    {
+        wl_egl_window_destroy(m_eglWindow);
+        m_eglWindow = nullptr;
+    }
+
+    if (m_eglDisplay != EGL_NO_DISPLAY)
+    {
+        if (m_eglContext != EGL_NO_CONTEXT)
+        {
+            eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            eglDestroyContext(m_eglDisplay, m_eglContext);
+            m_eglContext = EGL_NO_CONTEXT;
+        }
+
+        if (m_eglSurface != EGL_NO_SURFACE)
+        {
+            eglDestroySurface(m_eglDisplay, m_eglSurface);
+            m_eglSurface = EGL_NO_SURFACE;
+        }
+
+        eglTerminate(m_eglDisplay);
+        m_eglDisplay = EGL_NO_DISPLAY;
+    }
+}
+
+void OpenGLES2::DestroyOpenGL()
+{
+    if (m_vertexBuffer != 0) {
+        glDeleteBuffers(1, &m_vertexBuffer);
+        m_vertexBuffer = 0;
+    }
+
+    if (m_texCoordBuffer != 0) {
+        glDeleteBuffers(1, &m_texCoordBuffer);
+        m_texCoordBuffer = 0;
+    }
+
+    if (m_normalBuffer != 0) {
+        glDeleteBuffers(1, &m_normalBuffer);
+        m_normalBuffer = 0;
+    }
+
+    if (m_indexBuffer != 0) {
+        glDeleteBuffers(1, &m_indexBuffer);
+        m_indexBuffer = 0;
+    }
+}
+
+bool OpenGLES2::InitializeEGL(WindowHandle* window)
+{
+    bool success = true;
+
+    m_eglWindow
+        = wl_egl_window_create(window->surface, 800, 600);
+
+    if (m_eglWindow == nullptr)
+    {
+        success = false;
+    }
+
+    if (success)
+    {
+        m_eglDisplay = eglGetDisplay(
+            static_cast<EGLNativeDisplayType>(window->display));
+
+        success = m_eglDisplay != EGL_NO_DISPLAY
+                  && eglInitialize(m_eglDisplay, nullptr, nullptr)
+                  && eglBindAPI(EGL_OPENGL_ES_API);
+    }
+
+    if (success)
+    {
+        const EGLint configAttributes[] = {
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_DEPTH_SIZE, 16,
+            EGL_NONE
+        };
+
+        EGLConfig eglConfig = nullptr;
+        EGLint configCount = 0;
+
+        success = eglChooseConfig(
+                      m_eglDisplay, configAttributes, &eglConfig, 1, &configCount)
+                  && configCount > 0;
+
+        if (success)
+        {
+            m_eglSurface = eglCreateWindowSurface(
+                m_eglDisplay,
+                eglConfig,
+                reinterpret_cast<EGLNativeWindowType>(m_eglWindow),
+                nullptr);
+
+            success = m_eglSurface != EGL_NO_SURFACE;
+        }
+
+        if (success)
+        {
+            const EGLint contextAttributes[] = {
+                EGL_CONTEXT_CLIENT_VERSION, 2,
+                EGL_NONE
+            };
+
+            m_eglContext = eglCreateContext(
+                m_eglDisplay, eglConfig, EGL_NO_CONTEXT, contextAttributes);
+
+            success = m_eglContext != EGL_NO_CONTEXT;
+        }
+
+        if (success)
+        {
+            success = eglMakeCurrent(
+                          m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext) == EGL_TRUE;
+        }
+    }
+
+    return success;
+}
+
+bool OpenGLES2::InitializeGLES()
+{
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
+    glCullFace(GL_FRONT);
+    glGenBuffers(1, &m_vertexBuffer);
+    glGenBuffers(1, &m_texCoordBuffer);
+    glGenBuffers(1, &m_normalBuffer);
+    glGenBuffers(1, &m_indexBuffer);
+
+    return glGetError() == GL_NO_ERROR;
 }

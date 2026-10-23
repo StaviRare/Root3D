@@ -1,12 +1,14 @@
 # Root3D
 
-Root3D is a 3D engine project focused on platform independence and is still actively in development. Bugs and incomplete features are expected.
+Root3D is an experimental 3D engine focused on platform independence.
 
-Development currently focuses on a small number of platforms to keep development easy, while extending the engine to support additional platforms is straightforward.
+The project is intended for exploring ideas and experimenting with engine development.
+
+Bugs, missing features, and inconsistencies are expected as the engine continues to evolve.
 
 ## Features
 - **Platforms:** Android, Windows, Linux
-- **Rendering:** OpenGL, OpenGLES, DirectX 11
+- **Rendering:** Vulkan, OpenGL, OpenGLES, DirectX
 - **Physics:** Jolt
 
 ## Getting Started
