@@ -75,6 +75,7 @@ set(INCLUDE_DIRS
 		"${rootPath}source/engine/layer_0/platform/common/"
 		"${rootPath}source/engine/layer_0/platform/p_linux/"
 		"${rootPath}source/engine/layer_0/window/common/"
+		"${rootPath}source/engine/layer_0/window/p_linux/"
 		"${rootPath}source/engine/layer_0/timer/"
 		"${rootPath}source/engine/layer_0/types/"
 		"${rootPath}source/engine/layer_1/config/"
