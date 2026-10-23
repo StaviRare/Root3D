@@ -2,9 +2,9 @@
 
 Root3D is an experimental 3D engine focused on platform independence.
 
-It serves as a platform for research and experimentation.
+The project is intended for exploring ideas and experimenting with engine development.
 
-Bugs, incomplete features, and varying levels of polish are expected.
+Bugs, missing features, and inconsistencies are expected as the engine continues to evolve.
 
 ## Features
 - **Platforms:** Android, Windows, Linux
