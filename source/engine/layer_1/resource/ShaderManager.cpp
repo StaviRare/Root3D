@@ -1,64 +1,63 @@
+#include <sstream>
+
 #include "Log.h"
 #include "ShaderManager.h"
 #include "Graphics.h"
+#include "UserDefinedTypes.h"
+#include "AssetLoader.h"
 
-uniqueID ShaderManager::m_nextID;
+uniqueID ShaderManager::m_nextID = 0;
 std::unordered_map<uniqueID, Resource> ShaderManager::m_shaders;
 
-uniqueID ShaderManager::CreateOrGet(const string vs, const string fs)
+uniqueID ShaderManager::CreateOrGet(const string& name)
 {
-    bool isNewShader = true;
-    uniqueID returnValue = 0;
+    uniqueID returnValue = -1;
+    string assetPath = BuildShaderAssetPath(name);
+    bool assetPathValid = !assetPath.empty();
 
-    // Get hash from shader:
-    std::hash<std::string> hasher;
-    hash hashVS = hasher(vs);
-    hash hashFS = hasher(fs);
-    hash combinedHash = hashVS ^ (hashFS << 1);
+    if(assetPathValid){
+        bool isNewShader = true;
+        Hasher<string> hasher;
+        hash hash = hasher(assetPath);
 
-    for (const auto& it : m_shaders)
-    {
-        const Resource& r = it.second;
-
-        if (r.contentHash == combinedHash)
+        for (const auto& it : m_shaders)
         {
-            returnValue = it.first;
-            m_shaders[returnValue].useCount++;
-            isNewShader = false;
+            const Resource& r = it.second;
+
+            if (r.contentHash == hash)
+            {
+                returnValue = it.first;
+                m_shaders[returnValue].useCount++;
+                isNewShader = false;
+            }
         }
-    }
 
-    if (isNewShader)
-    {
-        ShaderUpload upload;
-        upload.vertexCode = vs;
-        upload.fragmentCode = fs;
-        uniqueID shaderHandle = Graphics::CreateShader(upload);
-
-        if (shaderHandle)
-        {
-            m_nextID++;
-
-            Resource resource;
-            resource.handle = shaderHandle;
-            resource.useCount = 1;
-            resource.contentHash = combinedHash;
-            m_shaders[m_nextID] = resource;
-
-            returnValue = m_nextID;
-        }
-        else
-        {
-            ENGINE_ERROR("Shader compile fail.");
-        }
-    }
-
-    // Shader is valid
-    if (returnValue > 0)
-    {
         if (isNewShader)
         {
-            ENGINE_INFO("Resource [Shader] Created | ID: " + std::to_string(returnValue));
+            auto assetData = AssetLoader::LoadResource(assetPath);
+            ShaderUpload upload = ParseShaderAsset(assetData);
+            uniqueID shaderHandle = Graphics::CreateShader(upload);
+
+            if (shaderHandle)
+            {
+                m_nextID++;
+                Resource resource;
+                resource.handle = shaderHandle;
+                resource.useCount = 1;
+                resource.contentHash = hash;
+                m_shaders[m_nextID] = resource;
+                returnValue = m_nextID;
+            }
+        }
+
+        bool shaderIsValid = returnValue > 0;
+
+        if (shaderIsValid)
+        {
+            if (isNewShader)
+            {
+                ENGINE_DEBUG("Shader created | ID: " + std::to_string(returnValue));
+            }
         }
     }
 
@@ -68,8 +67,8 @@ uniqueID ShaderManager::CreateOrGet(const string vs, const string fs)
 uniqueID ShaderManager::TryDestroy(uniqueID id)
 {
     uniqueID returnValue = 0;
-
     auto it = m_shaders.find(id);
+
     if(it != m_shaders.end())
     {
         if(it->second.useCount > 1)
@@ -81,7 +80,7 @@ uniqueID ShaderManager::TryDestroy(uniqueID id)
         {
             Graphics::DestroyShader(it->second.handle);
             m_shaders.erase(it);
-            ENGINE_INFO("Resource [Shader] Destroyed  | ID: " + std::to_string(id));
+            ENGINE_DEBUG("Shader destroyed | ID: " + std::to_string(id));
         }
     }
 
@@ -97,6 +96,84 @@ uniqueID ShaderManager::GetHandle(uniqueID id)
     if(it != m_shaders.end())
     {
         returnValue = it->second.handle;
+    }
+
+    return returnValue;
+}
+
+string ShaderManager::BuildShaderAssetPath(const string& name)
+{
+    string returnValue = "";
+    string shaderFolder = "";
+    string shaderExtension = "";
+    string graphicsAPI = Graphics::TypeName();
+
+    if (graphicsAPI == "OpenGL")
+    {
+        shaderFolder = "glsl";
+        shaderExtension = ".glsl";
+    }
+    else if (graphicsAPI == "DirectX11")
+    {
+        shaderFolder = "hlsl";
+        shaderExtension = ".hlsl";
+    }
+    else if (graphicsAPI == "OpenGLES1")
+    {
+        ENGINE_DEBUG("Failed to resolve shader path: OpenGLES1 does not support shaders.");
+    }
+    else if(graphicsAPI == "OpenGLES2")
+    {
+        shaderFolder = "gles2";
+        shaderExtension = ".glsl";
+    }
+    else if(graphicsAPI == "Vulkan")
+    {
+        shaderFolder = "vulkan";
+        shaderExtension = ".glsl";
+    }
+    else{
+        ENGINE_ERROR("Failed to resolve shader path: unsupported graphics API " + graphicsAPI);
+    }
+
+    bool isSupportedAPI
+        = !shaderFolder.empty() && !shaderExtension.empty();
+
+    if(isSupportedAPI){
+        returnValue = "shaders/" + shaderFolder + "/" + name + shaderExtension;
+    }
+
+    return returnValue;
+}
+
+ShaderUpload ShaderManager::ParseShaderAsset(const std::vector<char>& data)
+{
+    ShaderUpload returnValue;
+    bool hasData = !data.empty();
+
+    if (hasData)
+    {
+        string line;
+        bool isFragment = false;
+        string shaderString(data.begin(), data.end());
+        std::istringstream fileStream(shaderString);
+        std::stringstream vertexStream;
+        std::stringstream fragmentStream;
+
+        while (std::getline(fileStream, line))
+        {
+            if (line.find("==SEPARATOR==") != string::npos)
+            {
+                isFragment = true;
+            }
+            else
+            {
+                (isFragment ? fragmentStream : vertexStream) << line << '\n';
+            }
+        }
+
+        returnValue.vertexCode = vertexStream.str();
+        returnValue.fragmentCode = fragmentStream.str();
     }
 
     return returnValue;

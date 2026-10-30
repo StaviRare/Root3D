@@ -2,11 +2,8 @@
 #include "Mesh.h"
 #include "MeshFilter.h"
 #include "MeshGenerator.h"
-#include "Debug.h"
-#include "Texture.h"
 #include "Renderer.h"
 #include "AssetLoader.h"
-#include "Graphics.h"
 #include "Camera.h"
 #include "DeferredSceneLoad.h"
 
@@ -19,7 +16,7 @@ void SplashScene::onLoad()
     camera->backgroundColor = Color(0, 0, 0, 1);
 
     // Logo
-    initShaders();
+    m_shader = new Shader("Unlit");
     m_logo = new Entity();
     m_logo->transform.scale = Vector3(1, 1, 1);
     m_logo->transform.position = Vector3(0, 0, 0);
@@ -52,34 +49,4 @@ void SplashScene::onUnload()
 
     delete m_sceneLoader;
     m_sceneLoader = nullptr;
-}
-
-void SplashScene::initShaders()
-{
-    string graphicsAPI = Graphics::TypeName();
-
-    if (graphicsAPI == "OpenGL")
-    {
-        m_shader = AssetLoader::LoadShader("shaders/glsl/Unlit.glsl");
-    }
-    else if (graphicsAPI == "DirectX11")
-    {
-        m_shader = AssetLoader::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
-    }
-    else if(graphicsAPI == "OpenGLES1")
-    {
-        Debug::LogWarning("No shaders in OpenGLES1");
-    }
-    else if(graphicsAPI == "OpenGLES2")
-    {
-        m_shader = AssetLoader::LoadShader("shaders/gles2/Unlit.glsl");
-    }
-    else if(graphicsAPI == "Vulkan")
-    {
-        m_shader = AssetLoader::LoadShader("shaders/vulkan/Unlit.glsl");
-    }
-    else
-    {
-        Debug::LogError("Unsupported graphics API. Shaders not set.");
-    }
 }

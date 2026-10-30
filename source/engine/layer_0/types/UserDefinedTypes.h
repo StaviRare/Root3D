@@ -5,6 +5,9 @@
 // Limiting to three arguments for clarity and simplicity. 
 // For more complex data, prefer structs/classes.
 
+template<typename T>
+using Hasher = std::hash<T>;
+
 // Static function (no captures)
 using Func0Arg = void (*)();
 template <typename T>

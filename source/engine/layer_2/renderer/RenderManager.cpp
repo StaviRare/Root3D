@@ -3,10 +3,10 @@
 #include "Mesh.h"
 #include "GraphicsTypes.h"
 #include "Renderer.h"
-#include "Debug.h"
 #include "Matrix4.h"
 #include "Light.h"
 #include "SceneManager.h"
+#include "ShaderManager.h"
 
 Camera* RenderManager::_camera = nullptr;
 std::set<Entity*> RenderManager::_entities;

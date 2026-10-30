@@ -11,9 +11,6 @@ class SplashScene : public Scene
     void onUnload() override;
 
     private:
-    void initShaders();
-
-    private:
     Shader* m_shader = nullptr;
     Entity* m_camera = nullptr;
     Entity* m_logo = nullptr;

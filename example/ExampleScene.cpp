@@ -52,36 +52,8 @@ void ExampleScene::initCamera()
 
 void ExampleScene::initShaders()
 {
-    string graphicsAPI = Graphics::TypeName();
-
-    if (graphicsAPI == "OpenGL")
-    {
-        m_shaderLit = AssetLoader::LoadShader("shaders/glsl/Lit.glsl");
-        m_shaderUnlit = AssetLoader::LoadShader("shaders/glsl/Unlit.glsl"); // UnlitWobble
-    }
-    else if (graphicsAPI == "DirectX11")
-    {
-        m_shaderLit = AssetLoader::LoadShader("shaders/hlsl/Lit.hlsl");
-        m_shaderUnlit = AssetLoader::LoadShader("shaders/hlsl/UnlitTexture.hlsl");
-    }
-    else if(graphicsAPI == "OpenGLES1")
-    {
-        Debug::LogWarning("No shaders in OpenGLES1");
-    }
-    else if(graphicsAPI == "OpenGLES2")
-    {
-        m_shaderLit = AssetLoader::LoadShader("shaders/gles2/Lit.glsl");
-        m_shaderUnlit = AssetLoader::LoadShader("shaders/gles2/Unlit.glsl");
-    }
-    else if(graphicsAPI == "Vulkan")
-    {
-        m_shaderLit = AssetLoader::LoadShader("shaders/vulkan/Lit.glsl");
-        m_shaderUnlit = AssetLoader::LoadShader("shaders/vulkan/Unlit.glsl");
-    }
-    else
-    {
-        Debug::LogError("Unsupported graphics API. Shaders not set.");
-    }
+    m_shaderLit = new Shader("Lit");
+    m_shaderUnlit = new Shader("Unlit");
 }
 
 void ExampleScene::initLighting()

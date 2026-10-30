@@ -1,5 +1,3 @@
-#pragma once
-
 #include "DeferredSceneLoad.h"
 #include "SceneManager.h"
 #include "Timer.h"

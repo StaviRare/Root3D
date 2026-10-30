@@ -1,5 +1,4 @@
 ﻿#include <fstream>
-#include <sstream>
 #include <algorithm>
 #include <ttf2mesh.h>
 
@@ -41,53 +40,6 @@ Texture* AssetLoader::LoadTexture(const std::string& path)
     stbi_image_free(rawData);
 
     return texture;
-}
-
-Shader* AssetLoader::LoadShader(const string& path)
-{
-    Shader* returnValue = nullptr;
-    auto data = LoadResource(path);
-
-    if (data.empty() == false)
-    {
-        enum class ShaderType
-        {
-            NONE = -1,
-            VERTEX = 0,
-            FRAGMENT = 1
-        };
-
-        ShaderType type = ShaderType::NONE;
-
-        std::string line;
-        std::stringstream ss[2];
-        std::string shaderString(data.begin(), data.end());
-        std::istringstream fileStream(shaderString);
-
-        while (std::getline(fileStream, line))
-        {
-            if (line.find("==SEPARATOR==") != std::string::npos)
-            {
-                type = ShaderType::FRAGMENT; // Switch to fragment shader
-                continue; // Skip the separator line
-            }
-
-            if (type != ShaderType::NONE)
-            {
-                ss[static_cast<int>( type )] << line << '\n';
-            }
-            else
-            {
-                // Default to vertex shader if no type has been set yet
-                type = ShaderType::VERTEX;
-                ss[static_cast<int>( type )] << line << '\n';
-            }
-        }
-
-        returnValue = new Shader(ss[0].str(),ss[1].str()) ;
-    }
-
-    return returnValue;
 }
 
 Font AssetLoader::LoadFont(const string& path)
