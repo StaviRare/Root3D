@@ -45,14 +45,14 @@ void ExampleScene::initCamera()
 
 void ExampleScene::initShaders()
 {
-    m_shaderLit = new Shader("Lit");
-    m_shaderUnlit = new Shader("Unlit");
+    m_shaderLit = new Shader("shaders/lit");
+    m_shaderUnlit = new Shader("shaders/unlit");
 }
 
 void ExampleScene::initTextures()
 {
-    m_texture1 = new Texture("dev.png");
-    m_texture2 = new Texture("dev_og.png");
+    m_texture1 = new Texture("textures/dev.png");
+    m_texture2 = new Texture("textures/dev_og.png");
 }
 
 void ExampleScene::initLighting()

@@ -103,18 +103,18 @@ uniqueID ShaderManager::CreateOrGet(const string& name)
 string ShaderManager::BuildShaderAssetPath(const string& name)
 {
     string returnValue = "";
-    string shaderFolder = "";
+    string shaderVariant = "";
     string shaderExtension = "";
     string graphicsAPI = Graphics::TypeName();
 
     if (graphicsAPI == "OpenGL")
     {
-        shaderFolder = "glsl";
+        shaderVariant = "opengl";
         shaderExtension = ".glsl";
     }
     else if (graphicsAPI == "DirectX11")
     {
-        shaderFolder = "hlsl";
+        shaderVariant = "d3d11";
         shaderExtension = ".hlsl";
     }
     else if (graphicsAPI == "OpenGLES1")
@@ -123,12 +123,12 @@ string ShaderManager::BuildShaderAssetPath(const string& name)
     }
     else if(graphicsAPI == "OpenGLES2")
     {
-        shaderFolder = "gles2";
+        shaderVariant = "gles2";
         shaderExtension = ".glsl";
     }
     else if(graphicsAPI == "Vulkan")
     {
-        shaderFolder = "vulkan";
+        shaderVariant = "vulkan";
         shaderExtension = ".glsl";
     }
     else{
@@ -136,10 +136,10 @@ string ShaderManager::BuildShaderAssetPath(const string& name)
     }
 
     bool isSupportedAPI
-        = !shaderFolder.empty() && !shaderExtension.empty();
+        = !shaderVariant.empty() && !shaderExtension.empty();
 
     if(isSupportedAPI){
-        returnValue = "shaders/" + shaderFolder + "/" + name + shaderExtension;
+        returnValue = name + "/" + shaderVariant + shaderExtension;
     }
 
     return returnValue;

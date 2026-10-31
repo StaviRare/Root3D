@@ -15,7 +15,7 @@ void SplashScene::onLoad()
     camera->backgroundColor = Color(0, 0, 0, 1);
 
     // Logo
-    m_shader = new Shader("Unlit");
+    m_shader = new Shader("shaders/unlit");
     m_logo = new Entity();
     m_logo->transform.scale = Vector3(1, 1, 1);
     m_logo->transform.position = Vector3(0, 0, 0);
@@ -24,7 +24,7 @@ void SplashScene::onLoad()
     MeshFilter* meshFilter = m_logo->AddComponent<MeshFilter>();
     Renderer* renderer = m_logo->AddComponent<Renderer>();
     Material material(*m_shader);
-    m_texture = new Texture("logo.png");
+    m_texture = new Texture("textures/logo.png");
     material.texture = m_texture;
     meshFilter->mesh = mesh;
     renderer->material = material;

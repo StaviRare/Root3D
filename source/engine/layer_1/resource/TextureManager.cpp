@@ -106,7 +106,7 @@ uniqueID TextureManager::CreateOrGet(const string& name)
 
 string TextureManager::BuildTextureAssetPath(const string& name)
 {
-    return "textures/" + name;
+    return name; // Maybe later we'll handle the extension automatically.
 }
 
 TextureUpload TextureManager::ParseTextureAsset(const std::vector<char>& data)
