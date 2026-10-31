@@ -1,20 +1,12 @@
 #include "ExampleScene.h"
-#include "Timer.h"
-#include "Input.h"
 #include "Mesh.h"
 #include "MeshFilter.h"
 #include "MeshGenerator.h"
-#include "Debug.h"
 #include "Texture.h"
 #include "Renderer.h"
-#include "SceneManager.h"
 #include "AssetLoader.h"
 #include "Light.h"
-#include "Graphics.h"
 #include "RigidBody.h"
-#include "Physics.h"
-#include "Collider.h"
-#include "SphereCollider.h"
 #include "BoxCollider.h"
 #include "MeshCollider.h"
 #include "Camera.h"
@@ -26,6 +18,7 @@ void ExampleScene::onLoad()
 {
     initCamera();
     initShaders();
+    initTextures();
     initLighting();
     initStaticCube();
     initDynamicCube();
@@ -56,6 +49,12 @@ void ExampleScene::initShaders()
     m_shaderUnlit = new Shader("Unlit");
 }
 
+void ExampleScene::initTextures()
+{
+    m_texture1 = new Texture("dev.png");
+    m_texture2 = new Texture("dev_og.png");
+}
+
 void ExampleScene::initLighting()
 {
     // Point light
@@ -81,7 +80,7 @@ void ExampleScene::initLighting()
 void ExampleScene::initStaticCube()
 {
     Material material(*m_shaderLit);
-    material.texture = AssetLoader::LoadTexture("textures/dev.png");
+    material.texture = m_texture1;
 
     m_staticCube = new Entity();
     m_staticCube->transform.scale = Vector3(2, 1, 2);
@@ -103,7 +102,7 @@ void ExampleScene::initStaticCube()
 void ExampleScene::initDynamicCube()
 {
     Material material2(*m_shaderUnlit);
-    material2.texture = AssetLoader::LoadTexture("textures/dev.png");
+    material2.texture = m_texture1;
 
     m_dynamicCube = new Entity();
     m_dynamicCube->transform.position = Vector3(0.0, 1.0f, 0.0f);
@@ -123,7 +122,7 @@ void ExampleScene::initText()
     Mesh textMesh = TextMesh::Generate(font, U"Hello World");
 
     Material material(*m_shaderUnlit);
-    material.texture = AssetLoader::LoadTexture("textures/dev_og.png");
+    material.texture = m_texture2;
 
     m_textEntity = new Entity();
     m_textEntity->transform.position = Vector3(0, 1, -1);
@@ -145,6 +144,8 @@ void ExampleScene::unInit()
     delete m_textEntity;
     delete m_shaderLit;
     delete m_shaderUnlit;
+    delete m_texture1;
+    delete m_texture2;
 
     m_staticCube = nullptr;
     m_dynamicCube = nullptr;
@@ -154,4 +155,6 @@ void ExampleScene::unInit()
     m_textEntity = nullptr;
     m_shaderLit = nullptr;
     m_shaderUnlit = nullptr;
+    m_texture1 = nullptr;
+    m_texture2 = nullptr;
 }

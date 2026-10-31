@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "SceneManager.h"
 #include "ShaderManager.h"
+#include "TextureManager.h"
 
 Camera* RenderManager::_camera = nullptr;
 std::set<Entity*> RenderManager::_entities;
@@ -186,7 +187,7 @@ void RenderManager::DrawEntities()
 			objectCommand.mesh = meshData;
 
 			// Texture
-			uniqueID textureId = renderer->material.texture->getID();
+			uniqueID textureId = renderer->material.texture->getResourceID();
 			uniqueID textureHandle = TextureManager::GetHandle(textureId);
 			objectCommand.textureHandle = textureHandle;
 

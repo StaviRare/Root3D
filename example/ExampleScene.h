@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "Shader.h"
+#include "Texture.h"
 
 class ExampleScene : public Scene
 {
@@ -13,6 +14,7 @@ class ExampleScene : public Scene
     private:
     void initCamera();
     void initShaders();
+    void initTextures();
     void initLighting();
     void initStaticCube();
     void initDynamicCube();
@@ -28,4 +30,6 @@ class ExampleScene : public Scene
     Entity* m_textEntity = nullptr;
     Shader* m_shaderLit = nullptr;
     Shader* m_shaderUnlit = nullptr;
+    Texture* m_texture1 = nullptr;
+    Texture* m_texture2 = nullptr;
 };

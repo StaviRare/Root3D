@@ -13,7 +13,7 @@ struct TextureUpload
     unsigned int width = 0;
     unsigned int height = 0;
     unsigned int nrChannels = 0;
-    const unsigned char* rawData = nullptr;
+    unsigned char* rawData = nullptr;
 };
 
 struct MeshUpload

@@ -1,71 +1,23 @@
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include "Log.h"
 #include "TextureManager.h"
 #include "Graphics.h"
+#include "AssetLoader.h"
 
-uniqueID TextureManager::m_nextID;
+uniqueID TextureManager::m_nextID = 0;
 std::unordered_map<uniqueID, Resource> TextureManager::m_textures;
 
-uniqueID TextureManager::CreateOrGet(unsigned char* data, unsigned int width, unsigned int height, unsigned int channels)
+uniqueID TextureManager::GetHandle(uniqueID id)
 {
-    bool isNewTexture = true;
     uniqueID returnValue = 0;
 
-    // Get hash from texture:
-    std::hash<unsigned char> hasher;
-    size_t hashValue = width ^ (height << 1) ^ (channels << 2);
-    for (unsigned int i = 0; i < width * height * channels; ++i)
+    auto it = m_textures.find(id);
+
+    if(it != m_textures.end())
     {
-        hashValue ^= hasher(data[i]) + 0x9e3779b9 + (hashValue << 6) + (hashValue >> 2);
-    }
-
-    // Check if texture with same hash already exists
-    for (const auto& it : m_textures)
-    {
-        const Resource& r = it.second;
-
-        if (r.contentHash == hashValue)
-        {
-            returnValue = it.first;
-            m_textures[returnValue].useCount++;
-            isNewTexture = false;
-        }
-    }
-
-    // Not found, create new
-    if (isNewTexture)
-    {
-        TextureUpload upload;
-        upload.rawData = data;
-        upload.width = width;
-        upload.height = height;
-        upload.nrChannels = channels;
-        uniqueID shaderHandle = Graphics::CreateTexture(upload);
-
-        if (shaderHandle)
-        {
-            m_nextID++;
-
-            Resource resource;
-            resource.handle = shaderHandle;
-            resource.useCount = 1;
-            resource.contentHash = hashValue;
-            m_textures[m_nextID] = resource;
-
-            returnValue = m_nextID;
-        }
-        else
-        {
-            ENGINE_ERROR("Texture compile fail.");
-        }
-    }
-
-    // Texture is valid
-    if (returnValue > 0)
-    {
-        if (isNewTexture)
-        {
-            ENGINE_INFO("Resource [Texture] Created | ID: " + std::to_string(returnValue));
-        }
+        returnValue = it->second.handle;
     }
 
     return returnValue;
@@ -87,22 +39,103 @@ uniqueID TextureManager::TryDestroy(uniqueID id)
         {
             Graphics::DestroyTexture(it->second.handle);
             m_textures.erase(it);
-            ENGINE_INFO("Resource [Texture] Destroyed  | ID: " + std::to_string(id));
+            ENGINE_DEBUG("Texture destroyed | ID: " + std::to_string(id));
         }
     }
 
     return returnValue;
 }
 
-uniqueID TextureManager::GetHandle(uniqueID id)
+uniqueID TextureManager::CreateOrGet(const string& name)
 {
-    uniqueID returnValue = 0;
+    uniqueID returnValue = -1;
+    string assetPath = BuildTextureAssetPath(name);
+    bool assetPathValid = !assetPath.empty();
 
-    auto it = m_textures.find(id);
+    if(assetPathValid){
+        bool isNewTexture = true;
+        hash hashValue = AssetLoader::GetAssetHash(assetPath);
 
-    if(it != m_textures.end())
+        // Check if texture with same hash already exists
+        for (const auto& it : m_textures)
+        {
+            const Resource& r = it.second;
+
+            if (r.id == hashValue)
+            {
+                returnValue = it.first;
+                m_textures[returnValue].useCount++;
+                isNewTexture = false;
+            }
+        }
+
+        if (isNewTexture)
+        {
+            auto assetData = AssetLoader::LoadResource(assetPath);
+            TextureUpload upload = ParseTextureAsset(assetData);
+            uniqueID textureHandle = Graphics::CreateTexture(upload);
+
+            // Not the biggest fan of doing it here, but it'll do for now.
+            stbi_image_free(upload.rawData);
+
+            if (textureHandle)
+            {
+                m_nextID++;
+                Resource resource;
+                resource.handle = textureHandle;
+                resource.useCount = 1;
+                resource.id = hashValue;
+                m_textures[m_nextID] = resource;
+                returnValue = m_nextID;
+            }
+        }
+
+        bool textureIsValid = returnValue > 0;
+
+        if (textureIsValid)
+        {
+            if (isNewTexture)
+            {
+                ENGINE_DEBUG("Texture created | ID: " + std::to_string(returnValue));
+            }
+        }
+    }
+
+    return returnValue;
+}
+
+string TextureManager::BuildTextureAssetPath(const string& name)
+{
+    return "textures/" + name;
+}
+
+TextureUpload TextureManager::ParseTextureAsset(const std::vector<char>& data)
+{
+    TextureUpload returnValue;
+    bool hasData = !data.empty();
+
+    if (hasData)
     {
-        returnValue = it->second.handle;
+        int width = 0;
+        int height = 0;
+        int nrChannels = 0;
+
+        unsigned char* rawData = stbi_load_from_memory(
+            reinterpret_cast<const stbi_uc*>(data.data()),
+            static_cast<int>(data.size()),
+            &width,
+            &height,
+            &nrChannels,
+            4 // force RGBA
+            );
+
+        if (rawData)
+        {
+            returnValue.rawData = rawData;
+            returnValue.width = width;
+            returnValue.height = height;
+            returnValue.nrChannels = 4;
+        }
     }
 
     return returnValue;

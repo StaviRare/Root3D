@@ -3,7 +3,6 @@
 #include "MeshFilter.h"
 #include "MeshGenerator.h"
 #include "Renderer.h"
-#include "AssetLoader.h"
 #include "Camera.h"
 #include "DeferredSceneLoad.h"
 
@@ -25,7 +24,8 @@ void SplashScene::onLoad()
     MeshFilter* meshFilter = m_logo->AddComponent<MeshFilter>();
     Renderer* renderer = m_logo->AddComponent<Renderer>();
     Material material(*m_shader);
-    material.texture = AssetLoader::LoadTexture("textures/logo.png");
+    m_texture = new Texture("logo.png");
+    material.texture = m_texture;
     meshFilter->mesh = mesh;
     renderer->material = material;
 
@@ -40,6 +40,9 @@ void SplashScene::onUnload()
 {
     delete m_shader;
     m_shader = nullptr;
+
+    delete m_texture;
+    m_texture = nullptr;
 
     delete m_camera;
     m_camera = nullptr;

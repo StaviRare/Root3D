@@ -1,16 +1,13 @@
 #pragma once
 
 #include <vector>
-#include "Texture.h"
 #include "Font.h"
 #include "Types.h"
-
-// ToDo - Simplify loadTexture so the "texture/" prefix is not needed in the path.
 
 class AssetLoader
 {
     public:
-    static Texture* LoadTexture(const string& path);
     static Font LoadFont(const std::string& path);
+    static hash GetAssetHash(const string& path);
     static std::vector<char> LoadResource(const string& resourcePath);
 };

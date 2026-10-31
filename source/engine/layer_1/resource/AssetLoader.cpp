@@ -6,40 +6,15 @@
 #include "Directory.h"
 #include "AssetLoader.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+
 
 #include "AssetLoader.h"
-#include "Texture.h"
+#include "UserDefinedTypes.h"
 
-Texture* AssetLoader::LoadTexture(const std::string& path)
+hash AssetLoader::GetAssetHash(const string& path)
 {
-    auto data = LoadResource(path);
-    if (data.empty())
-    {
-        return nullptr;
-    }
-
-    int width = 0, height = 0, nrChannels = 0;
-    unsigned char* rawData = stbi_load_from_memory(
-        reinterpret_cast<const stbi_uc*>(data.data()),
-        static_cast<int>(data.size()),
-        &width,
-        &height,
-        &nrChannels,
-        4 // force RGBA
-    );
-
-    if (!rawData)
-    {
-        return nullptr;
-    }
-
-    Texture* texture = new Texture(rawData, width, height, 4);
-
-    stbi_image_free(rawData);
-
-    return texture;
+    Hasher<string> hasher;
+    return hasher(path);
 }
 
 Font AssetLoader::LoadFont(const string& path)

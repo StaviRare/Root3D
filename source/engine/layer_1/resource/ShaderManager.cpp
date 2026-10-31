@@ -3,62 +3,20 @@
 #include "Log.h"
 #include "ShaderManager.h"
 #include "Graphics.h"
-#include "UserDefinedTypes.h"
 #include "AssetLoader.h"
 
 uniqueID ShaderManager::m_nextID = 0;
 std::unordered_map<uniqueID, Resource> ShaderManager::m_shaders;
 
-uniqueID ShaderManager::CreateOrGet(const string& name)
+uniqueID ShaderManager::GetHandle(uniqueID id)
 {
-    uniqueID returnValue = -1;
-    string assetPath = BuildShaderAssetPath(name);
-    bool assetPathValid = !assetPath.empty();
+    uniqueID returnValue = 0;
 
-    if(assetPathValid){
-        bool isNewShader = true;
-        Hasher<string> hasher;
-        hash hash = hasher(assetPath);
+    auto it = m_shaders.find(id);
 
-        for (const auto& it : m_shaders)
-        {
-            const Resource& r = it.second;
-
-            if (r.contentHash == hash)
-            {
-                returnValue = it.first;
-                m_shaders[returnValue].useCount++;
-                isNewShader = false;
-            }
-        }
-
-        if (isNewShader)
-        {
-            auto assetData = AssetLoader::LoadResource(assetPath);
-            ShaderUpload upload = ParseShaderAsset(assetData);
-            uniqueID shaderHandle = Graphics::CreateShader(upload);
-
-            if (shaderHandle)
-            {
-                m_nextID++;
-                Resource resource;
-                resource.handle = shaderHandle;
-                resource.useCount = 1;
-                resource.contentHash = hash;
-                m_shaders[m_nextID] = resource;
-                returnValue = m_nextID;
-            }
-        }
-
-        bool shaderIsValid = returnValue > 0;
-
-        if (shaderIsValid)
-        {
-            if (isNewShader)
-            {
-                ENGINE_DEBUG("Shader created | ID: " + std::to_string(returnValue));
-            }
-        }
+    if(it != m_shaders.end())
+    {
+        returnValue = it->second.handle;
     }
 
     return returnValue;
@@ -87,15 +45,56 @@ uniqueID ShaderManager::TryDestroy(uniqueID id)
     return returnValue;
 }
 
-uniqueID ShaderManager::GetHandle(uniqueID id)
+uniqueID ShaderManager::CreateOrGet(const string& name)
 {
-    uniqueID returnValue = 0;
+    uniqueID returnValue = -1;
+    string assetPath = BuildShaderAssetPath(name);
+    bool assetPathValid = !assetPath.empty();
 
-    auto it = m_shaders.find(id);
+    if(assetPathValid){
+        bool isNewShader = true;
+        hash hash = AssetLoader::GetAssetHash(assetPath);
 
-    if(it != m_shaders.end())
-    {
-        returnValue = it->second.handle;
+        // Check if shader with same hash already exists
+        for (const auto& it : m_shaders)
+        {
+            const Resource& r = it.second;
+
+            if (r.id == hash)
+            {
+                returnValue = it.first;
+                m_shaders[returnValue].useCount++;
+                isNewShader = false;
+            }
+        }
+
+        if (isNewShader)
+        {
+            auto assetData = AssetLoader::LoadResource(assetPath);
+            ShaderUpload upload = ParseShaderAsset(assetData);
+            uniqueID shaderHandle = Graphics::CreateShader(upload);
+
+            if (shaderHandle)
+            {
+                m_nextID++;
+                Resource resource;
+                resource.handle = shaderHandle;
+                resource.useCount = 1;
+                resource.id = hash;
+                m_shaders[m_nextID] = resource;
+                returnValue = m_nextID;
+            }
+        }
+
+        bool shaderIsValid = returnValue > 0;
+
+        if (shaderIsValid)
+        {
+            if (isNewShader)
+            {
+                ENGINE_DEBUG("Shader created | ID: " + std::to_string(returnValue));
+            }
+        }
     }
 
     return returnValue;

@@ -10,8 +10,8 @@
 class ShaderManager
 {
     public:
-    static uniqueID TryDestroy(uniqueID id);
     static uniqueID GetHandle(uniqueID id);
+    static uniqueID TryDestroy(uniqueID id);
     static uniqueID CreateOrGet(const string& name);
 
     private:

@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "Shader.h"
+#include "Texture.h"
 
 class SplashScene : public Scene
 {
@@ -12,6 +13,7 @@ class SplashScene : public Scene
 
     private:
     Shader* m_shader = nullptr;
+    Texture* m_texture = nullptr;
     Entity* m_camera = nullptr;
     Entity* m_logo = nullptr;
     Entity* m_sceneLoader = nullptr;

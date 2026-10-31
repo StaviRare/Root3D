@@ -4,8 +4,8 @@
 
 struct Resource
 {
-    // Hash of the resource content for deduplication
-    hash contentHash;
+    // hash, acts as id for resource
+    hash id;
     
     // Backend object identifier
     uniqueID handle;     
