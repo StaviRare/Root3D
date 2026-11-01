@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "Log.h"
 #include "Timer.h"
 #include "OpenGLES2.h"
@@ -65,6 +67,7 @@ void OpenGLES2::BeginFrame(FrameUniform cmd)
 void OpenGLES2::DrawObject(ObjectUniform cmd)
 {
     auto shaderIt = m_shaderMap.find(cmd.shaderHandle);
+    auto meshIt = m_meshMap.find(cmd.meshHandle);
 
     if (shaderIt == m_shaderMap.end())
     {
@@ -72,10 +75,18 @@ void OpenGLES2::DrawObject(ObjectUniform cmd)
         return;
     }
 
+    if (meshIt == m_meshMap.end())
+    {
+        ENGINE_ERROR("Mesh not found for DrawObject");
+        return;
+    }
+
+    GLMesh& mesh = meshIt->second;
     GLuint shaderProgram = shaderIt->second.programID;
+
     glUseProgram(shaderProgram);
 
-    // Set model, view, projection matrices
+    // Matrices
     GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, cmd.modelMatrix);
 
@@ -85,7 +96,7 @@ void OpenGLES2::DrawObject(ObjectUniform cmd)
     GLint projectionLoc = glGetUniformLocation(shaderProgram, "projection");
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, m_currentFrame.projectionMatrix);
 
-    // Bind texture
+    // Texture
     if (cmd.textureHandle != 0)
     {
         auto textureIt = m_textureMap.find(cmd.textureHandle);
@@ -94,21 +105,22 @@ void OpenGLES2::DrawObject(ObjectUniform cmd)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, textureIt->second.textureID);
+
             GLint textureLoc = glGetUniformLocation(shaderProgram, "tex0");
             glUniform1i(textureLoc, 0);
         }
     }
 
     // Time
-    m_time = glGetUniformLocation(shaderProgram, "time");
-    glUniform1f(m_time, Timer::TimeSinceInit());
+    GLint timeLoc = glGetUniformLocation(shaderProgram, "time");
+    glUniform1f(timeLoc, Timer::TimeSinceInit());
 
     // Lights
     size_t numLights =
         sizeof(m_currentFrame.lights) /
         sizeof(m_currentFrame.lights[0]);
 
-    for (size_t i = 0; i < numLights; ++i)
+    for (size_t i = 0; i < numLights; i++)
     {
         const LightUniform& light = m_currentFrame.lights[i];
         std::string prefix = "lights[" + std::to_string(i) + "].";
@@ -116,18 +128,18 @@ void OpenGLES2::DrawObject(ObjectUniform cmd)
         GLint typeLoc = glGetUniformLocation(shaderProgram, (prefix + "type").c_str());
         glUniform1i(typeLoc, light.type);
 
-        GLint colorLoc = glGetUniformLocation(shaderProgram,(prefix + "color").c_str());
+        GLint colorLoc = glGetUniformLocation(shaderProgram, (prefix + "color").c_str());
         glUniform3f(colorLoc, light.color[0], light.color[1], light.color[2]);
 
         GLint intensityLoc = glGetUniformLocation(shaderProgram, (prefix + "intensity").c_str());
         glUniform1f(intensityLoc, light.intensity);
 
-        if (light.type == 0) // directional
+        if (light.type == 0)
         {
             GLint directionLoc = glGetUniformLocation(shaderProgram, (prefix + "direction").c_str());
-            glUniform3f(directionLoc,light.direction[0],light.direction[1],light.direction[2]);
+            glUniform3f(directionLoc, light.direction[0], light.direction[1], light.direction[2]);
         }
-        else if (light.type == 1)  // point
+        else if (light.type == 1)
         {
             GLint positionLoc = glGetUniformLocation(shaderProgram, (prefix + "position").c_str());
             glUniform3f(positionLoc, light.position[0], light.position[1], light.position[2]);
@@ -143,43 +155,55 @@ void OpenGLES2::DrawObject(ObjectUniform cmd)
     GLint numLightsLoc = glGetUniformLocation(shaderProgram, "numLights");
     glUniform1i(numLightsLoc, static_cast<GLint>(numLights));
 
-    // Vertex data
-    glBindBuffer(GL_ARRAY_BUFFER,m_vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER,cmd.mesh.verticesSize * sizeof(float),cmd.mesh.vertices,GL_STATIC_DRAW);
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3 * sizeof(float),nullptr);
+    // Vertex positions
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
 
     // Texture coordinates
-    glBindBuffer(GL_ARRAY_BUFFER,m_texCoordBuffer);
-    glBufferData(GL_ARRAY_BUFFER,cmd.mesh.texCoordsSize * sizeof(float),cmd.mesh.texCoords,GL_STATIC_DRAW);
-    glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,2 * sizeof(float),nullptr);
-    glEnableVertexAttribArray(1);
+    if (mesh.texCoordBuffer != 0)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, mesh.texCoordBuffer);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
+        glEnableVertexAttribArray(1);
+    }
+    else
+    {
+        glDisableVertexAttribArray(1);
+    }
 
     // Normals
-    glBindBuffer(GL_ARRAY_BUFFER,m_normalBuffer);
-    glBufferData(GL_ARRAY_BUFFER,cmd.mesh.normalsSize * sizeof(float),cmd.mesh.normals,GL_STATIC_DRAW);
-    glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,3 * sizeof(float),nullptr);
-    glEnableVertexAttribArray(2);
-
-    // Indices
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,m_indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,cmd.mesh.indicesSize * sizeof(unsigned int),cmd.mesh.indices,GL_STATIC_DRAW);
+    if (mesh.normalBuffer != 0)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, mesh.normalBuffer);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        glEnableVertexAttribArray(2);
+    }
+    else
+    {
+        glDisableVertexAttribArray(2);
+    }
 
     // Draw
-    glDrawElements(GL_TRIANGLES,cmd.mesh.indicesSize,GL_UNSIGNED_INT,nullptr);
+    if (mesh.indexBuffer != 0 && mesh.indicesSize > 0)
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
+        glDrawElements(GL_TRIANGLES, mesh.indicesSize, GL_UNSIGNED_SHORT, nullptr);
+    }
 
     GLenum error = glGetError();
 
     if (error != GL_NO_ERROR)
     {
-        ENGINE_ERROR("OpenGLES2 DrawObject error: " +std::to_string(error));
+        ENGINE_ERROR("OpenGLES2 DrawObject error: " + std::to_string(error));
     }
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER,0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void OpenGLES2::EndFrame()
@@ -190,6 +214,21 @@ void OpenGLES2::EndFrame()
     if (swapSucceeded == false)
     {
         ENGINE_ERROR("EGL swap buffers failed.");
+    }
+}
+
+void OpenGLES2::DestroyMesh(uniqueID id)
+{
+    auto it = m_meshMap.find(id);
+
+    if (it != m_meshMap.end())
+    {
+        GLMesh& mesh = it->second;
+        glDeleteBuffers(1, &mesh.vertexBuffer);
+        glDeleteBuffers(1, &mesh.texCoordBuffer);
+        glDeleteBuffers(1, &mesh.normalBuffer);
+        glDeleteBuffers(1, &mesh.indexBuffer);
+        m_meshMap.erase(it);
     }
 }
 
@@ -211,6 +250,111 @@ void OpenGLES2::DestroyTexture(uniqueID id)
         glDeleteTextures(1, &it->second.textureID);
         m_textureMap.erase(it);
     }
+}
+
+uniqueID OpenGLES2::CreateMesh(const MeshUpload data)
+{
+    uniqueID returnValue = 0;
+
+    bool valid = data.vertices != nullptr
+                 && data.verticesSize > 0
+                 && data.verticesSize % 3 == 0
+                 && (data.texCoordsSize == 0 || data.texCoords != nullptr)
+                 && (data.normalsSize == 0 || data.normals != nullptr)
+                 && (data.indicesSize == 0 || data.indices != nullptr)
+                 && data.indicesSize <= static_cast<unsigned int>(std::numeric_limits<GLsizei>::max());
+
+    std::vector<GLushort> indices;
+
+    if (valid)
+    {
+        unsigned int vertexCount = data.verticesSize / 3;
+
+        for (unsigned int i = 0; i < data.indicesSize; i++)
+        {
+            if (data.indices[i] < 0
+                || static_cast<unsigned int>(data.indices[i]) >= vertexCount
+                || data.indices[i] > 65535)
+            {
+                valid = false;
+                break;
+            }
+
+            indices.push_back(static_cast<GLushort>(data.indices[i]));
+        }
+    }
+
+    if (valid)
+    {
+        GLMesh mesh;
+
+        glGenBuffers(1, &mesh.vertexBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBuffer);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            data.verticesSize * sizeof(float),
+            data.vertices,
+            GL_STATIC_DRAW);
+
+        if (data.texCoordsSize > 0)
+        {
+            glGenBuffers(1, &mesh.texCoordBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, mesh.texCoordBuffer);
+            glBufferData(
+                GL_ARRAY_BUFFER,
+                data.texCoordsSize * sizeof(float),
+                data.texCoords,
+                GL_STATIC_DRAW);
+        }
+
+        if (data.normalsSize > 0)
+        {
+            glGenBuffers(1, &mesh.normalBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, mesh.normalBuffer);
+            glBufferData(
+                GL_ARRAY_BUFFER,
+                data.normalsSize * sizeof(float),
+                data.normals,
+                GL_STATIC_DRAW);
+        }
+
+        if (!indices.empty())
+        {
+            glGenBuffers(1, &mesh.indexBuffer);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
+            glBufferData(
+                GL_ELEMENT_ARRAY_BUFFER,
+                indices.size() * sizeof(GLushort),
+                indices.data(),
+                GL_STATIC_DRAW);
+        }
+
+        GLenum error = glGetError();
+
+        if (error == GL_NO_ERROR)
+        {
+            mesh.indicesSize = static_cast<GLsizei>(indices.size());
+
+            m_nextMeshID++;
+            m_meshMap[m_nextMeshID] = mesh;
+
+            returnValue = m_nextMeshID;
+        }
+        else
+        {
+            ENGINE_ERROR("OpenGLES2::CreateMesh failed: " + std::to_string(error));
+
+            glDeleteBuffers(1, &mesh.vertexBuffer);
+            glDeleteBuffers(1, &mesh.texCoordBuffer);
+            glDeleteBuffers(1, &mesh.normalBuffer);
+            glDeleteBuffers(1, &mesh.indexBuffer);
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    return returnValue;
 }
 
 uniqueID OpenGLES2::CreateShader(const ShaderUpload data)

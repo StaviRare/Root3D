@@ -87,8 +87,8 @@ void PhysicsHandler::SetData()
                 if (meshFilter)
                 {
                     collider.type = 3;
-                    collider.vertices = reinterpret_cast<const float*>( meshFilter->mesh.GetVertices().data() );
-                    collider.verticesSize = meshFilter->mesh.GetVertices().size() * 3;
+                    collider.vertices = reinterpret_cast<const float*>( meshFilter->mesh->GetVertices().data() );
+                    collider.verticesSize = meshFilter->mesh->GetVertices().size() * 3;
                 }
             }
             else

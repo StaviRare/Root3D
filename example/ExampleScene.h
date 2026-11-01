@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Mesh.h"
 
 class ExampleScene : public Scene
 {
@@ -13,6 +14,7 @@ class ExampleScene : public Scene
 
     private:
     void initCamera();
+    void initMeshes();
     void initShaders();
     void initTextures();
     void initLighting();
@@ -32,4 +34,6 @@ class ExampleScene : public Scene
     Shader* m_shaderUnlit = nullptr;
     Texture* m_texture1 = nullptr;
     Texture* m_texture2 = nullptr;
+    Mesh* m_meshCube = nullptr;
+    Mesh* m_meshBunny = nullptr;
 };

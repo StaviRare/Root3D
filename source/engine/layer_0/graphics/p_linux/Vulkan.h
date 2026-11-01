@@ -116,8 +116,10 @@ class Vulkan : public IGraphicsAPI
     void BeginFrame(FrameUniform cmd) override;
     void DrawObject(ObjectUniform cmd) override;
     void EndFrame() override;
+    void DestroyMesh(uniqueID id) override;
     void DestroyShader(uniqueID id) override;
     void DestroyTexture(uniqueID id) override;
+    uniqueID CreateMesh(const MeshUpload data) override;
     uniqueID CreateShader(const ShaderUpload data) override;
     uniqueID CreateTexture(const TextureUpload data) override;
 
@@ -184,8 +186,10 @@ class Vulkan : public IGraphicsAPI
     VkDescriptorPool m_descriptorPool = VK_NULL_HANDLE;
     FrameUniform m_currentFrame{};
     std::vector<VulkanBuffer> m_frameBuffers;
+    uniqueID m_nextMeshID = 0;
     uniqueID m_nextShaderID = 0;
     uniqueID m_nextTextureID = 0;
+    std::unordered_map<uniqueID, VulkanShader> m_meshMap;
     std::unordered_map<uniqueID, VulkanShader> m_shaderMap;
     std::unordered_map<uniqueID, VulkanTexture> m_textureMap;
 };

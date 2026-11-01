@@ -10,14 +10,23 @@
 #include "IGraphicsAPI.h"
 #include "WaylandHelpers.h"
 
-struct GLTexture
+struct GLMesh
 {
-    GLuint textureID;
+    GLuint vertexBuffer = 0;
+    GLuint texCoordBuffer = 0;
+    GLuint normalBuffer = 0;
+    GLuint indexBuffer = 0;
+    GLsizei indicesSize = 0;
 };
 
 struct GLShader
 {
     GLuint programID;
+};
+
+struct GLTexture
+{
+    GLuint textureID;
 };
 
 class OpenGLES2 : public IGraphicsAPI
@@ -31,10 +40,12 @@ class OpenGLES2 : public IGraphicsAPI
     void BeginFrame(FrameUniform cmd) override;
     void DrawObject(ObjectUniform cmd) override;
     void EndFrame() override;
+    void DestroyMesh(uniqueID id) override;
     void DestroyShader(uniqueID id) override;
     void DestroyTexture(uniqueID id) override;
     uniqueID CreateShader(const ShaderUpload data) override;
     uniqueID CreateTexture(const TextureUpload data) override;
+    uniqueID CreateMesh(const MeshUpload data) override;
 
     private:
     void DestroyEGL();
@@ -44,8 +55,10 @@ class OpenGLES2 : public IGraphicsAPI
     GLuint CompileShader(const string& source, GLuint type);
 
     private:
+    uniqueID m_nextMeshID = 0;
     uniqueID m_nextTextureID = 0;
     uniqueID m_nextShaderID = 0;
+    std::unordered_map<uniqueID, GLMesh> m_meshMap;
     std::unordered_map<uniqueID, GLTexture> m_textureMap;
     std::unordered_map<uniqueID, GLShader> m_shaderMap;
     GLuint m_time = -1;

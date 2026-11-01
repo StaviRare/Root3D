@@ -48,7 +48,7 @@ struct LightUniform
 
 struct ObjectUniform
 {
-    MeshUpload mesh;
+    uniqueID meshHandle;
     uniqueID shaderHandle;
     uniqueID textureHandle;
     float modelMatrix[16];

@@ -17,6 +17,7 @@
 void ExampleScene::onLoad()
 {
     initCamera();
+    initMeshes();
     initShaders();
     initTextures();
     initLighting();
@@ -41,6 +42,15 @@ void ExampleScene::initCamera()
     m_playerController->AddComponent<BoxCollider>();
     RigidBody* rigidBody1 = m_playerController->AddComponent<RigidBody>();
     rigidBody1->IsStatic = true;
+}
+
+void ExampleScene::initMeshes()
+{
+    m_meshCube = new Mesh();
+    m_meshCube->CreatePrimitive(PrimitiveType::Cube);
+
+    // m_meshBunny = new Mesh();
+    // m_meshBunny->Load("models/bunny.obj");
 }
 
 void ExampleScene::initShaders()
@@ -86,15 +96,14 @@ void ExampleScene::initStaticCube()
     m_staticCube->transform.scale = Vector3(2, 1, 2);
     m_staticCube->transform.position = Vector3(0, -1, 0);
     m_staticCube->transform.rotation = Quaternion::FromEuler(Vector3(15, 15, 0));
-    Mesh mesh = MeshGenerator::GetCube();
     MeshFilter* meshFilter = m_staticCube->AddComponent<MeshFilter>();
     Renderer* renderer = m_staticCube->AddComponent<Renderer>();
     RigidBody* rigidBody1 = m_staticCube->AddComponent<RigidBody>();
-    m_staticCube->AddComponent<MeshCollider>();
+    // m_staticCube->AddComponent<MeshCollider>();
     MiscRotate* miscRotate = m_staticCube->AddComponent<MiscRotate>();
     miscRotate->direction = Vector3(-5, -5, 5);
 
-    meshFilter->mesh = mesh;
+    meshFilter->mesh = m_meshCube;
     renderer->material = material;
     rigidBody1->IsStatic = true;
 }
@@ -106,32 +115,31 @@ void ExampleScene::initDynamicCube()
 
     m_dynamicCube = new Entity();
     m_dynamicCube->transform.position = Vector3(0.0, 1.0f, 0.0f);
-    Mesh mesh2 = MeshGenerator::GetCube();
     MeshFilter* meshFilter2 = m_dynamicCube->AddComponent<MeshFilter>();
     Renderer* renderer2 = m_dynamicCube->AddComponent<Renderer>();
     m_dynamicCube->AddComponent<RigidBody>();
-    m_dynamicCube->AddComponent<MeshCollider>();
+    // m_dynamicCube->AddComponent<MeshCollider>();
 
-    meshFilter2->mesh = mesh2;
+    meshFilter2->mesh = m_meshCube;
     renderer2->material = material2;
 }
 
 void ExampleScene::initText()
 {
-    Font font = AssetLoader::LoadFont("fonts/arial.ttf");
-    Mesh textMesh = TextMesh::Generate(font, U"Hello World");
+    // Font font = AssetLoader::LoadFont("fonts/arial.ttf");
+    // Mesh textMesh = TextMesh::Generate(font, U"Hello World");
 
-    Material material(*m_shaderUnlit);
-    material.texture = m_texture2;
+    // Material material(*m_shaderUnlit);
+    // material.texture = m_texture2;
 
-    m_textEntity = new Entity();
-    m_textEntity->transform.position = Vector3(0, 1, -1);
+    // m_textEntity = new Entity();
+    // m_textEntity->transform.position = Vector3(0, 1, -1);
 
-    MeshFilter* meshFilter = m_textEntity->AddComponent<MeshFilter>();
-    Renderer* renderer = m_textEntity->AddComponent<Renderer>();
+    // MeshFilter* meshFilter = m_textEntity->AddComponent<MeshFilter>();
+    // Renderer* renderer = m_textEntity->AddComponent<Renderer>();
 
-    meshFilter->mesh = textMesh;
-    renderer->material = material;
+    // meshFilter->mesh = textMesh;
+    // renderer->material = material;
 }
 
 void ExampleScene::unInit()
@@ -142,10 +150,12 @@ void ExampleScene::unInit()
     delete m_dirLight;
     delete m_playerController;
     delete m_textEntity;
+    delete m_meshCube;
     delete m_shaderLit;
     delete m_shaderUnlit;
     delete m_texture1;
     delete m_texture2;
+    delete m_meshBunny;
 
     m_staticCube = nullptr;
     m_dynamicCube = nullptr;
@@ -153,6 +163,8 @@ void ExampleScene::unInit()
     m_dirLight = nullptr;
     m_playerController = nullptr;
     m_textEntity = nullptr;
+    m_meshCube = nullptr;
+    m_meshBunny = nullptr;
     m_shaderLit = nullptr;
     m_shaderUnlit = nullptr;
     m_texture1 = nullptr;

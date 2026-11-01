@@ -10,6 +10,7 @@ class Graphics
 {
     friend class Engine;
     friend class RenderManager;
+    friend class MeshManager;
     friend class ShaderManager;
     friend class TextureManager;
 
@@ -30,8 +31,10 @@ class Graphics
     static void BeginFrame(FrameUniform cmd);
     static void DrawObject(ObjectUniform cmd);
     static void EndFrame();
+    static void DestroyMesh(uniqueID id);
     static void DestroyShader(uniqueID id);
     static void DestroyTexture(uniqueID id);
+    static uniqueID CreateMesh(const MeshUpload data);
     static uniqueID CreateShader(const ShaderUpload data);
     static uniqueID CreateTexture(const TextureUpload data);
 };

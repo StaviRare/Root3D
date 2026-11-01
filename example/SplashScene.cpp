@@ -1,7 +1,5 @@
 #include "SplashScene.h"
-#include "Mesh.h"
 #include "MeshFilter.h"
-#include "MeshGenerator.h"
 #include "Renderer.h"
 #include "Camera.h"
 #include "DeferredSceneLoad.h"
@@ -20,13 +18,14 @@ void SplashScene::onLoad()
     m_logo->transform.scale = Vector3(1, 1, 1);
     m_logo->transform.position = Vector3(0, 0, 0);
     m_logo->transform.rotation = Quaternion::FromEuler(Vector3(0, 0, 0));
-    Mesh mesh = MeshGenerator::GetQuad();
+    m_mesh = new Mesh();
+    m_mesh->CreatePrimitive(PrimitiveType::Quad);
     MeshFilter* meshFilter = m_logo->AddComponent<MeshFilter>();
     Renderer* renderer = m_logo->AddComponent<Renderer>();
     Material material(*m_shader);
     m_texture = new Texture("textures/logo.png");
     material.texture = m_texture;
-    meshFilter->mesh = mesh;
+    meshFilter->mesh = m_mesh;
     renderer->material = material;
 
     // Scene Loader
@@ -38,6 +37,9 @@ void SplashScene::onLoad()
 
 void SplashScene::onUnload()
 {
+    delete m_mesh;
+    m_mesh = nullptr;
+
     delete m_shader;
     m_shader = nullptr;
 

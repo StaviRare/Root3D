@@ -8,6 +8,8 @@
 #include "SceneManager.h"
 #include "ShaderManager.h"
 #include "TextureManager.h"
+#include "MeshManager.h"
+#include "Log.h"
 
 Camera* RenderManager::_camera = nullptr;
 std::set<Entity*> RenderManager::_entities;
@@ -170,21 +172,13 @@ void RenderManager::DrawEntities()
 
 		if (renderer && meshFilter)
 		{
-			// Mesh
-			// Convert Vector3/2 to floats: size x3 (Vector3), x2 (Vector2).
-			MeshUpload meshData;
-			meshData.indices = meshFilter->mesh.GetIndices().data();
-			meshData.indicesSize = meshFilter->mesh.GetIndices().size();
-			meshData.vertices = reinterpret_cast<const float*>(meshFilter->mesh.GetVertices().data());
-			meshData.verticesSize = meshFilter->mesh.GetVertices().size() * 3;
-			meshData.texCoords = reinterpret_cast<const float*>(meshFilter->mesh.GetTexCoords().data());
-			meshData.texCoordsSize = meshFilter->mesh.GetTexCoords().size() * 2;
-			meshData.normals = reinterpret_cast<const float*>(meshFilter->mesh.GetNormals().data());
-			meshData.normalsSize = meshFilter->mesh.GetNormals().size() * 3;
-
 			// Command
 			ObjectUniform objectCommand;
-			objectCommand.mesh = meshData;
+
+            // Mesh
+            uniqueID meshId = meshFilter->mesh->getResourceID();
+            uniqueID meshHandle = MeshManager::GetHandle(meshId);
+            objectCommand.meshHandle = meshHandle;
 
 			// Texture
 			uniqueID textureId = renderer->material.texture->getResourceID();

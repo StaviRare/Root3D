@@ -446,161 +446,161 @@ void Vulkan::BeginFrame(FrameUniform cmd)
 
 void Vulkan::DrawObject(ObjectUniform cmd)
 {
-    if (m_initialized && m_frameStarted)
-    {
-        bool cmdValid = true;
-        auto shaderIt = m_shaderMap.find(cmd.shaderHandle);
-        auto textureIt = m_textureMap.find(cmd.textureHandle);
+    // if (m_initialized && m_frameStarted)
+    // {
+    //     bool cmdValid = true;
+    //     auto shaderIt = m_shaderMap.find(cmd.shaderHandle);
+    //     auto textureIt = m_textureMap.find(cmd.textureHandle);
 
-        if (shaderIt == m_shaderMap.end())
-        {
-            ENGINE_ERROR("Shader not found for DrawObject.");
-            cmdValid = false;
-        }
+    //     if (shaderIt == m_shaderMap.end())
+    //     {
+    //         ENGINE_ERROR("Shader not found for DrawObject.");
+    //         cmdValid = false;
+    //     }
 
-        if (textureIt == m_textureMap.end())
-        {
-            ENGINE_ERROR("A valid texture is required by this pipeline.");
-            cmdValid = false;
-        }
+    //     if (textureIt == m_textureMap.end())
+    //     {
+    //         ENGINE_ERROR("A valid texture is required by this pipeline.");
+    //         cmdValid = false;
+    //     }
 
-        if (cmd.mesh.vertices == nullptr || cmd.mesh.indices == nullptr ||
-            cmd.mesh.verticesSize == 0 || cmd.mesh.indicesSize == 0)
-        {
-            ENGINE_ERROR("Invalid mesh data for DrawObject.");
-            cmdValid = false;
-        }
+    //     if (cmd.mesh.vertices == nullptr || cmd.mesh.indices == nullptr ||
+    //         cmd.mesh.verticesSize == 0 || cmd.mesh.indicesSize == 0)
+    //     {
+    //         ENGINE_ERROR("Invalid mesh data for DrawObject.");
+    //         cmdValid = false;
+    //     }
 
-        if (cmdValid)
-        {
-            const VulkanShader& shader = shaderIt->second;
-            const VulkanTexture& texture = textureIt->second;
-            const auto& mesh = cmd.mesh;
+    //     if (cmdValid)
+    //     {
+    //         const VulkanShader& shader = shaderIt->second;
+    //         const VulkanTexture& texture = textureIt->second;
+    //         const auto& mesh = cmd.mesh;
 
-            VulkanUniform uniform{};
-            std::memcpy(uniform.model, cmd.modelMatrix, sizeof(uniform.model));
-            std::memcpy(uniform.view, m_currentFrame.viewMatrix, sizeof(uniform.view));
-            std::memcpy(uniform.projection, m_currentFrame.projectionMatrix, sizeof(uniform.projection));
+    //         VulkanUniform uniform{};
+    //         std::memcpy(uniform.model, cmd.modelMatrix, sizeof(uniform.model));
+    //         std::memcpy(uniform.view, m_currentFrame.viewMatrix, sizeof(uniform.view));
+    //         std::memcpy(uniform.projection, m_currentFrame.projectionMatrix, sizeof(uniform.projection));
 
-            const size_t vertexCount = mesh.verticesSize / 3;
+    //         const size_t vertexCount = mesh.verticesSize / 3;
 
-            VkBuffer vertexBuffer = UploadFrameBuffer(
-                { mesh.vertices, mesh.verticesSize * sizeof(float),
-                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT });
+    //         VkBuffer vertexBuffer = UploadFrameBuffer(
+    //             { mesh.vertices, mesh.verticesSize * sizeof(float),
+    //              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT });
 
-            VkBuffer texCoordBuffer = UploadAttribute(
-                { mesh.texCoords, mesh.texCoordsSize, vertexCount * 2 });
+    //         VkBuffer texCoordBuffer = UploadAttribute(
+    //             { mesh.texCoords, mesh.texCoordsSize, vertexCount * 2 });
 
-            VkBuffer normalBuffer = UploadAttribute(
-                { mesh.normals, mesh.normalsSize, vertexCount * 3 });
+    //         VkBuffer normalBuffer = UploadAttribute(
+    //             { mesh.normals, mesh.normalsSize, vertexCount * 3 });
 
-            VkBuffer indexBuffer = UploadFrameBuffer(
-                { mesh.indices, mesh.indicesSize * sizeof(int),
-                 VK_BUFFER_USAGE_INDEX_BUFFER_BIT });
+    //         VkBuffer indexBuffer = UploadFrameBuffer(
+    //             { mesh.indices, mesh.indicesSize * sizeof(int),
+    //              VK_BUFFER_USAGE_INDEX_BUFFER_BIT });
 
-            VkBuffer uniformBuffer = UploadFrameBuffer(
-                { &uniform, sizeof(uniform), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT });
+    //         VkBuffer uniformBuffer = UploadFrameBuffer(
+    //             { &uniform, sizeof(uniform), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT });
 
-            // Allocate descriptor set
-            VkDescriptorSetAllocateInfo info{};
-            info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            info.descriptorPool = m_descriptorPool;
-            info.descriptorSetCount = 1;
-            info.pSetLayouts = &shader.descriptorSetLayout;
-            VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+    //         // Allocate descriptor set
+    //         VkDescriptorSetAllocateInfo info{};
+    //         info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    //         info.descriptorPool = m_descriptorPool;
+    //         info.descriptorSetCount = 1;
+    //         info.pSetLayouts = &shader.descriptorSetLayout;
+    //         VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
 
-            if (vkAllocateDescriptorSets(m_device, &info, &descriptorSet) != VK_SUCCESS)
-            {
-                descriptorSet = VK_NULL_HANDLE;
-            }
+    //         if (vkAllocateDescriptorSets(m_device, &info, &descriptorSet) != VK_SUCCESS)
+    //         {
+    //             descriptorSet = VK_NULL_HANDLE;
+    //         }
 
-            // Final check
-            cmdValid =
-                vertexBuffer != VK_NULL_HANDLE &&
-                texCoordBuffer != VK_NULL_HANDLE &&
-                normalBuffer != VK_NULL_HANDLE &&
-                indexBuffer != VK_NULL_HANDLE &&
-                uniformBuffer != VK_NULL_HANDLE &&
-                descriptorSet != VK_NULL_HANDLE;
+    //         // Final check
+    //         cmdValid =
+    //             vertexBuffer != VK_NULL_HANDLE &&
+    //             texCoordBuffer != VK_NULL_HANDLE &&
+    //             normalBuffer != VK_NULL_HANDLE &&
+    //             indexBuffer != VK_NULL_HANDLE &&
+    //             uniformBuffer != VK_NULL_HANDLE &&
+    //             descriptorSet != VK_NULL_HANDLE;
 
-            if (cmdValid)
-            {
-                const VkDescriptorBufferInfo matrixInfo{
-                    uniformBuffer, 0, sizeof(VulkanUniform)
-                };
+    //         if (cmdValid)
+    //         {
+    //             const VkDescriptorBufferInfo matrixInfo{
+    //                 uniformBuffer, 0, sizeof(VulkanUniform)
+    //             };
 
-                const VkDescriptorBufferInfo lightInfo{
-                    m_lightBuffer.buffer, 0, sizeof(VulkanLightBuffer)
-                };
+    //             const VkDescriptorBufferInfo lightInfo{
+    //                 m_lightBuffer.buffer, 0, sizeof(VulkanLightBuffer)
+    //             };
 
-                const VkDescriptorImageInfo imageInfo{
-                    texture.sampler,
-                    texture.imageView,
-                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-                };
+    //             const VkDescriptorImageInfo imageInfo{
+    //                 texture.sampler,
+    //                 texture.imageView,
+    //                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    //             };
 
-                VkWriteDescriptorSet matrixWrite{};
-                matrixWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                matrixWrite.dstSet = descriptorSet;
-                matrixWrite.dstBinding = 0;
-                matrixWrite.descriptorCount = 1;
-                matrixWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                matrixWrite.pBufferInfo = &matrixInfo;
+    //             VkWriteDescriptorSet matrixWrite{};
+    //             matrixWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    //             matrixWrite.dstSet = descriptorSet;
+    //             matrixWrite.dstBinding = 0;
+    //             matrixWrite.descriptorCount = 1;
+    //             matrixWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    //             matrixWrite.pBufferInfo = &matrixInfo;
 
-                VkWriteDescriptorSet imageWrite{};
-                imageWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                imageWrite.dstSet = descriptorSet;
-                imageWrite.dstBinding = 1;
-                imageWrite.descriptorCount = 1;
-                imageWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                imageWrite.pImageInfo = &imageInfo;
+    //             VkWriteDescriptorSet imageWrite{};
+    //             imageWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    //             imageWrite.dstSet = descriptorSet;
+    //             imageWrite.dstBinding = 1;
+    //             imageWrite.descriptorCount = 1;
+    //             imageWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    //             imageWrite.pImageInfo = &imageInfo;
 
-                VkWriteDescriptorSet lightWrite{};
-                lightWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                lightWrite.dstSet = descriptorSet;
-                lightWrite.dstBinding = 2;
-                lightWrite.descriptorCount = 1;
-                lightWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                lightWrite.pBufferInfo = &lightInfo;
+    //             VkWriteDescriptorSet lightWrite{};
+    //             lightWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    //             lightWrite.dstSet = descriptorSet;
+    //             lightWrite.dstBinding = 2;
+    //             lightWrite.descriptorCount = 1;
+    //             lightWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    //             lightWrite.pBufferInfo = &lightInfo;
 
-                const VkWriteDescriptorSet writes[3] = {
-                    matrixWrite,
-                    imageWrite,
-                    lightWrite
-                };
+    //             const VkWriteDescriptorSet writes[3] = {
+    //                 matrixWrite,
+    //                 imageWrite,
+    //                 lightWrite
+    //             };
 
-                vkUpdateDescriptorSets(m_device, 3, writes, 0, nullptr);
+    //             vkUpdateDescriptorSets(m_device, 3, writes, 0, nullptr);
 
-                VkViewport viewport{};
-                viewport.width = static_cast<float>(m_extent.width);
-                viewport.height = static_cast<float>(m_extent.height);
-                viewport.maxDepth = 1.0f;
+    //             VkViewport viewport{};
+    //             viewport.width = static_cast<float>(m_extent.width);
+    //             viewport.height = static_cast<float>(m_extent.height);
+    //             viewport.maxDepth = 1.0f;
 
-                VkRect2D scissor{};
-                scissor.extent = m_extent;
+    //             VkRect2D scissor{};
+    //             scissor.extent = m_extent;
 
-                const VkBuffer vertexBuffers[] = {
-                    vertexBuffer,
-                    texCoordBuffer,
-                    normalBuffer
-                };
+    //             const VkBuffer vertexBuffers[] = {
+    //                 vertexBuffer,
+    //                 texCoordBuffer,
+    //                 normalBuffer
+    //             };
 
-                const VkDeviceSize offsets[] = { 0, 0, 0 };
-                vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);
-                vkCmdSetScissor(m_commandBuffer, 0, 1, &scissor);
-                vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader.pipeline);
-                vkCmdBindVertexBuffers(m_commandBuffer, 0, 3, vertexBuffers, offsets);
-                vkCmdBindIndexBuffer(m_commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-                vkCmdBindDescriptorSets(m_commandBuffer,VK_PIPELINE_BIND_POINT_GRAPHICS,shader.pipelineLayout,0, 1,
-                                        &descriptorSet, 0, nullptr);
-                vkCmdDrawIndexed(m_commandBuffer,static_cast<uint32_t>(mesh.indicesSize),1, 0, 0, 0);
-            }
-            else
-            {
-                ENGINE_ERROR("Failed to prepare Vulkan draw resources.");
-            }
-        }
-    }
+    //             const VkDeviceSize offsets[] = { 0, 0, 0 };
+    //             vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);
+    //             vkCmdSetScissor(m_commandBuffer, 0, 1, &scissor);
+    //             vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader.pipeline);
+    //             vkCmdBindVertexBuffers(m_commandBuffer, 0, 3, vertexBuffers, offsets);
+    //             vkCmdBindIndexBuffer(m_commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+    //             vkCmdBindDescriptorSets(m_commandBuffer,VK_PIPELINE_BIND_POINT_GRAPHICS,shader.pipelineLayout,0, 1,
+    //                                     &descriptorSet, 0, nullptr);
+    //             vkCmdDrawIndexed(m_commandBuffer,static_cast<uint32_t>(mesh.indicesSize),1, 0, 0, 0);
+    //         }
+    //         else
+    //         {
+    //             ENGINE_ERROR("Failed to prepare Vulkan draw resources.");
+    //         }
+    //     }
+    // }
 }
 
 void Vulkan::EndFrame()
@@ -650,6 +650,22 @@ void Vulkan::EndFrame()
     }
 }
 
+void Vulkan::DestroyMesh(uniqueID id)
+{
+    auto it = m_meshMap.find(id);
+
+    if (it != m_meshMap.end())
+    {
+        if (m_device != VK_NULL_HANDLE)
+        {
+            vkDeviceWaitIdle(m_device);
+            DestroyShaderObjects(it->second);
+        }
+
+        m_meshMap.erase(it);
+    }
+}
+
 void Vulkan::DestroyShader(uniqueID id)
 {
     auto it = m_shaderMap.find(id);
@@ -680,6 +696,11 @@ void Vulkan::DestroyTexture(uniqueID id)
 
         m_textureMap.erase(it);
     }
+}
+
+uniqueID Vulkan::CreateMesh(const MeshUpload data)
+{
+    return 0;
 }
 
 uniqueID Vulkan::CreateShader(const ShaderUpload data)

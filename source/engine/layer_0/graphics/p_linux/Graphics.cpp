@@ -112,6 +112,42 @@ void Graphics::EndFrame()
     }
 }
 
+void Graphics::DestroyMesh(uniqueID handle)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->DestroyShader(handle);
+    }
+}
+
+void Graphics::DestroyTexture(uniqueID handle)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->DestroyTexture(handle);
+    }
+}
+
+void Graphics::DestroyShader(uniqueID handle)
+{
+    if (_currentAPI != nullptr)
+    {
+        _currentAPI->DestroyShader(handle);
+    }
+}
+
+uniqueID Graphics::CreateMesh(const MeshUpload data)
+{
+    uniqueID returnValue = 0;
+
+    if (_currentAPI != nullptr)
+    {
+        returnValue = _currentAPI->CreateMesh(data);
+    }
+
+    return returnValue;
+}
+
 uniqueID Graphics::CreateShader(const ShaderUpload data)
 {
     uniqueID returnValue = 0;
@@ -124,14 +160,6 @@ uniqueID Graphics::CreateShader(const ShaderUpload data)
     return returnValue;
 }
 
-void Graphics::DestroyShader(uniqueID handle)
-{
-    if (_currentAPI != nullptr)
-    {
-        _currentAPI->DestroyShader(handle);
-    }
-}
-
 uniqueID Graphics::CreateTexture(const TextureUpload data)
 {
     uniqueID returnValue = 0;
@@ -142,12 +170,4 @@ uniqueID Graphics::CreateTexture(const TextureUpload data)
     }
 
     return returnValue;
-}
-
-void Graphics::DestroyTexture(uniqueID handle)
-{
-    if (_currentAPI != nullptr)
-    {
-        _currentAPI->DestroyTexture(handle);
-    }
 }

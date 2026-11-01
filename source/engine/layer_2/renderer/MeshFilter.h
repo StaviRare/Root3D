@@ -6,5 +6,5 @@
 class MeshFilter : public Component
 {
 public:
-    Mesh mesh;
+    Mesh* mesh;
 };
